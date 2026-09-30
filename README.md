@@ -32,6 +32,11 @@ The fork is being restructured and improved, so the API can still change until 1
   (`ChestBuilder`), toggle buttons (`ToggleBuilder`), anvil text prompts (`AnvilInputBuilder`) and confirmation
   dialogs (`ConfirmBuilder`).
 
+## Releases
+Every version is published as a [GitHub release](https://github.com/CroaBeast/InventoryFramework/releases) with the
+shaded jar attached. A release covers every commit from its version bump onwards, and it is rebuilt with the new
+commits until the next version is bumped.
+
 ## Gradle dependency
 InventoryFramework is built with Gradle (Kotlin DSL). Install it into your local Maven repository with `./gradlew publishToMavenLocal`
 (see [Building from source](#building-from-source)), then add it to your `build.gradle.kts`:
@@ -48,7 +53,7 @@ In order to include the project in your own project, you will need to use the `s
 framework to your own namespace, with [YOUR PACKAGE] being the top-level package of your project:
 ```kotlin
 plugins {
-    id("com.gradleup.shadow") version "9.4.1"
+    id("com.gradleup.shadow") version "9.6.1"
 }
 
 tasks.shadowJar {
@@ -160,6 +165,8 @@ Please consult the [Adventure documentation](https://docs.adventure.kyori.net/) 
 Example of migration from legacy `String` to Adventure `Component`:
  - legacy: `namedGui.setTitle("My Title!");`
  - Adventure: `namedGui.setTitle(ComponentHolder.of(Component.text("My Title!")));`
+ - Plain text as a component: `namedGui.setTitle(ComponentHolder.fromString("My Title!"));`. The string is used as it
+   is, without parsing color codes or MiniMessage tags.
 
 We apologize for the boilerplate (the `ComponentHolder.of(...)` call), but that was the only way to not make InventoryFramework hard-depend on Adventure.
 
