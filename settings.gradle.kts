@@ -1,4 +1,4 @@
-rootProject.name = "IF"
+rootProject.name = "InventoryFramework"
 
 include(
     "core",
