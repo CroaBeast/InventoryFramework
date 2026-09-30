@@ -1,0 +1,28 @@
+package me.croabeast.inventory.pane.component;
+
+import me.croabeast.inventory.pane.Pane;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CycleButtonTest {
+
+    @Test
+    void testCopy() {
+        CycleButton original = new CycleButton(2, 3, Pane.Priority.HIGH);
+        original.setVisible(true);
+
+        original.addPane(new CycleButton(1, 1));
+
+        CycleButton copy = original.copy();
+
+        assertNotSame(original, copy);
+
+        assertEquals(original.getLength(), copy.getLength());
+        assertEquals(original.getHeight(), copy.getHeight());
+        assertEquals(original.getPriority(), copy.getPriority());
+        assertEquals(original.isVisible(), copy.isVisible());
+        assertEquals(original.getPanes().size(), copy.getPanes().size());
+        assertEquals(original.getUUID(), copy.getUUID());
+    }
+}
