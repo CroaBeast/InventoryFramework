@@ -729,6 +729,15 @@ public abstract class Gui {
         processMethodAnnotations(CLOSE_ANNOTATIONS, InventoryCloseEvent.class);
     }
 
+    /**
+     * Registers the legacy smithing table. It is deprecated, but still loadable from XML for 1.16 - 1.19.4.
+     */
+    @SuppressWarnings("deprecation")
+    private static void registerLegacySmithingTable() {
+        registerGui("smithing-table",
+                (TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Gui>) SmithingTableGui::load);
+    }
+
     static {
         registerPane("masonrypane",
                 (TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Pane>) MasonryPane::load);
@@ -789,8 +798,7 @@ public abstract class Gui {
                 (TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Gui>) MerchantGui::load);
         registerGui("shulker-box",
                 (TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Gui>) ShulkerBoxGui::load);
-        registerGui("smithing-table",
-                (TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Gui>) SmithingTableGui::load);
+        registerLegacySmithingTable();
         registerGui("smoker",
                 (TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Gui>) SmokerGui::load);
         registerGui("stonecutter",

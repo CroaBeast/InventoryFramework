@@ -276,6 +276,7 @@ public class GuiItem {
      * @since 0.1.0
      */
     @NotNull
+    @SuppressWarnings("deprecation")
     public static GuiItem loadItem(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
         String id = element.getAttribute("id");
         Material material = Material.matchMaterial(id.toUpperCase(Locale.getDefault()));
@@ -420,7 +421,6 @@ public class GuiItem {
                     SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
 
                     if (elementItem.hasAttribute("owner"))
-                        //noinspection deprecation
                         skullMeta.setOwner(elementItem.getAttribute("owner"));
                     else if (elementItem.hasAttribute("id")) {
                         SkullUtil.setSkull(skullMeta, elementItem.getAttribute("id"));

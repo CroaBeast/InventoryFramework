@@ -21,6 +21,7 @@ import java.util.Objects;
  *
  * @since 0.1.0
  */
+@SuppressWarnings("deprecation")
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StringHolder extends TextHolder {
     
@@ -83,36 +84,30 @@ public final class StringHolder extends TextHolder {
     
     @NotNull
     public Inventory asInventoryTitle(InventoryHolder holder, InventoryType type) {
-        //noinspection deprecation
         return Bukkit.createInventory(holder, type, value);
     }
     
     @NotNull
     public Inventory asInventoryTitle(InventoryHolder holder, int size) {
-        //noinspection deprecation
         return Bukkit.createInventory(holder, size, value);
     }
 
     @NotNull
     public Merchant asMerchantTitle() {
-        //noinspection deprecation
         return Bukkit.createMerchant(value);
     }
 
     @Override
     public void asItemDisplayName(ItemMeta meta) {
-        //noinspection deprecation
         meta.setDisplayName(value);
     }
     
     @Override
     public void asItemLoreAtEnd(ItemMeta meta) {
-        //noinspection deprecation
         List<String> lore = meta.hasLore()
                 ? Objects.requireNonNull(meta.getLore())
                 : new ArrayList<>();
         lore.add(value);
-        //noinspection deprecation
         meta.setLore(lore);
     }
 }

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * @since 0.1.0
  * @deprecated this type of smithing table will be removed in Minecraft 1.20
  */
-@SuppressWarnings("all")
+@SuppressWarnings("removal")
 @Deprecated
 public class LegacySmithingTableInventoryImpl implements CustomInventory {
 

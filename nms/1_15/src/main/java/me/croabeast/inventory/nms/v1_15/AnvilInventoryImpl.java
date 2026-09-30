@@ -303,10 +303,10 @@ public class AnvilInventoryImpl extends AnvilInventory {
          *
          * @since 0.1.0
          */
+        @SuppressWarnings("unchecked")
         private void broadcastFullState() {
             List<ContainerProperty> properties;
             try {
-                //noinspection unchecked
                 properties = (List<ContainerProperty>) this.propertiesField.get(this);
             } catch (IllegalAccessException exception) {
                 throw new IllegalStateException(exception);
@@ -317,7 +317,6 @@ public class AnvilInventoryImpl extends AnvilInventory {
 
                 if (property.c()) {
                     try {
-                        //noinspection unchecked
                         for (ICrafting listener : (List<ICrafting>) this.listenersField.get(this)) {
                             listener.setContainerData(this, index, property.get());
                         }
