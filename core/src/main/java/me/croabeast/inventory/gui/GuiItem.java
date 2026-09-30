@@ -18,6 +18,7 @@ import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -282,7 +283,6 @@ public class GuiItem {
         if (material == null)
             throw new XMLLoadException("Can't find material for '" + id + "'");
 
-        boolean hasDamage = element.hasAttribute("damage");
         int amount = 1;
 
         if (element.hasAttribute("amount")) {
@@ -297,14 +297,22 @@ public class GuiItem {
 
         if (element.hasAttribute("damage")) {
             try {
-                amount = Short.parseShort(element.getAttribute("damage"));
+                damage = Short.parseShort(element.getAttribute("damage"));
             } catch (NumberFormatException exception) {
                 throw new XMLLoadException("Damage attribute is not a short", exception);
             }
         }
 
-        //noinspection deprecation
-        ItemStack itemStack = new ItemStack(material, amount, damage);
+        ItemStack itemStack = new ItemStack(material, amount);
+
+        if (damage != 0) {
+            ItemMeta damageMeta = itemStack.getItemMeta();
+
+            if (damageMeta instanceof Damageable) {
+                ((Damageable) damageMeta).setDamage(damage);
+                itemStack.setItemMeta(damageMeta);
+            }
+        }
 
         List<Object> properties = new ArrayList<>();
 
