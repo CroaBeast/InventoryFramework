@@ -14,12 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache Spigot jars
+      # Keyed on this file, which holds the BuildTools revisions. When the list changes, the previous cache is still
+      # restored through the prefix and only the missing revisions are built.
+      - name: Restore Spigot jars
         id: cache-spigot
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ~/.m2/repository/org/spigotmc
-          key: ${{ runner.os }}-${{ secrets.CACHE_VERSION }}-spigot-${{ hashFiles('build.gradle.kts') }}
+          key: ${{ runner.os }}-${{ secrets.CACHE_VERSION }}-spigot-${{ hashFiles('.github/workflows/gradle.yml') }}
+          restore-keys: ${{ runner.os }}-${{ secrets.CACHE_VERSION }}-spigot-
 
       - name: Set up JDKs
         uses: actions/setup-java@v4
@@ -32,23 +35,44 @@ jobs:
             25
 
       - name: Run BuildTools
-        if: steps.cache-spigot.outputs.cache-hit != 'true'
         run: |
           mkdir -p buildtools && cd buildtools
-          wget -q https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 
-          for rev in 1.14.4 1.15.2 1.16.1 1.16.3 1.16.5; do
-            "$JAVA_HOME_11_X64/bin/java" -jar BuildTools.jar --rev $rev
+          # Arguments: JDK home, BuildTools revision, Spigot artifact version, optional --remapped
+          build() {
+            local jar="$HOME/.m2/repository/org/spigotmc/spigot/$3/spigot-$3${4:+-remapped-mojang}.jar"
+            if [ -f "$jar" ]; then
+              echo "$3 is cached"
+              return
+            fi
+            [ -f BuildTools.jar ] || wget -q https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+            "$1/bin/java" -jar BuildTools.jar --rev "$2" $4
+          }
+
+          for version in 1.14.4 1.15.2 1.16.1 1.16.3 1.16.5; do
+            build "$JAVA_HOME_11_X64" $version $version-R0.1-SNAPSHOT
           done
           # --rev 1.20, 1.20.5 and 1.21 resolve to 1.20.1, 1.20.6 and 1.21.1; these build numbers pin the original
           # releases (3798 = 1.20, 4132 = 1.20.5, 4289 = 1.21)
-          for rev in 1.17.1 1.18.2 1.19.4 3798 1.20.1 1.20.2 1.20.4; do
-            "$JAVA_HOME_17_X64/bin/java" -jar BuildTools.jar --rev $rev --remapped
+          build "$JAVA_HOME_17_X64" 3798 1.20-R0.1-SNAPSHOT --remapped
+          for version in 1.17.1 1.18.2 1.19.4 1.20.1 1.20.2 1.20.4; do
+            build "$JAVA_HOME_17_X64" $version $version-R0.1-SNAPSHOT --remapped
           done
-          for rev in 4132 1.20.6 4289 1.21.1 1.21.3 1.21.4 1.21.5 1.21.8 1.21.10 1.21.11; do
-            "$JAVA_HOME_21_X64/bin/java" -jar BuildTools.jar --rev $rev --remapped
+          build "$JAVA_HOME_21_X64" 4132 1.20.5-R0.1-SNAPSHOT --remapped
+          build "$JAVA_HOME_21_X64" 4289 1.21-R0.1-SNAPSHOT --remapped
+          for version in 1.20.6 1.21.1 1.21.3 1.21.4 1.21.5 1.21.8 1.21.10; do
+            build "$JAVA_HOME_21_X64" $version $version-R0.1-SNAPSHOT --remapped
           done
-          "$JAVA_HOME_25_X64/bin/java" -jar BuildTools.jar --rev 26.1.2
+          build "$JAVA_HOME_21_X64" 1.21.11 1.21.11-R0.2-SNAPSHOT --remapped
+          build "$JAVA_HOME_25_X64" 26.1.2 26.1.2-R0.1-SNAPSHOT
+
+      # Saved right after BuildTools, so a failing Gradle build does not throw the jars away
+      - name: Save Spigot jars
+        if: steps.cache-spigot.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.m2/repository/org/spigotmc
+          key: ${{ steps.cache-spigot.outputs.cache-primary-key }}
 
       - name: Build with Gradle
         run: ./gradlew build -Porg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
