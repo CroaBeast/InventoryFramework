@@ -12,7 +12,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -24,7 +23,7 @@ import java.util.*;
 /**
  * Represents a component within a gui that can hold items. This is always in the shape of a rectangular grid.
  *
- * @since 0.8.0
+ * @since 0.1.0
  */
 public class GuiComponent {
 
@@ -53,18 +52,16 @@ public class GuiComponent {
      *
      * @param length the length of the component
      * @param height the height of the component
-     * @since 0.8.0
+     * @since 0.1.0
      */
     public GuiComponent(int length, int height) {
-        if (length < 0 || height < 0) {
+        if (length < 0 || height < 0)
             throw new IllegalArgumentException("Sizes must be greater or equal to zero");
-        }
 
         this.container = new GuiItemContainer(length, height);
 
-        if (length != 0 && height != 0) {
+        if (length != 0 && height != 0)
             this.items = new StaticPane(length, height);
-        }
     }
 
     /**
@@ -72,7 +69,7 @@ public class GuiComponent {
      *
      * @param slot the position of the pane
      * @param pane the pane to add
-     * @since 0.8.0
+     * @since 0.1.0
      */
     public void addPane(@NotNull Slot slot, @NotNull Pane pane) {
         PositionedPane positionedPane = new PositionedPane(slot, pane);
@@ -120,7 +117,7 @@ public class GuiComponent {
      *
      * @param inventory the inventory to place the items in
      * @param offset the offset from which to start counting the slots
-     * @since 0.8.0
+     * @since 0.1.0
      * @see #display(PlayerInventory, int)
      */
     public void display(@NotNull Inventory inventory, int offset) {
@@ -140,7 +137,7 @@ public class GuiComponent {
      *
      * @param inventory the inventory to place the items in
      * @param offset the offset from which to start counting the slots
-     * @since 0.8.0
+     * @since 0.1.0
      * @see #display(Inventory, int)
      */
     public void display(@NotNull PlayerInventory inventory, int offset) {
@@ -158,7 +155,7 @@ public class GuiComponent {
      *
      * @param inventory the inventory to place the items in
      * @param offset the offset from which to start counting the slots
-     * @since 0.8.0
+     * @since 0.1.0
      * @see #placeItems(Inventory, int)
      */
     public void placeItems(@NotNull PlayerInventory inventory, int offset) {
@@ -186,7 +183,7 @@ public class GuiComponent {
      *
      * @param inventory the inventory to place the items in
      * @param offset the offset from which to start counting the slots
-     * @since 0.8.0
+     * @since 0.1.0
      * @see #placeItems(PlayerInventory, int)
      */
     public void placeItems(@NotNull Inventory inventory, int offset) {
@@ -207,12 +204,11 @@ public class GuiComponent {
      * @param gui the gui this inventory component belongs to
      * @param event the event to delegate
      * @param index the slot that was clicked
-     * @since 0.8.0
+     * @since 0.1.0
      */
     public void click(@NotNull Gui gui, @NotNull InventoryClickEvent event, int index) {
-        if (this.items != null && this.items.click(gui, this, event, Slot.fromIndex(index))) {
+        if (this.items != null && this.items.click(gui, this, event, Slot.fromIndex(index)))
             return;
-        }
 
         int x = index % getLength();
         int y = index / getLength();
@@ -223,9 +219,8 @@ public class GuiComponent {
             Slot paneSlot = positionedPane.getSlot();
             Slot innerSlot = Slot.fromXY(x - paneSlot.getX(getLength()), y - paneSlot.getY(getLength()));
 
-            if (positionedPane.getPane().click(gui, this, event, innerSlot)) {
+            if (positionedPane.getPane().click(gui, this, event, innerSlot))
                 break;
-            }
         }
     }
 
@@ -235,10 +230,9 @@ public class GuiComponent {
      * is guaranteed to not reference equals this gui component.
      *
      * @return the new gui component
-     * @since 0.8.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public GuiComponent copy() {
         GuiComponent guiComponent = new GuiComponent(getLength(), getHeight());
 
@@ -246,9 +240,8 @@ public class GuiComponent {
             guiComponent.addPane(positionedPane.getSlot(), positionedPane.getPane().copy());
         }
 
-        if (this.items != null) {
+        if (this.items != null)
             guiComponent.items = this.items.copy();
-        }
 
         guiComponent.container = this.container.copy();
 
@@ -268,14 +261,12 @@ public class GuiComponent {
      * @param from the starting index of the range
      * @param end the ending index of the range
      * @return the new, shrunk gui component
-     * @since 0.8.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public GuiComponent excludeRows(int from, int end) {
-        if (from < 0 || end >= getHeight()) {
+        if (from < 0 || end >= getHeight())
             throw new IllegalArgumentException("Specified range includes non-existent rows");
-        }
 
         int newHeight = getHeight() - (end - from + 1);
 
@@ -294,9 +285,8 @@ public class GuiComponent {
                 for (int y = 0; y < getHeight(); y++) {
                     GuiItem item = this.items.getItem(Slot.fromXY(x, y));
 
-                    if (item == null || (y >= from && y <= end)) {
+                    if (item == null || (y >= from && y <= end))
                         continue;
-                    }
 
                     newGuiComponent.items.addItem(item, x, newY);
                     newY++;
@@ -316,7 +306,7 @@ public class GuiComponent {
      * @param instance the instance to apply field and method references on
      * @param element the element to load
      * @param plugin the plugin to load the panes with
-     * @since 0.10.12
+     * @since 0.1.0
      */
     public void load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
         NodeList childNodes = element.getChildNodes();
@@ -324,9 +314,8 @@ public class GuiComponent {
         for (int innerIndex = 0; innerIndex < childNodes.getLength(); innerIndex++) {
             Node innerItem = childNodes.item(innerIndex);
 
-            if (innerItem.getNodeType() != Node.ELEMENT_NODE) {
+            if (innerItem.getNodeType() != Node.ELEMENT_NODE)
                 continue;
-            }
 
             addPane(Slot.deserialize((Element) innerItem), Gui.loadPane(instance, innerItem, plugin));
         }
@@ -336,15 +325,13 @@ public class GuiComponent {
      * Checks whether this component has at least one item. If it does, true is returned; false otherwise.
      *
      * @return true if this has an item, false otherwise
-     * @since 0.8.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public boolean hasItem() {
         for (int x = 0; x < getLength(); x++) {
             for (int y = 0; y < getHeight(); y++) {
-                if (this.container.getItem(x, y) != null) {
+                if (this.container.getItem(x, y) != null)
                     return true;
-                }
             }
         }
 
@@ -356,22 +343,20 @@ public class GuiComponent {
      * according to their priority, with the lowest priority rendering first and the highest priority (note: highest
      * priority, not {@link Pane.Priority#HIGHEST} priority) rendering last.
      *
-     * @since 0.8.0
+     * @since 0.1.0
      * @see #display(Inventory, int)
      */
     public void display() {
         this.container.clearItems();
 
-        if (this.items != null) {
+        if (this.items != null)
             this.container.apply(this.items.display(), 0, 0);
-        }
 
         for (PositionedPane positionedPane : this.panes) {
             Pane pane = positionedPane.getPane();
 
-            if (!pane.isVisible()) {
+            if (!pane.isVisible())
                 continue;
-            }
 
             Slot slot = positionedPane.getSlot();
 
@@ -388,7 +373,7 @@ public class GuiComponent {
      *
      * @param item the item to set
      * @param slot the slot to place the item at
-     * @since 0.12.1
+     * @since 0.1.0
      * @throws IllegalArgumentException if the slot is out of bounds
      */
     public void setItem(@NotNull GuiItem item, @NotNull Slot slot) {
@@ -398,9 +383,8 @@ public class GuiComponent {
         int x = slot.getX(length);
         int y = slot.getY(length);
 
-        if (!isInBounds(0, length - 1, x) || !isInBounds(0, height - 1, y)) {
+        if (!isInBounds(0, length - 1, x) || !isInBounds(0, height - 1, y))
             throw new IllegalArgumentException("Slot is out of bounds");
-        }
 
         assert this.items != null;
 
@@ -415,10 +399,9 @@ public class GuiComponent {
      * the returned collection must be synchronized externally.
      *
      * @return the panes this component has
-     * @since 0.12.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public List<? extends PositionedPane> getPositionedPanes() {
         return this.panes;
     }
@@ -429,10 +412,9 @@ public class GuiComponent {
      * the panes' priorities.
      *
      * @return the panes this component has
-     * @since 0.8.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public List<Pane> getPanes() {
         List<Pane> panes = new ArrayList<>(getPositionedPanes().size());
 
@@ -447,9 +429,8 @@ public class GuiComponent {
      * Gets the height of this gui component.
      *
      * @return the height
-     * @since 0.8.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public int getHeight() {
         return this.container.getHeight();
     }
@@ -458,9 +439,8 @@ public class GuiComponent {
      * Gets the length of this gui component.
      *
      * @return the length
-     * @since 0.8.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public int getLength() {
         return this.container.getLength();
     }
@@ -470,14 +450,12 @@ public class GuiComponent {
      *
      * @param index the index of the pane
      * @return the pane
-     * @since 0.8.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     private Pane getPane(int index) {
-        if (!isInBounds(0, this.panes.size() - 1, index)) {
+        if (!isInBounds(0, this.panes.size() - 1, index))
             throw new IllegalArgumentException("Index not in pane list");
-        }
 
         return this.panes.get(index).getPane();
     }
@@ -489,9 +467,8 @@ public class GuiComponent {
      * @param upperBound the upper bound of the range
      * @param value the value to check
      * @return true if the value is within the bounds, false otherwise
-     * @since 0.8.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     private boolean isInBounds(int lowerBound, int upperBound, int value) {
         return lowerBound <= value && value <= upperBound;
     }

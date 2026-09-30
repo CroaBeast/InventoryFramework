@@ -1,7 +1,9 @@
 package me.croabeast.inventory.gui.type;
 
+import lombok.Getter;
 import me.croabeast.inventory.HumanEntityCache;
-import me.croabeast.inventory.nms.BeaconInventory;
+import me.croabeast.inventory.nms.CustomInventory;
+import me.croabeast.inventory.adventure.StringHolder;
 import me.croabeast.inventory.exception.XMLLoadException;
 import me.croabeast.inventory.gui.GuiComponent;
 import me.croabeast.inventory.gui.GuiItem;
@@ -17,7 +19,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -38,7 +39,7 @@ import java.util.List;
 /**
  * Represents a gui in the form of a beacon
  *
- * @since 0.8.0
+ * @since 0.1.0
  */
 public class BeaconGui extends Gui implements InventoryBased {
 
@@ -46,24 +47,27 @@ public class BeaconGui extends Gui implements InventoryBased {
      * Represents the payment item gui component
      */
     @NotNull
+    @Getter
     private GuiComponent paymentItemComponent = new GuiComponent(1, 1);
 
     /**
      * Represents the player gui component
      */
     @NotNull
+    @Getter
     private GuiComponent playerGuiComponent = new GuiComponent(9, 4);
 
     /**
      * An internal beacon inventory
      */
     @NotNull
-    private final BeaconInventory beaconInventory = VersionMatcher.newBeaconInventory(Version.getVersion());
+    private final CustomInventory beaconInventory =
+            VersionMatcher.newInventory(VersionMatcher.Type.BEACON, Version.getVersion());
 
     /**
      * Constructs a new beacon gui.
      *
-     * @since 0.8.0
+     * @since 0.1.0
      */
     public BeaconGui() {
         this(JavaPlugin.getProvidingPlugin(BeaconGui.class));
@@ -74,7 +78,7 @@ public class BeaconGui extends Gui implements InventoryBased {
      *
      * @param plugin the owning plugin of this gui
      * @see #BeaconGui()
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public BeaconGui(@NotNull Plugin plugin) {
         super(plugin);
@@ -98,16 +102,13 @@ public class BeaconGui extends Gui implements InventoryBased {
             viewer.setItemOnCursor(cursor);
         }
 
-        if (!super.updating) {
+        if (!super.updating)
             throw new AssertionError("Gui#isUpdating became false before Gui#update finished");
-        }
 
         super.updating = false;
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Iterable<? extends GuiItem> getItems() {
         Collection<GuiItem> items = new HashSet<>();
 
@@ -124,9 +125,8 @@ public class BeaconGui extends Gui implements InventoryBased {
 
     @Override
     public void show(@NotNull HumanEntity humanEntity) {
-        if (isDirty()) {
+        if (isDirty())
             update();
-        }
 
         populateBottomInventory(humanEntity);
 
@@ -137,23 +137,20 @@ public class BeaconGui extends Gui implements InventoryBased {
      * Populates the inventory of the {@link HumanEntity} if needed.
      *
      * @param humanEntity the human entity
-     * @since 0.11.4
+     * @since 0.1.0
      */
     private void populateBottomInventory(@NotNull HumanEntity humanEntity) {
         if (getPlayerGuiComponent().hasItem()) {
             HumanEntityCache humanEntityCache = getHumanEntityCache();
 
-            if (!humanEntityCache.contains(humanEntity)) {
+            if (!humanEntityCache.contains(humanEntity))
                 humanEntityCache.storeAndClear(humanEntity);
-            }
 
             getPlayerGuiComponent().placeItems(humanEntity.getInventory(), 0);
         }
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public BeaconGui copy() {
         BeaconGui gui = new BeaconGui(super.plugin);
 
@@ -181,67 +178,35 @@ public class BeaconGui extends Gui implements InventoryBased {
     }
 
     @NotNull
-    @Override
     public Inventory getInventory() {
-        if (this.inventory == null) {
+        if (this.inventory == null)
             this.inventory = createInventory();
-        }
 
         return inventory;
     }
 
-    @Contract(pure = true)
     @Override
     public boolean isPlayerInventoryUsed() {
         return getPlayerGuiComponent().hasItem();
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory createInventory() {
-        Inventory inventory = this.beaconInventory.createInventory();
+        Inventory inventory = this.beaconInventory.createInventory(StringHolder.empty());
 
         addInventory(inventory, this);
 
         return inventory;
     }
 
-    @Contract(pure = true)
     @Override
     public int getViewerCount() {
         return getInventory().getViewers().size();
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public List<HumanEntity> getViewers() {
         return new ArrayList<>(getInventory().getViewers());
-    }
-
-    /**
-     * Gets the gui component representing the payment item
-     *
-     * @return the payment item component
-     * @since 0.8.0
-     */
-    @NotNull
-    @Contract(pure = true)
-    public GuiComponent getPaymentItemComponent() {
-        return paymentItemComponent;
-    }
-
-    /**
-     * Gets the giu component representing the player inventory
-     *
-     * @return the player gui component
-     * @since 0.8.0
-     */
-    @NotNull
-    @Contract(pure = true)
-    public GuiComponent getPlayerGuiComponent() {
-        return this.playerGuiComponent;
     }
 
     /**
@@ -252,10 +217,9 @@ public class BeaconGui extends Gui implements InventoryBased {
      * @param plugin the plugin that will be the owner of the created gui
      * @return the loaded beacon gui
      * @see #load(Object, InputStream)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     public static BeaconGui load(@NotNull Object instance, @NotNull InputStream inputStream, @NotNull Plugin plugin) {
         try {
             Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
@@ -278,35 +242,31 @@ public class BeaconGui extends Gui implements InventoryBased {
      * @param plugin the plugin that will be the owner of the created gui
      * @return the loaded beacon gui
      * @see #load(Object, Element)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
     public static BeaconGui load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
         BeaconGui beaconGui = new BeaconGui(plugin);
         beaconGui.initializeOrThrow(instance, element);
 
-        if (element.hasAttribute("populate")) {
+        if (element.hasAttribute("populate"))
             return beaconGui;
-        }
 
         NodeList childNodes = element.getChildNodes();
 
         for (int index = 0; index < childNodes.getLength(); index++) {
             Node item = childNodes.item(index);
 
-            if (item.getNodeType() != Node.ELEMENT_NODE) {
+            if (item.getNodeType() != Node.ELEMENT_NODE)
                 continue;
-            }
 
             Element componentElement = (Element) item;
 
-            if (!componentElement.getTagName().equalsIgnoreCase("component")) {
+            if (!componentElement.getTagName().equalsIgnoreCase("component"))
                 throw new XMLLoadException("Gui element contains non-component tags");
-            }
 
-            if (!componentElement.hasAttribute("name")) {
+            if (!componentElement.hasAttribute("name"))
                 throw new XMLLoadException("Component tag does not have a name specified");
-            }
 
             GuiComponent component;
 
@@ -333,10 +293,9 @@ public class BeaconGui extends Gui implements InventoryBased {
      * @param instance the instance on which to reference fields and methods
      * @param inputStream the input stream containing the XML data
      * @return the loaded beacon gui
-     * @since 0.8.0
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     public static BeaconGui load(@NotNull Object instance, @NotNull InputStream inputStream) {
         return load(instance, inputStream, JavaPlugin.getProvidingPlugin(BeaconGui.class));
     }
@@ -347,7 +306,7 @@ public class BeaconGui extends Gui implements InventoryBased {
      * @param instance the instance on which to reference fields and methods
      * @param element the element to load the gui from
      * @return the loaded beacon gui
-     * @since 0.8.0
+     * @since 0.1.0
      */
     @NotNull
     public static BeaconGui load(@NotNull Object instance, @NotNull Element element) {

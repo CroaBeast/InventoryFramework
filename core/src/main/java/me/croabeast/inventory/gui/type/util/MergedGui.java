@@ -4,7 +4,6 @@ import me.croabeast.inventory.gui.GuiComponent;
 import me.croabeast.inventory.gui.GuiItem;
 import me.croabeast.inventory.pane.Pane;
 import me.croabeast.inventory.pane.util.Slot;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -14,7 +13,7 @@ import java.util.List;
  * Represents a chest-like gui in which the top and bottom inventories are merged together and only exist of one
  * inventory component.
  *
- * @since 0.8.1
+ * @since 0.1.0
  */
 public interface MergedGui {
 
@@ -23,7 +22,7 @@ public interface MergedGui {
      *
      * @param slot the position of the pane
      * @param pane the pane to add
-     * @since 0.12.0
+     * @since 0.1.0
      */
     void addPane(@NotNull Slot slot, @NotNull Pane pane);
 
@@ -31,29 +30,26 @@ public interface MergedGui {
      * Gets all the panes in this gui. This includes child panes from other panes.
      *
      * @return all panes
-     * @since 0.8.1
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     List<Pane> getPanes();
 
     /**
      * Gets all the items in all underlying panes
      *
      * @return all items
-     * @since 0.8.1
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     Collection<GuiItem> getItems();
 
     /**
      * Gets the gui component for this gui
      *
      * @return the gui component
-     * @since 0.8.1
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     GuiComponent getGuiComponent();
 }

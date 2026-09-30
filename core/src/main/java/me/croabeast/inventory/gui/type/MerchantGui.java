@@ -1,5 +1,7 @@
 package me.croabeast.inventory.gui.type;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.croabeast.inventory.HumanEntityCache;
 import me.croabeast.inventory.nms.MerchantInventory;
 import me.croabeast.inventory.adventure.StringHolder;
@@ -24,7 +26,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -48,7 +49,7 @@ import java.util.function.Consumer;
 /**
  * Represents a gui in the form of a merchant.
  *
- * @since 0.10.0
+ * @since 0.1.0
  */
 public class MerchantGui extends NamedGui implements InventoryBased {
 
@@ -56,18 +57,21 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * The consumer that will be called once a players selects a trade listed
      * on the left side of the gui
      */
+    @Setter
     private Consumer<? super TradeSelectEvent> onTradeSelect;
 
     /**
      * Represents the gui component for the input
      */
     @NotNull
+    @Getter
     private GuiComponent inputComponent = new GuiComponent(2, 1);
 
     /**
      * Represents the gui component for the player inventory
      */
     @NotNull
+    @Getter
     private GuiComponent playerGuiComponent = new GuiComponent(9, 4);
 
     /**
@@ -97,7 +101,7 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * Creates a merchant gui with the given title.
      *
      * @param title the title
-     * @since 0.10.0
+     * @since 0.1.0
      */
     public MerchantGui(@NotNull String title) {
         this(StringHolder.of(title));
@@ -107,7 +111,7 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * Creates a merchant gui with the given title.
      *
      * @param title the title
-     * @since 0.10.0
+     * @since 0.1.0
      */
     public MerchantGui(@NotNull TextHolder title) {
         this(title, JavaPlugin.getProvidingPlugin(MerchantGui.class));
@@ -119,7 +123,7 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * @param title the title/name of this gui.
      * @param plugin the owning plugin of this gui
      * @see #MerchantGui(String)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public MerchantGui(@NotNull String title, @NotNull Plugin plugin) {
         this(StringHolder.of(title), plugin);
@@ -131,20 +135,10 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * @param title the title/name of this gui.
      * @param plugin the owning plugin of this gui
      * @see #MerchantGui(TextHolder)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public MerchantGui(@NotNull TextHolder title, @NotNull Plugin plugin) {
         super(title, plugin);
-    }
-
-    /**
-     * Set the consumer that should be called whenever a trade is selected
-     * in this gui.
-     *
-     * @param onTradeSelect the consumer that gets called
-     */
-    public void setOnTradeSelect(@Nullable Consumer<? super TradeSelectEvent> onTradeSelect) {
-        this.onTradeSelect = onTradeSelect;
     }
 
     /**
@@ -196,9 +190,8 @@ public class MerchantGui extends NamedGui implements InventoryBased {
 
             populateBottomInventory(viewer);
 
-            if ((this.experience >= 0 || this.level > 0 || !this.trades.isEmpty()) && viewer instanceof Player) {
+            if ((this.experience >= 0 || this.level > 0 || !this.trades.isEmpty()) && viewer instanceof Player)
                 this.merchantInventory.sendMerchantOffers((Player) viewer, this.trades, this.level, this.experience);
-            }
 
             viewer.setItemOnCursor(cursor);
         }
@@ -210,8 +203,6 @@ public class MerchantGui extends NamedGui implements InventoryBased {
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Iterable<? extends GuiItem> getItems() {
         Collection<@NotNull GuiItem> items = new HashSet<>();
 
@@ -228,43 +219,38 @@ public class MerchantGui extends NamedGui implements InventoryBased {
 
     @Override
     public void show(@NotNull HumanEntity humanEntity) {
-        if (!(humanEntity instanceof Player)) {
+        if (!(humanEntity instanceof Player))
             throw new IllegalArgumentException("Merchants can only be opened by players");
-        }
 
-        if (isDirty()) {
+        if (isDirty())
             update();
-        }
 
         populateBottomInventory(humanEntity);
 
         humanEntity.openInventory(getInventory());
 
-        if (this.experience >= 0 || this.level > 0 || !this.trades.isEmpty()) {
+        if (this.experience >= 0 || this.level > 0 || !this.trades.isEmpty())
             this.merchantInventory.sendMerchantOffers((Player) humanEntity, this.trades, this.level, this.experience);
-        }
     }
 
     /**
      * Populates the inventory of the {@link HumanEntity} if needed.
      *
      * @param humanEntity the human entity
-     * @since 0.11.4
+     * @since 0.1.0
      */
     private void populateBottomInventory(@NotNull HumanEntity humanEntity) {
         if (getPlayerGuiComponent().hasItem()) {
             HumanEntityCache humanEntityCache = getHumanEntityCache();
 
-            if (!humanEntityCache.contains(humanEntity)) {
+            if (!humanEntityCache.contains(humanEntity))
                 humanEntityCache.storeAndClear(humanEntity);
-            }
 
             getPlayerGuiComponent().placeItems(humanEntity.getInventory(), 0);
         }
     }
 
     @NotNull
-    @Override
     public Gui copy() {
         MerchantGui gui = new MerchantGui(getTitleHolder(), super.plugin);
 
@@ -317,18 +303,14 @@ public class MerchantGui extends NamedGui implements InventoryBased {
     }
 
     @NotNull
-    @Override
     public Inventory getInventory() {
-        if (this.inventory == null) {
+        if (this.inventory == null)
             this.inventory = createInventory();
-        }
 
         return inventory;
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory createInventory() {
         Inventory inventory = this.merchantInventory.createInventory(getTitleHolder());
 
@@ -343,7 +325,7 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      *
      * @param recipe the recipe to add
      * @param discount the discount
-     * @since 0.10.1
+     * @since 0.1.0
      */
     public void addTrade(@NotNull MerchantRecipe recipe, int discount) {
         this.trades.add(new AbstractMap.SimpleImmutableEntry<>(recipe, -discount));
@@ -357,13 +339,12 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * {@link IllegalArgumentException}.
      *
      * @param experience the experience to set
-     * @since 0.10.1
+     * @since 0.1.0
      * @throws IllegalArgumentException when the experience is below zero
      */
     public void setExperience(int experience) {
-        if (experience < 0) {
+        if (experience < 0)
             throw new IllegalArgumentException("Experience must be greater than or equal to zero");
-        }
 
         this.experience = experience;
     }
@@ -375,13 +356,12 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * that is not within one and five, an {@link IllegalArgumentException} will be thrown.
      *
      * @param level the numeric level
-     * @since 0.10.1
+     * @since 0.1.0
      * @throws IllegalArgumentException when the level is not between one and five
      */
     public void setLevel(int level) {
-        if (level < 0 || level > 5) {
+        if (level < 0 || level > 5)
             throw new IllegalArgumentException("Level must be between one and five");
-        }
 
         this.level = level;
     }
@@ -391,7 +371,7 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * {@link #addTrade(MerchantRecipe, int)}.
      *
      * @param recipe the recipe to add
-     * @since 0.10.0
+     * @since 0.1.0
      */
     public void addTrade(@NotNull MerchantRecipe recipe) {
         addTrade(recipe, 0);
@@ -402,41 +382,14 @@ public class MerchantGui extends NamedGui implements InventoryBased {
         return getPlayerGuiComponent().hasItem();
     }
 
-    @Contract(pure = true)
     @Override
     public int getViewerCount() {
         return getInventory().getViewers().size();
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public List<HumanEntity> getViewers() {
         return new ArrayList<>(getInventory().getViewers());
-    }
-
-    /**
-     * Gets the gui component representing the input
-     *
-     * @return the input component
-     * @since 0.10.0
-     */
-    @NotNull
-    @Contract(pure = true)
-    public GuiComponent getInputComponent() {
-        return inputComponent;
-    }
-
-    /**
-     * Gets the gui component representing the player inventory
-     *
-     * @return the player gui component
-     * @since 0.10.0
-     */
-    @NotNull
-    @Contract(pure = true)
-    public GuiComponent getPlayerGuiComponent() {
-        return this.playerGuiComponent;
     }
 
     /**
@@ -447,10 +400,9 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * @param plugin the plugin that will be the owner of the created gui
      * @return the loaded merchant gui
      * @see #load(Object, InputStream)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     public static MerchantGui load(@NotNull Object instance, @NotNull InputStream inputStream, @NotNull Plugin plugin) {
         try {
             Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
@@ -473,38 +425,33 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * @param plugin the plugin that will be the owner of the created gui
      * @return the loaded merchant gui
      * @see #load(Object, Element)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public static MerchantGui load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
-        if (!element.hasAttribute("title")) {
+        if (!element.hasAttribute("title"))
             throw new XMLLoadException("Provided XML element's gui tag doesn't have the mandatory title attribute set");
-        }
 
         MerchantGui merchantGui = new MerchantGui(element.getAttribute("title"), plugin);
         merchantGui.initializeOrThrow(instance, element);
 
-        if (element.hasAttribute("populate")) {
+        if (element.hasAttribute("populate"))
             return merchantGui;
-        }
 
         NodeList childNodes = element.getChildNodes();
 
         for (int index = 0; index < childNodes.getLength(); index++) {
             Node item = childNodes.item(index);
 
-            if (item.getNodeType() != Node.ELEMENT_NODE) {
+            if (item.getNodeType() != Node.ELEMENT_NODE)
                 continue;
-            }
 
             Element nestedElement = (Element) item;
             String tagName = nestedElement.getTagName();
 
             if (tagName.equalsIgnoreCase("component")) {
-                if (!nestedElement.hasAttribute("name")) {
+                if (!nestedElement.hasAttribute("name"))
                     throw new XMLLoadException("Component tag does not have a name specified");
-                }
 
                 GuiComponent component;
 
@@ -529,25 +476,22 @@ public class MerchantGui extends NamedGui implements InventoryBased {
                 for (int tradeIndex = 0; tradeIndex < tradeNodes.getLength(); tradeIndex++) {
                     Node tradeNode = tradeNodes.item(tradeIndex);
 
-                    if (tradeNode.getNodeType() != Node.ELEMENT_NODE) {
+                    if (tradeNode.getNodeType() != Node.ELEMENT_NODE)
                         continue;
-                    }
 
                     Element tradeElement = (Element) tradeNode;
 
                     if (tradeElement.getTagName().equalsIgnoreCase("ingredient")) {
-                        if (ingredients.size() >= 2) {
+                        if (ingredients.size() >= 2)
                             throw new XMLLoadException("Too many ingredients specified, must be no more than two");
-                        }
 
                         NodeList ingredientNodes = tradeElement.getChildNodes();
 
                         for (int ingredientIndex = 0; ingredientIndex < ingredientNodes.getLength(); ingredientIndex++) {
                             Node ingredientNode = ingredientNodes.item(ingredientIndex);
 
-                            if (ingredientNode.getNodeType() != Node.ELEMENT_NODE) {
+                            if (ingredientNode.getNodeType() != Node.ELEMENT_NODE)
                                 continue;
-                            }
 
                             ingredients.add(GuiItem.loadItem(instance, (Element) ingredientNode).getItem());
                         }
@@ -557,13 +501,11 @@ public class MerchantGui extends NamedGui implements InventoryBased {
                         for (int resultIndex = 0; resultIndex < resultNodes.getLength(); resultIndex++) {
                             Node resultNode = resultNodes.item(resultIndex);
 
-                            if (resultNode.getNodeType() != Node.ELEMENT_NODE) {
+                            if (resultNode.getNodeType() != Node.ELEMENT_NODE)
                                 continue;
-                            }
 
-                            if (result != null) {
+                            if (result != null)
                                 throw new XMLLoadException("Multiple results specified for the same trade");
-                            }
 
                             result = GuiItem.loadItem(instance, (Element) resultNode).getItem();
                         }
@@ -572,13 +514,11 @@ public class MerchantGui extends NamedGui implements InventoryBased {
                     }
                 }
 
-                if (result == null) {
+                if (result == null)
                     throw new XMLLoadException("Trade must have a result specified");
-                }
 
-                if (ingredients.size() < 1) {
+                if (ingredients.size() < 1)
                     throw new XMLLoadException("Trade must have at least one ingredient");
-                }
 
                 MerchantRecipe recipe = new MerchantRecipe(result, Integer.MAX_VALUE);
 
@@ -599,10 +539,9 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * @param instance the instance on which to reference fields and methods
      * @param inputStream the input stream containing the XML data
      * @return the loaded merchant gui
-     * @since 0.10.0
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     public static MerchantGui load(@NotNull Object instance, @NotNull InputStream inputStream) {
         return load(instance, inputStream, JavaPlugin.getProvidingPlugin(MerchantGui.class));
     }
@@ -613,10 +552,9 @@ public class MerchantGui extends NamedGui implements InventoryBased {
      * @param instance the instance on which to reference fields and methods
      * @param element the element to load the gui from
      * @return the loaded merchant gui
-     * @since 0.10.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public static MerchantGui load(@NotNull Object instance, @NotNull Element element) {
         return load(instance, element, JavaPlugin.getProvidingPlugin(MerchantGui.class));
     }

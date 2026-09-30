@@ -1,5 +1,7 @@
 package me.croabeast.inventory.gui.type;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.croabeast.inventory.HumanEntityCache;
 import me.croabeast.inventory.nms.AnvilInventory;
 import me.croabeast.inventory.adventure.TextHolder;
@@ -18,7 +20,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -41,7 +42,7 @@ import java.util.logging.Level;
 /**
  * Represents a gui in the form of an anvil
  *
- * @since 0.8.0
+ * @since 0.1.0
  */
 public class AnvilGui extends NamedGui implements InventoryBased {
 
@@ -49,30 +50,35 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * Called whenever the name input is changed.
      */
     @NotNull
+    @Setter
     private Consumer<? super String> onNameInputChanged = (name) -> {};
 
     /**
      * Represents the gui component for the first item
      */
     @NotNull
+    @Getter
     private GuiComponent firstItemComponent = new GuiComponent(1, 1);
 
     /**
      * Represents the gui component for the second item
      */
     @NotNull
+    @Getter
     private GuiComponent secondItemComponent = new GuiComponent(1, 1);
 
     /**
      * Represents the gui component for the result
      */
     @NotNull
+    @Getter
     private GuiComponent resultComponent = new GuiComponent(1, 1);
 
     /**
      * Represents the gui component for the player inventory
      */
     @NotNull
+    @Getter
     private GuiComponent playerGuiComponent = new GuiComponent(9, 4);
 
     /**
@@ -85,7 +91,7 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * Constructs a new anvil gui
      *
      * @param title the title/name of this gui.
-     * @since 0.8.0
+     * @since 0.1.0
      */
     public AnvilGui(@NotNull String title) {
         super(title);
@@ -97,7 +103,7 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * Constructs a new anvil gui
      *
      * @param title the title/name of this gui.
-     * @since 0.10.0
+     * @since 0.1.0
      */
     public AnvilGui(@NotNull TextHolder title) {
         super(title);
@@ -111,7 +117,7 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * @param title the title/name of this gui.
      * @param plugin the owning plugin of this gui
      * @see #AnvilGui(String)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public AnvilGui(@NotNull String title, @NotNull Plugin plugin) {
         super(title, plugin);
@@ -125,7 +131,7 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * @param title the title/name of this gui.
      * @param plugin the owning plugin of this gui
      * @see #AnvilGui(TextHolder)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public AnvilGui(@NotNull TextHolder title, @NotNull Plugin plugin) {
         super(title, plugin);
@@ -169,16 +175,13 @@ public class AnvilGui extends NamedGui implements InventoryBased {
             viewer.setItemOnCursor(cursor);
         }
 
-        if (!super.updating) {
+        if (!super.updating)
             throw new AssertionError("Gui#isUpdating became false before Gui#update finished");
-        }
 
         super.updating = false;
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Iterable<? extends GuiItem> getItems() {
         Collection<GuiItem> items = new HashSet<>();
 
@@ -203,9 +206,8 @@ public class AnvilGui extends NamedGui implements InventoryBased {
 
     @Override
     public void show(@NotNull HumanEntity humanEntity) {
-        if (isDirty()) {
+        if (isDirty())
             update();
-        }
 
         populateBottomInventory(humanEntity);
 
@@ -216,23 +218,20 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * Populates the inventory of the {@link HumanEntity} if needed.
      *
      * @param humanEntity the human entity
-     * @since 0.11.4
+     * @since 0.1.0
      */
     private void populateBottomInventory(@NotNull HumanEntity humanEntity) {
         if (getPlayerGuiComponent().hasItem()) {
             HumanEntityCache humanEntityCache = getHumanEntityCache();
 
-            if (!humanEntityCache.contains(humanEntity)) {
+            if (!humanEntityCache.contains(humanEntity))
                 humanEntityCache.storeAndClear(humanEntity);
-            }
 
             getPlayerGuiComponent().placeItems(humanEntity.getInventory(), 0);
         }
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public AnvilGui copy() {
         AnvilGui gui = new AnvilGui(getTitleHolder(), super.plugin);
 
@@ -266,11 +265,9 @@ public class AnvilGui extends NamedGui implements InventoryBased {
     }
 
     @NotNull
-    @Override
     public Inventory getInventory() {
-        if (this.inventory == null) {
+        if (this.inventory == null)
             this.inventory = createInventory();
-        }
 
         return inventory;
     }
@@ -281,7 +278,7 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * even if the player does not have the specified amount of levels. The cost must be a non-negative number.
      *
      * @param cost the cost
-     * @since 0.10.8
+     * @since 0.1.0
      * @throws IllegalArgumentException when the cost is less than zero
      */
     public void setCost(short cost) {
@@ -293,8 +290,6 @@ public class AnvilGui extends NamedGui implements InventoryBased {
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory createInventory() {
         Inventory inventory = this.anvilInventory.createInventory(getTitleHolder());
 
@@ -307,44 +302,27 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * Gets the rename text currently specified in the anvil.
      *
      * @return the rename text
-     * @since 0.8.0
+     * @since 0.1.0
      * @see org.bukkit.inventory.AnvilInventory#getRenameText()
      */
     @NotNull
-    @Contract(pure = true)
     public String getRenameText() {
         return anvilInventory.getRenameText();
     }
 
-    @Contract(pure = true)
     @Override
     public boolean isPlayerInventoryUsed() {
         return getPlayerGuiComponent().hasItem();
     }
 
-    @Contract(pure = true)
     @Override
     public int getViewerCount() {
         return getInventory().getViewers().size();
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public List<HumanEntity> getViewers() {
         return new ArrayList<>(getInventory().getViewers());
-    }
-
-    /**
-     * Sets the consumer that should be called whenever the name input is changed. The argument is the new input. When
-     * this consumer is invoked, the value as returned by {@link #getRenameText()} will not have updated yet, hence
-     * allowing you to see the old value via that.
-     *
-     * @param onNameInputChanged the consumer to call when the rename input is changed
-     * @since 0.10.10
-     */
-    public void setOnNameInputChanged(@NotNull Consumer<? super String> onNameInputChanged) {
-        this.onNameInputChanged = onNameInputChanged;
     }
 
     /**
@@ -352,7 +330,7 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * be called whenever the rename input is changed. Catches and logs all exceptions the consumer might throw.
      *
      * @param newInput the new rename input
-     * @since 0.10.10
+     * @since 0.1.0
      */
     private void callOnRename(@NotNull String newInput) {
         try {
@@ -365,54 +343,6 @@ public class AnvilGui extends NamedGui implements InventoryBased {
     }
 
     /**
-     * Gets the gui component representing the first item
-     *
-     * @return the first item component
-     * @since 0.8.0
-     */
-    @NotNull
-    @Contract(pure = true)
-    public GuiComponent getFirstItemComponent() {
-        return firstItemComponent;
-    }
-
-    /**
-     * Gets the gui component representing the second item
-     *
-     * @return the second item component
-     * @since 0.8.0
-     */
-    @NotNull
-    @Contract(pure = true)
-    public GuiComponent getSecondItemComponent() {
-        return secondItemComponent;
-    }
-
-    /**
-     * Gets the gui component representing the result
-     *
-     * @return the result component
-     * @since 0.8.0
-     */
-    @NotNull
-    @Contract(pure = true)
-    public GuiComponent getResultComponent() {
-        return resultComponent;
-    }
-
-    /**
-     * Gets the gui component representing the player inventory
-     *
-     * @return the player gui component
-     * @since 0.8.0
-     */
-    @NotNull
-    @Contract(pure = true)
-    public GuiComponent getPlayerGuiComponent() {
-        return this.playerGuiComponent;
-    }
-
-    /**
      * Loads an anvil gui from an XML file.
      *
      * @param instance the instance on which to reference fields and methods
@@ -420,10 +350,9 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * @param plugin the plugin that will be the owner of the created gui
      * @return the loaded anvil gui
      * @see #load(Object, InputStream)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     public static AnvilGui load(@NotNull Object instance, @NotNull InputStream inputStream, @NotNull Plugin plugin) {
         try {
             Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
@@ -446,39 +375,34 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * @param plugin the plugin that will own the created gui
      * @return the loaded anvil gui
      * @see #load(Object, Element)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
     public static AnvilGui load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
-        if (!element.hasAttribute("title")) {
+        if (!element.hasAttribute("title"))
             throw new XMLLoadException("Provided XML element's gui tag doesn't have the mandatory title attribute set");
-        }
 
         AnvilGui anvilGui = new AnvilGui(element.getAttribute("title"), plugin);
         anvilGui.initializeOrThrow(instance, element);
 
-        if (element.hasAttribute("populate")) {
+        if (element.hasAttribute("populate"))
             return anvilGui;
-        }
 
         NodeList childNodes = element.getChildNodes();
 
         for (int index = 0; index < childNodes.getLength(); index++) {
             Node item = childNodes.item(index);
 
-            if (item.getNodeType() != Node.ELEMENT_NODE) {
+            if (item.getNodeType() != Node.ELEMENT_NODE)
                 continue;
-            }
 
             Element componentElement = (Element) item;
 
-            if (!componentElement.getTagName().equalsIgnoreCase("component")) {
+            if (!componentElement.getTagName().equalsIgnoreCase("component"))
                 throw new XMLLoadException("Gui element contains non-component tags");
-            }
 
-            if (!componentElement.hasAttribute("name")) {
+            if (!componentElement.hasAttribute("name"))
                 throw new XMLLoadException("Component tag does not have a name specified");
-            }
 
             GuiComponent component;
 
@@ -511,10 +435,9 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * @param instance the instance on which to reference fields and methods
      * @param inputStream the input stream containing the XML data
      * @return the loaded anvil gui
-     * @since 0.8.0
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     public static AnvilGui load(@NotNull Object instance, @NotNull InputStream inputStream) {
         return load(instance, inputStream, JavaPlugin.getProvidingPlugin(AnvilGui.class));
     }
@@ -525,7 +448,7 @@ public class AnvilGui extends NamedGui implements InventoryBased {
      * @param instance the instance on which to reference fields and methods
      * @param element the element to load the gui from
      * @return the loaded anvil gui
-     * @since 0.8.0
+     * @since 0.1.0
      */
     @NotNull
     public static AnvilGui load(@NotNull Object instance, @NotNull Element element) {

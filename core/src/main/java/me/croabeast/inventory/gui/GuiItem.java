@@ -1,5 +1,7 @@
 package me.croabeast.inventory.gui;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.croabeast.inventory.adventure.TextHolder;
 import me.croabeast.inventory.exception.XMLLoadException;
 import me.croabeast.inventory.exception.XMLReflectionException;
@@ -22,7 +24,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -76,17 +77,22 @@ public class GuiItem {
      * List of item's properties
      */
     @NotNull
+    @Getter
     private List<Object> properties;
 
     /**
      * The items shown
      */
     @NotNull
+    @Getter
+    @Setter
     private ItemStack item;
 
     /**
      * Whether this item is visible or not
      */
+    @Getter
+    @Setter
     private boolean visible;
 
     /**
@@ -102,7 +108,7 @@ public class GuiItem {
      * @param action the action called whenever an interaction with this item happens
      * @param plugin the owning plugin of this item
      * @see #GuiItem(ItemStack, Consumer)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public GuiItem(@NotNull ItemStack item, @Nullable Consumer<? super InventoryClickEvent> action,
                    @NotNull Plugin plugin) {
@@ -115,7 +121,7 @@ public class GuiItem {
      * @param item the item stack
      * @param plugin the owning plugin of this item
      * @see #GuiItem(ItemStack)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public GuiItem(@NotNull ItemStack item, @NotNull Plugin plugin) {
         this(item, event -> {}, plugin);
@@ -148,7 +154,7 @@ public class GuiItem {
      * @param action the action called whenever an interaction with this item happens
      * @param logger the logger used for logging exceptions
      * @param key the key to identify this item with
-     * @since 0.10.10
+     * @since 0.1.0
      */
     private GuiItem(@NotNull ItemStack item, @Nullable Consumer<? super InventoryClickEvent> action,
                     @NotNull Logger logger, @NotNull NamespacedKey key) {
@@ -166,10 +172,9 @@ public class GuiItem {
      * such a way that they are identical. The returned gui item will never be reference equal to the current gui item.
      *
      * @return a copy of the gui item
-     * @since 0.6.2
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public GuiItem copy() {
         GuiItem guiItem = new GuiItem(item.clone(), action, this.logger, this.keyUUID);
 
@@ -186,18 +191,17 @@ public class GuiItem {
      * Catches and logs all exceptions the handler might throw.
      *
      * @param event the event to handle
-     * @since 0.6.0
+     * @since 0.1.0
      */
     public void callAction(@NotNull InventoryClickEvent event) {
-        if (action == null) {
+        if (action == null)
             return;
-        }
 
         try {
             action.accept(event);
         } catch (Throwable t) {
             this.logger.log(Level.SEVERE, "Exception while handling click event in inventory '"
-                    + InventoryViewUtil.getInstance().getTitle(event.getView()) + "', slot=" + event.getSlot() +
+                    + InventoryViewUtil.getTitle(event.getView()) + "', slot=" + event.getSlot() +
                     ", item=" + item.getType(), t);
         }
     }
@@ -206,7 +210,7 @@ public class GuiItem {
      * Sets the internal UUID of this gui item onto the underlying item. Previously set UUID will be overwritten by the
      * current UUID. If the underlying item does not have an item meta, this method will silently do nothing.
      *
-     * @since 0.9.3
+     * @since 0.1.0
      */
     public void applyUUID() {
         ItemMeta meta = item.getItemMeta();
@@ -218,66 +222,32 @@ public class GuiItem {
     }
 
     /**
-     * Overwrites the current item with the provided item.
-     *
-     * @param item the item to set
-     * @since 0.10.8
-     */
-    public void setItem(@NotNull ItemStack item) {
-        this.item = item;
-    }
-
-    /**
      * Sets the action to be executed when a human entity clicks on this item.
      *
      * @param action the action of this item
-     * @since 0.7.1
+     * @since 0.1.0
      */
     public void setAction(@NotNull Consumer<InventoryClickEvent> action) {
         this.action = action;
     }
     
     /**
-     * Returns the list of properties
-     *
-     * @return the list of properties that belong to this gui item
-     * @since 0.7.2
-     */
-    @NotNull
-    @Contract(pure = true)
-    public List<Object> getProperties(){
-        return properties;
-    }
-    
-    /**
      * Sets the list of properties for this gui item
      *
      * @param properties list of new properties
-     * @since 0.7.2
+     * @since 0.1.0
      */
     public void setProperties(@NotNull List<Object> properties){
         this.properties = properties;
     }
 
     /**
-     * Returns the item
-     *
-     * @return the item that belongs to this gui item
-     */
-    @NotNull
-    @Contract(pure = true)
-    public ItemStack getItem() {
-        return item;
-    }
-
-    /**
      * Gets the namespaced key used for this item.
      *
      * @return the namespaced key
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public NamespacedKey getKey() {
         return keyUUID;
     }
@@ -287,30 +257,11 @@ public class GuiItem {
      * used.
      *
      * @return the {@link UUID} of this item
-     * @since 0.5.9
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public UUID getUUID() {
         return uuid;
-    }
-
-    /**
-     * Returns whether or not this item is visible
-     *
-     * @return true if this item is visible, false otherwise
-     */
-    public boolean isVisible() {
-        return visible;
-    }
-
-    /**
-     * Sets the visibility of this item to the new visibility
-     *
-     * @param visible the new visibility
-     */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
     }
 
     /**
@@ -321,17 +272,15 @@ public class GuiItem {
      * @param plugin the plugin that will be the owner of the created item
      * @return the gui item
      * @see #loadItem(Object, Element)
-     * @since 0.12.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public static GuiItem loadItem(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
         String id = element.getAttribute("id");
         Material material = Material.matchMaterial(id.toUpperCase(Locale.getDefault()));
 
-        if (material == null) {
+        if (material == null)
             throw new XMLLoadException("Can't find material for '" + id + "'");
-        }
 
         boolean hasDamage = element.hasAttribute("damage");
         int amount = 1;
@@ -396,9 +345,8 @@ public class GuiItem {
 
                                 Function<? super String, ?> mapping = PROPERTY_MAPPINGS.get(propertyType);
 
-                                if (mapping == null) {
+                                if (mapping == null)
                                     throw new XMLLoadException("Specified property type is not registered");
-                                }
 
                                 properties.add(mapping.apply(innerElementChild.getTextContent()));
                                 break;
@@ -414,17 +362,15 @@ public class GuiItem {
                                 if (!innerNode.getNodeName().equals("enchantment"))
                                     continue;
 
-                                if (!innerElementChild.hasAttribute("id")) {
+                                if (!innerElementChild.hasAttribute("id"))
                                     throw new XMLLoadException("Enchantment tag does not have mandatory id attribute");
-                                }
 
                                 Enchantment enchantment = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(
                                         innerElementChild.getAttribute("id").toUpperCase(Locale.getDefault())
                                 ));
 
-                                if (enchantment == null) {
+                                if (enchantment == null)
                                     throw new XMLLoadException("Enchantment cannot be found");
-                                }
 
                                 if (!element.hasAttribute("level")) {
                                     throw new XMLLoadException(
@@ -554,9 +500,8 @@ public class GuiItem {
                 break;
             }
 
-            if (!found) {
+            if (!found)
                 throw new XMLLoadException("Specified method could not be found");
-            }
         }
 
         GuiItem item = new GuiItem(itemStack, action, plugin);
@@ -564,9 +509,8 @@ public class GuiItem {
         if (element.hasAttribute("field"))
             XMLUtil.loadFieldAttribute(instance, element, item);
 
-        if (element.hasAttribute("populate")) {
+        if (element.hasAttribute("populate"))
             XMLUtil.invokeMethod(instance, element.getAttribute("populate"), item, GuiItem.class);
-        }
 
         item.setProperties(properties);
 
@@ -579,10 +523,9 @@ public class GuiItem {
      * @param instance the instance
      * @param element the element
      * @return the gui item
-     * @since 0.12.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public static GuiItem loadItem(@NotNull Object instance, @NotNull Element element) {
         return loadItem(instance, element, JavaPlugin.getProvidingPlugin(Pane.class));
     }
@@ -596,12 +539,11 @@ public class GuiItem {
      * @param function how the property should be processed. This converts the raw text input from the XML node value
      *                 into the correct object type.
      * @throws IllegalArgumentException when a property with this name is already registered.
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public static void registerProperty(@NotNull String attributeName, @NotNull Function<? super String, ?> function) {
-        if (PROPERTY_MAPPINGS.containsKey(attributeName)) {
+        if (PROPERTY_MAPPINGS.containsKey(attributeName))
             throw new IllegalArgumentException("property '" + attributeName + "' is already registered");
-        }
 
         PROPERTY_MAPPINGS.put(attributeName, function);
     }
