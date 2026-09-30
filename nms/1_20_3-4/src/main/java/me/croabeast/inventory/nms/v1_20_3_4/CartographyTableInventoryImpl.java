@@ -1,8 +1,8 @@
-package me.croabeast.inventory.nms.v1_20_3;
+package me.croabeast.inventory.nms.v1_20_3_4;
 
-import me.croabeast.inventory.nms.GrindstoneInventory;
+import me.croabeast.inventory.nms.CartographyTableInventory;
 import me.croabeast.inventory.adventure.TextHolder;
-import me.croabeast.inventory.nms.v1_20_3.util.TextHolderUtil;
+import me.croabeast.inventory.nms.v1_20_3_4.util.TextHolderUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.CompoundContainer;
@@ -11,10 +11,10 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CartographyTableMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.inventory.Slot;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryGrindstone;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryCartography;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -24,11 +24,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Internal grindstone inventory for 1.20.3
+ * Internal cartography table inventory for 1.20.3
  *
  * @since 0.10.13
  */
-public class GrindstoneInventoryImpl extends GrindstoneInventory {
+public class CartographyTableInventoryImpl extends CartographyTableInventory {
 
     @NotNull
     @Contract(pure = true)
@@ -45,7 +45,7 @@ public class GrindstoneInventoryImpl extends GrindstoneInventory {
                     @Nullable net.minecraft.world.entity.player.Inventory inventory,
                     @NotNull Player player
             ) {
-                return new ContainerGrindstoneImpl(containerId, player, this, resultSlot);
+                return new ContainerCartographyTableImpl(containerId, player, this, resultSlot);
             }
 
             @NotNull
@@ -56,12 +56,12 @@ public class GrindstoneInventoryImpl extends GrindstoneInventory {
             }
         };
 
-        return new CraftInventoryGrindstone(container, resultSlot) {
+        return new CraftInventoryCartography(container, resultSlot) {
             @NotNull
             @Contract(pure = true)
             @Override
             public InventoryType getType() {
-                return InventoryType.GRINDSTONE;
+                return InventoryType.CARTOGRAPHY;
             }
 
             @Override
@@ -91,11 +91,11 @@ public class GrindstoneInventoryImpl extends GrindstoneInventory {
     }
 
     /**
-     * A custom container grindstone
+     * A custom container cartography table
      *
      * @since 0.10.13
      */
-    private static class ContainerGrindstoneImpl extends GrindstoneMenu {
+    private static class ContainerCartographyTableImpl extends CartographyTableMenu {
 
         /**
          * The human entity viewing this menu.
@@ -104,10 +104,10 @@ public class GrindstoneInventoryImpl extends GrindstoneInventory {
         private final HumanEntity humanEntity;
 
         /**
-         * The container for the items slots.
+         * The container for the input slots.
          */
         @NotNull
-        private final SimpleContainer itemsSlots;
+        private final SimpleContainer inputSlots;
 
         /**
          * The container for the result slot.
@@ -123,29 +123,29 @@ public class GrindstoneInventoryImpl extends GrindstoneInventory {
         private CraftInventoryView bukkitEntity;
 
         /**
-         * Creates a new custom grindstone container for the specified player.
+         * Creates a new custom cartography table container for the specified player.
          *
          * @param containerId the container id
          * @param player the player
-         * @param itemsSlots the items slots
+         * @param inputSlots the input slots
          * @param resultSlot the result slot
          * @since 0.11.0
          */
-        public ContainerGrindstoneImpl(
+        public ContainerCartographyTableImpl(
                 int containerId,
                 @NotNull Player player,
-                @NotNull SimpleContainer itemsSlots,
+                @NotNull SimpleContainer inputSlots,
                 @NotNull SimpleContainer resultSlot
         ) {
             super(containerId, player.getInventory(), ContainerLevelAccess.create(player.level(), BlockPos.ZERO));
 
             this.humanEntity = player.getBukkitEntity();
-            this.itemsSlots = itemsSlots;
+            this.inputSlots = inputSlots;
             this.resultSlot = resultSlot;
 
             super.checkReachable = false;
 
-            CompoundContainer container = new CompoundContainer(itemsSlots, resultSlot);
+            CompoundContainer container = new CompoundContainer(inputSlots, resultSlot);
 
             updateSlot(0, container);
             updateSlot(1, container);
@@ -159,7 +159,7 @@ public class GrindstoneInventoryImpl extends GrindstoneInventory {
                 return this.bukkitEntity;
             }
 
-            CraftInventoryGrindstone inventory = new CraftInventoryGrindstone(this.itemsSlots, this.resultSlot);
+            CraftInventoryCartography inventory = new CraftInventoryCartography(this.inputSlots, this.resultSlot);
 
             this.bukkitEntity = new CraftInventoryView(this.humanEntity, inventory, this);
 
@@ -191,5 +191,6 @@ public class GrindstoneInventoryImpl extends GrindstoneInventory {
 
             super.slots.set(slotIndex, newSlot);
         }
+
     }
 }

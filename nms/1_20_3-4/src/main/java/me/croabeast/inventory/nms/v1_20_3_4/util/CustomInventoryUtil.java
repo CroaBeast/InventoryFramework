@@ -1,4 +1,4 @@
-package me.croabeast.inventory.nms.v1_20_3.util;
+package me.croabeast.inventory.nms.v1_20_3_4.util;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;

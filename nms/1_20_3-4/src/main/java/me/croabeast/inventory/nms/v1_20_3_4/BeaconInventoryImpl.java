@@ -1,8 +1,6 @@
-package me.croabeast.inventory.nms.v1_20_3;
+package me.croabeast.inventory.nms.v1_20_3_4;
 
-import me.croabeast.inventory.nms.EnchantingTableInventory;
-import me.croabeast.inventory.adventure.TextHolder;
-import me.croabeast.inventory.nms.v1_20_3.util.TextHolderUtil;
+import me.croabeast.inventory.nms.BeaconInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -10,12 +8,12 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.BeaconMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryEnchanting;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryBeacon;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
@@ -23,16 +21,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Internal enchanting table inventory for 1.20.3
+ * Internal beacon inventory for 1.20.3
  *
  * @since 0.10.13
  */
-public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
+public class BeaconInventoryImpl extends BeaconInventory {
 
     @NotNull
-    @Contract(pure = true)
     @Override
-    public Inventory createInventory(@NotNull TextHolder title) {
+    public Inventory createInventory() {
         Container container = new InventoryViewProvider() {
             @NotNull
             @Contract(pure = true)
@@ -42,23 +39,25 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
                     @Nullable net.minecraft.world.entity.player.Inventory inventory,
                     @NotNull Player player
             ) {
-                return new ContainerEnchantingTableImpl(containerId, player, this);
+                return new ContainerBeaconImpl(containerId, player, this);
             }
 
             @NotNull
             @Contract(pure = true)
             @Override
             public Component getDisplayName() {
-                return TextHolderUtil.toComponent(title);
+                return Component.literal("Beacon");
             }
         };
 
-        return new CraftInventoryEnchanting(container) {
+        container.setMaxStackSize(1); //client limitation
+
+        return new CraftInventoryBeacon(container) {
             @NotNull
             @Contract(pure = true)
             @Override
             public InventoryType getType() {
-                return InventoryType.ENCHANTING;
+                return InventoryType.BEACON;
             }
 
             @Override
@@ -78,33 +77,33 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
     private abstract static class InventoryViewProvider extends SimpleContainer implements MenuProvider {
 
         /**
-         * Creates a new inventory view provider with two slots.
+         * Creates a new inventory view provider with one slot.
          *
          * @since 0.11.0
          */
         public InventoryViewProvider() {
-            super(2);
+            super(1);
         }
     }
 
     /**
-     * A custom container enchanting table
+     * A custom container beacon
      *
      * @since 0.10.13
      */
-    private static class ContainerEnchantingTableImpl extends EnchantmentMenu {
+    private static class ContainerBeaconImpl extends BeaconMenu {
 
         /**
-         * The human entity viewing this menu.
+         * The player viewing this menu.
          */
         @NotNull
-        private final HumanEntity humanEntity;
+        private final Player player;
 
         /**
          * The container for the input slots.
          */
         @NotNull
-        private final SimpleContainer inputSlots;
+        private final SimpleContainer inputSlot;
 
         /**
          * The corresponding Bukkit view. Will be not null after the first call to {@link #getBukkitView()} and null
@@ -114,27 +113,28 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
         private CraftInventoryView bukkitEntity;
 
         /**
-         * Creates a new custom enchanting table container for the specified player.
+         * Creates a new custom beacon container for the specified player.
          *
          * @param containerId the container id
          * @param player the player
-         * @param inputSlots the input slots
+         * @param inputSlot the input slot
          * @since 0.11.0
          */
-        public ContainerEnchantingTableImpl(
-                int containerId,
-                @NotNull Player player,
-                @NotNull SimpleContainer inputSlots
-        ) {
-            super(containerId, player.getInventory(), ContainerLevelAccess.create(player.level(), BlockPos.ZERO));
+        public ContainerBeaconImpl(int containerId, @NotNull Player player, @NotNull SimpleContainer inputSlot) {
+            super(containerId, player.getInventory(), new SimpleContainerData(3),
+                    ContainerLevelAccess.create(player.level(), BlockPos.ZERO));
 
-            this.humanEntity = player.getBukkitEntity();
-            this.inputSlots = inputSlots;
+            this.player = player;
+            this.inputSlot = inputSlot;
 
             super.checkReachable = false;
 
-            updateSlot(0, inputSlots);
-            updateSlot(1, inputSlots);
+            Slot slot = super.slots.get(0);
+
+            Slot newSlot = new Slot(inputSlot, slot.slot, slot.x, slot.y);
+            newSlot.index = slot.index;
+
+            super.slots.set(0, newSlot);
         }
 
         @NotNull
@@ -144,15 +144,12 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
                 return this.bukkitEntity;
             }
 
-            CraftInventoryEnchanting inventory = new CraftInventoryEnchanting(this.inputSlots);
+            CraftInventoryBeacon inventory = new CraftInventoryBeacon(this.inputSlot);
 
-            this.bukkitEntity = new CraftInventoryView(this.humanEntity, inventory, this);
+            this.bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
 
             return this.bukkitEntity;
         }
-
-        @Override
-        public void slotsChanged(@Nullable Container container) {}
 
         @Override
         public void removed(@Nullable Player player) {}
@@ -160,21 +157,5 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
         @Override
         protected void clearContainer(@Nullable Player player, @Nullable Container container) {}
 
-        /**
-         * Updates the current slot at the specified index to a new slot. The new slot will have the same slot, x, y,
-         * and index as the original. The container of the new slot will be set to the value specified.
-         *
-         * @param slotIndex the slot index to update
-         * @param container the container of the new slot
-         * @since 0.11.0
-         */
-        private void updateSlot(int slotIndex, @NotNull Container container) {
-            Slot slot = super.slots.get(slotIndex);
-
-            Slot newSlot = new Slot(container, slot.slot, slot.x, slot.y);
-            newSlot.index = slot.index;
-
-            super.slots.set(slotIndex, newSlot);
-        }
     }
 }

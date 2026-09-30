@@ -1,8 +1,8 @@
-package me.croabeast.inventory.nms.v1_20_3;
+package me.croabeast.inventory.nms.v1_20_3_4;
 
 import me.croabeast.inventory.nms.MerchantInventory;
 import me.croabeast.inventory.adventure.TextHolder;
-import me.croabeast.inventory.nms.v1_20_3.util.TextHolderUtil;
+import me.croabeast.inventory.nms.v1_20_3_4.util.TextHolderUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;

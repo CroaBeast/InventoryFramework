@@ -1,8 +1,8 @@
-package me.croabeast.inventory.nms.v1_20_3;
+package me.croabeast.inventory.nms.v1_20_3_4;
 
-import me.croabeast.inventory.nms.SmithingTableInventory;
+import me.croabeast.inventory.nms.LoomInventory;
 import me.croabeast.inventory.adventure.TextHolder;
-import me.croabeast.inventory.nms.v1_20_3.util.TextHolderUtil;
+import me.croabeast.inventory.nms.v1_20_3_4.util.TextHolderUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.CompoundContainer;
@@ -10,14 +10,10 @@ import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.ResultContainer;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.SmithingMenu;
+import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventorySmithing;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryLoom;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -27,17 +23,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Internal smithing table inventory for 1.20.3. This is only available for Minecraft 1.20 and higher.
+ * Internal loom inventory for 1.20.3-1.20.4.
  *
- * @since 0.10.13
+ * @since 0.12.1
  */
-public class SmithingTableInventoryImpl extends SmithingTableInventory {
+public class LoomInventoryImpl extends LoomInventory {
 
     @NotNull
     @Contract(pure = true)
     @Override
     public Inventory createInventory(@NotNull TextHolder title) {
-        ResultContainer resultSlot = new ResultContainer();
+        ResultContainer resultSlot = new ResultContainer() {
+            @Override
+            public void setItem(int slot, @NotNull ItemStack itemStack) {
+                if (slot == 0 && !itemStack.isEmpty() && !(itemStack.getItem() instanceof BannerItem)) {
+                    throw new IllegalArgumentException("Only banners can be placed in the result slot");
+                }
+
+                super.setItem(slot, itemStack);
+            }
+        };
 
         Container container = new InventoryViewProvider() {
             @NotNull
@@ -48,7 +53,7 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
                     @Nullable net.minecraft.world.entity.player.Inventory inventory,
                     @NotNull Player player
             ) {
-                return new ContainerSmithingTableImpl(containerId, player, this, resultSlot);
+                return new ContainerLoomImpl(containerId, player, this, resultSlot);
             }
 
             @NotNull
@@ -57,14 +62,23 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
             public Component getDisplayName() {
                 return TextHolderUtil.toComponent(title);
             }
+
+            @Override
+            public void setItem(int slot, @NotNull ItemStack itemStack) {
+                if (slot == 0 && !itemStack.isEmpty() && !(itemStack.getItem() instanceof BannerItem)) {
+                    throw new IllegalArgumentException("Only banners can be placed in the banner slot");
+                }
+
+                super.setItem(slot, itemStack);
+            }
         };
 
-        return new CraftInventorySmithing(null, container, resultSlot) {
+        return new CraftInventoryLoom(container, resultSlot) {
             @NotNull
             @Contract(pure = true)
             @Override
             public InventoryType getType() {
-                return InventoryType.SMITHING;
+                return InventoryType.LOOM;
             }
 
             @Override
@@ -79,14 +93,14 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.11.0
+     * @since 0.12.1
      */
     private abstract static class InventoryViewProvider extends SimpleContainer implements MenuProvider {
 
         /**
          * Creates a new inventory view provider with three slots.
          *
-         * @since 0.11.0
+         * @since 0.12.1
          */
         public InventoryViewProvider() {
             super(3);
@@ -94,11 +108,11 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
     }
 
     /**
-     * A custom container smithing table
+     * A custom container loom
      *
-     * @since 0.10.13
+     * @since 0.12.1
      */
-    private static class ContainerSmithingTableImpl extends SmithingMenu {
+    private static class ContainerLoomImpl extends LoomMenu {
 
         /**
          * The human entity viewing this menu.
@@ -130,13 +144,13 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
          *
          * @param containerId the container id
          * @param player the player
-         * @param itemsSlots the items slots
+         * @param itemsSlots the item slots
          * @param resultSlot the result slot
-         * @since 0.11.0
+         * @since 0.12.1
          */
-        public ContainerSmithingTableImpl(
+        public ContainerLoomImpl(
                 int containerId,
-                @NotNull net.minecraft.world.entity.player.Player player,
+                @NotNull Player player,
                 @NotNull SimpleContainer itemsSlots,
                 @NotNull ResultContainer resultSlot
         ) {
@@ -163,11 +177,7 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
                 return this.bukkitEntity;
             }
 
-            CraftInventory inventory = new CraftInventorySmithing(
-                    this.access.getLocation(),
-                    this.itemsSlots,
-                    this.resultSlot
-            );
+            org.bukkit.inventory.LoomInventory inventory = new CraftInventoryLoom(this.itemsSlots, this.resultSlot);
 
             this.bukkitEntity = new CraftInventoryView(this.humanEntity, inventory, this);
 
@@ -176,25 +186,20 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
 
         @Contract(pure = true, value = "_ -> true")
         @Override
-        public boolean stillValid(@Nullable net.minecraft.world.entity.player.Player nmsPlayer) {
+        public boolean stillValid(@Nullable Player nmsPlayer) {
             return true;
         }
 
         @Override
-        public void slotsChanged(Container container) {}
+        public void slotsChanged(@NotNull Container container) {}
 
         @Override
-        public void removed(net.minecraft.world.entity.player.Player nmsPlayer) {}
+        public void removed(@NotNull Player nmsPlayer) {}
 
+        @Contract(pure = true)
         @Override
-        public void createResult() {}
-
-        @Override
-        protected void onTake(net.minecraft.world.entity.player.Player player, ItemStack stack) {}
-
-        @Override
-        protected boolean mayPickup(net.minecraft.world.entity.player.Player player, boolean present) {
-            return true;
+        public boolean clickMenuButton(@NotNull Player player, int buttonId) {
+            return false;
         }
 
         /**
@@ -203,12 +208,12 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
          *
          * @param slotIndex the slot index to update
          * @param container the container of the new slot
-         * @since 0.11.0
+         * @since 0.12.1
          */
         private void updateSlot(int slotIndex, @NotNull Container container) {
             Slot slot = super.slots.get(slotIndex);
 
-            Slot newSlot = new Slot(container, slot.slot, slot.x, slot.y);
+            Slot newSlot = new Slot(container, slotIndex, slot.x, slot.y);
             newSlot.index = slot.index;
 
             super.slots.set(slotIndex, newSlot);

@@ -1,8 +1,8 @@
-package me.croabeast.inventory.nms.v1_20_3;
+package me.croabeast.inventory.nms.v1_20_3_4;
 
-import me.croabeast.inventory.nms.LoomInventory;
+import me.croabeast.inventory.nms.GrindstoneInventory;
 import me.croabeast.inventory.adventure.TextHolder;
-import me.croabeast.inventory.nms.v1_20_3.util.TextHolderUtil;
+import me.croabeast.inventory.nms.v1_20_3_4.util.TextHolderUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.CompoundContainer;
@@ -10,10 +10,11 @@ import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
-import net.minecraft.world.item.BannerItem;
-import net.minecraft.world.item.ItemStack;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryLoom;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.GrindstoneMenu;
+import net.minecraft.world.inventory.Slot;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryGrindstone;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -23,26 +24,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Internal loom inventory for 1.20.3-1.20.4.
+ * Internal grindstone inventory for 1.20.3
  *
- * @since 0.12.1
+ * @since 0.10.13
  */
-public class LoomInventoryImpl extends LoomInventory {
+public class GrindstoneInventoryImpl extends GrindstoneInventory {
 
     @NotNull
     @Contract(pure = true)
     @Override
     public Inventory createInventory(@NotNull TextHolder title) {
-        ResultContainer resultSlot = new ResultContainer() {
-            @Override
-            public void setItem(int slot, @NotNull ItemStack itemStack) {
-                if (slot == 0 && !itemStack.isEmpty() && !(itemStack.getItem() instanceof BannerItem)) {
-                    throw new IllegalArgumentException("Only banners can be placed in the result slot");
-                }
-
-                super.setItem(slot, itemStack);
-            }
-        };
+        SimpleContainer resultSlot = new SimpleContainer(1);
 
         Container container = new InventoryViewProvider() {
             @NotNull
@@ -53,7 +45,7 @@ public class LoomInventoryImpl extends LoomInventory {
                     @Nullable net.minecraft.world.entity.player.Inventory inventory,
                     @NotNull Player player
             ) {
-                return new ContainerLoomImpl(containerId, player, this, resultSlot);
+                return new ContainerGrindstoneImpl(containerId, player, this, resultSlot);
             }
 
             @NotNull
@@ -62,23 +54,14 @@ public class LoomInventoryImpl extends LoomInventory {
             public Component getDisplayName() {
                 return TextHolderUtil.toComponent(title);
             }
-
-            @Override
-            public void setItem(int slot, @NotNull ItemStack itemStack) {
-                if (slot == 0 && !itemStack.isEmpty() && !(itemStack.getItem() instanceof BannerItem)) {
-                    throw new IllegalArgumentException("Only banners can be placed in the banner slot");
-                }
-
-                super.setItem(slot, itemStack);
-            }
         };
 
-        return new CraftInventoryLoom(container, resultSlot) {
+        return new CraftInventoryGrindstone(container, resultSlot) {
             @NotNull
             @Contract(pure = true)
             @Override
             public InventoryType getType() {
-                return InventoryType.LOOM;
+                return InventoryType.GRINDSTONE;
             }
 
             @Override
@@ -93,26 +76,26 @@ public class LoomInventoryImpl extends LoomInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.12.1
+     * @since 0.11.0
      */
     private abstract static class InventoryViewProvider extends SimpleContainer implements MenuProvider {
 
         /**
-         * Creates a new inventory view provider with three slots.
+         * Creates a new inventory view provider with two slots.
          *
-         * @since 0.12.1
+         * @since 0.11.0
          */
         public InventoryViewProvider() {
-            super(3);
+            super(2);
         }
     }
 
     /**
-     * A custom container loom
+     * A custom container grindstone
      *
-     * @since 0.12.1
+     * @since 0.10.13
      */
-    private static class ContainerLoomImpl extends LoomMenu {
+    private static class ContainerGrindstoneImpl extends GrindstoneMenu {
 
         /**
          * The human entity viewing this menu.
@@ -130,7 +113,7 @@ public class LoomInventoryImpl extends LoomInventory {
          * The container for the result slot.
          */
         @NotNull
-        private final ResultContainer resultSlot;
+        private final SimpleContainer resultSlot;
 
         /**
          * The corresponding Bukkit view. Will be not null after the first call to {@link #getBukkitView()} and null
@@ -140,19 +123,19 @@ public class LoomInventoryImpl extends LoomInventory {
         private CraftInventoryView bukkitEntity;
 
         /**
-         * Creates a new custom smithing table container for the specified player
+         * Creates a new custom grindstone container for the specified player.
          *
          * @param containerId the container id
          * @param player the player
-         * @param itemsSlots the item slots
+         * @param itemsSlots the items slots
          * @param resultSlot the result slot
-         * @since 0.12.1
+         * @since 0.11.0
          */
-        public ContainerLoomImpl(
+        public ContainerGrindstoneImpl(
                 int containerId,
                 @NotNull Player player,
                 @NotNull SimpleContainer itemsSlots,
-                @NotNull ResultContainer resultSlot
+                @NotNull SimpleContainer resultSlot
         ) {
             super(containerId, player.getInventory(), ContainerLevelAccess.create(player.level(), BlockPos.ZERO));
 
@@ -167,7 +150,6 @@ public class LoomInventoryImpl extends LoomInventory {
             updateSlot(0, container);
             updateSlot(1, container);
             updateSlot(2, container);
-            updateSlot(3, container);
         }
 
         @NotNull
@@ -177,30 +159,21 @@ public class LoomInventoryImpl extends LoomInventory {
                 return this.bukkitEntity;
             }
 
-            org.bukkit.inventory.LoomInventory inventory = new CraftInventoryLoom(this.itemsSlots, this.resultSlot);
+            CraftInventoryGrindstone inventory = new CraftInventoryGrindstone(this.itemsSlots, this.resultSlot);
 
             this.bukkitEntity = new CraftInventoryView(this.humanEntity, inventory, this);
 
             return this.bukkitEntity;
         }
 
-        @Contract(pure = true, value = "_ -> true")
         @Override
-        public boolean stillValid(@Nullable Player nmsPlayer) {
-            return true;
-        }
+        public void slotsChanged(@Nullable Container container) {}
 
         @Override
-        public void slotsChanged(@NotNull Container container) {}
+        public void removed(@Nullable Player player) {}
 
         @Override
-        public void removed(@NotNull Player nmsPlayer) {}
-
-        @Contract(pure = true)
-        @Override
-        public boolean clickMenuButton(@NotNull Player player, int buttonId) {
-            return false;
-        }
+        protected void clearContainer(@Nullable Player player, @Nullable Container container) {}
 
         /**
          * Updates the current slot at the specified index to a new slot. The new slot will have the same slot, x, y,
@@ -208,12 +181,12 @@ public class LoomInventoryImpl extends LoomInventory {
          *
          * @param slotIndex the slot index to update
          * @param container the container of the new slot
-         * @since 0.12.1
+         * @since 0.11.0
          */
         private void updateSlot(int slotIndex, @NotNull Container container) {
             Slot slot = super.slots.get(slotIndex);
 
-            Slot newSlot = new Slot(container, slotIndex, slot.x, slot.y);
+            Slot newSlot = new Slot(container, slot.slot, slot.x, slot.y);
             newSlot.index = slot.index;
 
             super.slots.set(slotIndex, newSlot);

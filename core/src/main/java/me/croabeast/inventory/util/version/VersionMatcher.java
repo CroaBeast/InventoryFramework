@@ -291,7 +291,7 @@ public class VersionMatcher {
         ANVIL_INVENTORIES.put(Version.V1_20_2,
             me.croabeast.inventory.nms.v1_20_2.AnvilInventoryImpl.class);
         ANVIL_INVENTORIES.put(Version.V1_20_3_4,
-            me.croabeast.inventory.nms.v1_20_3.AnvilInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_20_3_4.AnvilInventoryImpl.class);
         ANVIL_INVENTORIES.put(Version.V1_20_5,
             me.croabeast.inventory.nms.v1_20_5.AnvilInventoryImpl.class);
         ANVIL_INVENTORIES.put(Version.V1_20_6,
@@ -331,7 +331,7 @@ public class VersionMatcher {
         BEACON_INVENTORIES.put(Version.V1_20_2,
             me.croabeast.inventory.nms.v1_20_2.BeaconInventoryImpl.class);
         BEACON_INVENTORIES.put(Version.V1_20_3_4,
-            me.croabeast.inventory.nms.v1_20_3.BeaconInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_20_3_4.BeaconInventoryImpl.class);
         BEACON_INVENTORIES.put(Version.V1_20_5,
             me.croabeast.inventory.nms.v1_20_5.BeaconInventoryImpl.class);
         BEACON_INVENTORIES.put(Version.V1_20_6,
@@ -371,7 +371,7 @@ public class VersionMatcher {
         CARTOGRAPHY_TABLE_INVENTORIES.put(Version.V1_20_2,
             me.croabeast.inventory.nms.v1_20_2.CartographyTableInventoryImpl.class);
         CARTOGRAPHY_TABLE_INVENTORIES.put(Version.V1_20_3_4,
-            me.croabeast.inventory.nms.v1_20_3.CartographyTableInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_20_3_4.CartographyTableInventoryImpl.class);
         CARTOGRAPHY_TABLE_INVENTORIES.put(Version.V1_20_5,
             me.croabeast.inventory.nms.v1_20_5.CartographyTableInventoryImpl.class);
         CARTOGRAPHY_TABLE_INVENTORIES.put(Version.V1_20_6,
@@ -411,7 +411,7 @@ public class VersionMatcher {
         ENCHANTING_TABLE_INVENTORIES.put(Version.V1_20_2,
             me.croabeast.inventory.nms.v1_20_2.EnchantingTableInventoryImpl.class);
         ENCHANTING_TABLE_INVENTORIES.put(Version.V1_20_3_4,
-            me.croabeast.inventory.nms.v1_20_3.EnchantingTableInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_20_3_4.EnchantingTableInventoryImpl.class);
         ENCHANTING_TABLE_INVENTORIES.put(Version.V1_20_5,
             me.croabeast.inventory.nms.v1_20_5.EnchantingTableInventoryImpl.class);
         ENCHANTING_TABLE_INVENTORIES.put(Version.V1_20_6,
@@ -451,7 +451,7 @@ public class VersionMatcher {
         GRINDSTONE_INVENTORIES.put(Version.V1_20_2,
             me.croabeast.inventory.nms.v1_20_2.GrindstoneInventoryImpl.class);
         GRINDSTONE_INVENTORIES.put(Version.V1_20_3_4,
-            me.croabeast.inventory.nms.v1_20_3.GrindstoneInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_20_3_4.GrindstoneInventoryImpl.class);
         GRINDSTONE_INVENTORIES.put(Version.V1_20_5,
             me.croabeast.inventory.nms.v1_20_5.GrindstoneInventoryImpl.class);
         GRINDSTONE_INVENTORIES.put(Version.V1_20_6,
@@ -491,7 +491,7 @@ public class VersionMatcher {
         LOOM_INVENTORIES.put(Version.V1_20_2,
             me.croabeast.inventory.nms.v1_20_2.LoomInventoryImpl.class);
         LOOM_INVENTORIES.put(Version.V1_20_3_4,
-            me.croabeast.inventory.nms.v1_20_3.LoomInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_20_3_4.LoomInventoryImpl.class);
         LOOM_INVENTORIES.put(Version.V1_20_5,
             me.croabeast.inventory.nms.v1_20_5.LoomInventoryImpl.class);
         LOOM_INVENTORIES.put(Version.V1_20_6,
@@ -531,7 +531,7 @@ public class VersionMatcher {
         MERCHANT_INVENTORIES.put(Version.V1_20_2,
             me.croabeast.inventory.nms.v1_20_2.MerchantInventoryImpl.class);
         MERCHANT_INVENTORIES.put(Version.V1_20_3_4,
-            me.croabeast.inventory.nms.v1_20_3.MerchantInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_20_3_4.MerchantInventoryImpl.class);
         MERCHANT_INVENTORIES.put(Version.V1_20_5,
             me.croabeast.inventory.nms.v1_20_5.MerchantInventoryImpl.class);
         MERCHANT_INVENTORIES.put(Version.V1_20_6,
@@ -565,7 +565,7 @@ public class VersionMatcher {
         SMITHING_TABLE_INVENTORIES.put(Version.V1_20_2,
             me.croabeast.inventory.nms.v1_20_2.SmithingTableInventoryImpl.class);
         SMITHING_TABLE_INVENTORIES.put(Version.V1_20_3_4,
-            me.croabeast.inventory.nms.v1_20_3.SmithingTableInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_20_3_4.SmithingTableInventoryImpl.class);
         SMITHING_TABLE_INVENTORIES.put(Version.V1_20_5,
             me.croabeast.inventory.nms.v1_20_5.SmithingTableInventoryImpl.class);
         SMITHING_TABLE_INVENTORIES.put(Version.V1_20_6,
@@ -615,7 +615,7 @@ public class VersionMatcher {
         STONECUTTER_INVENTORIES.put(Version.V1_20_2,
             me.croabeast.inventory.nms.v1_20_2.StonecutterInventoryImpl.class);
         STONECUTTER_INVENTORIES.put(Version.V1_20_3_4,
-            me.croabeast.inventory.nms.v1_20_3.StonecutterInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_20_3_4.StonecutterInventoryImpl.class);
         STONECUTTER_INVENTORIES.put(Version.V1_20_5,
             me.croabeast.inventory.nms.v1_20_5.StonecutterInventoryImpl.class);
         STONECUTTER_INVENTORIES.put(Version.V1_20_6,
