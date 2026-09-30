@@ -115,9 +115,12 @@ fun Project.remapToSpigot(mc: String) {
     val obfJar = layout.buildDirectory.file("remap/obf.jar")
     val spigotJar = layout.buildDirectory.file("libs/$name-$version.jar")
 
+    // JavaExec is not cacheable by default; with every input declared, CI reuses the remapped jars from the build cache
     val remapObf = tasks.register<JavaExec>("remapObf") {
-        inputs.file(jar.flatMap { it.archiveFile })
+        inputs.file(jar.flatMap { it.archiveFile }).withPathSensitivity(PathSensitivity.NONE)
+        inputs.files(mojangMaps).withPathSensitivity(PathSensitivity.NONE)
         outputs.file(obfJar)
+        outputs.cacheIf { true }
         classpath(specialSource, mojangServer)
         mainClass.set("net.md_5.specialsource.SpecialSource")
         doFirst {
@@ -130,8 +133,10 @@ fun Project.remapToSpigot(mc: String) {
     }
 
     val remapSpigot = tasks.register<JavaExec>("remapSpigot") {
-        inputs.files(remapObf)
+        inputs.files(remapObf).withPathSensitivity(PathSensitivity.NONE)
+        inputs.files(spigotMaps).withPathSensitivity(PathSensitivity.NONE)
         outputs.file(spigotJar)
+        outputs.cacheIf { true }
         classpath(specialSource, obfServer)
         mainClass.set("net.md_5.specialsource.SpecialSource")
         doFirst {
