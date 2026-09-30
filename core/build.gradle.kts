@@ -20,7 +20,7 @@ configurations.testImplementation {
 
 dependencies {
     implementation(project(":nms:abstraction"))
-    rootProject.project(":nms").subprojects.filter { it.name != "abstraction" }.forEach { implementation(it) }
+    rootProject.project(":nms").subprojects.filter { it.name != "abstraction" }.forEach { implementation(project(it.path)) }
 
     compileOnly("net.kyori:adventure-api:$adventureVersion")
     // Provided, but commons-lang3 is not accessible on the server
