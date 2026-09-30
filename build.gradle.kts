@@ -104,7 +104,7 @@ fun Project.remapToSpigot(mc: String) {
     }
 
     val specialSource = configurations.create("specialSource") {
-        dependencies.add(project.dependencies.create("net.md-5:SpecialSource:1.11.4"))
+        dependencies.add(project.dependencies.create("net.md-5:SpecialSource:1.11.6"))
     }
     val mojangServer = single("mojangServer", "org.spigotmc:spigot:$mc:remapped-mojang")
     val obfServer = single("obfServer", "org.spigotmc:spigot:$mc:remapped-obf")
