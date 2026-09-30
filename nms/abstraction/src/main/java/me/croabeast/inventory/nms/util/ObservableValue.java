@@ -1,6 +1,6 @@
 package me.croabeast.inventory.nms.util;
 
-import org.jetbrains.annotations.Contract;
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,8 +12,9 @@ import java.util.function.Consumer;
  * A value whose modifications can be observed.
  *
  * @param <T> the type of value to store
- * @since 0.10.10
+ * @since 0.1.0
  */
+@AllArgsConstructor
 public class ObservableValue<T> {
 
     /**
@@ -29,27 +30,16 @@ public class ObservableValue<T> {
     private T value;
 
     /**
-     * Creates a new observable value with the given default value.
-     *
-     * @param defaultValue the default value
-     * @since 0.10.10
-     */
-    public ObservableValue(@Nullable T defaultValue) {
-        this.value = defaultValue;
-    }
-
-    /**
      * Updates the old value to the given new value. This will notify all the subscribers before updating the new value.
      * Subscribers may observe the old value by using {@link #get()}. This will always notify the subscribers, even if
      * the new value is the same as the old value.
      *
      * @param newValue the new value
-     * @since 0.10.10
+     * @since 0.1.0
      */
     public void set(T newValue) {
-        for (Consumer<? super T> subscriber : this.subscribers) {
+        for (Consumer<? super T> subscriber : this.subscribers)
             subscriber.accept(newValue);
-        }
 
         this.value = newValue;
     }
@@ -58,7 +48,7 @@ public class ObservableValue<T> {
      * Subscribes to modifications of this value. The provided consumer will be called every time this value changes.
      *
      * @param consumer the consumer to call upon updates of this value
-     * @since 0.10.10
+     * @since 0.1.0
      */
     public void subscribe(@NotNull Consumer<? super T> consumer) {
         this.subscribers.add(consumer);
@@ -69,12 +59,10 @@ public class ObservableValue<T> {
      * before the current in-progress update.
      *
      * @return the current value
-     * @since 0.10.10
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     public T get() {
         return this.value;
     }
-
 }

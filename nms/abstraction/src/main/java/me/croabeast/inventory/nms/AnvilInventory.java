@@ -1,9 +1,6 @@
 package me.croabeast.inventory.nms;
 
 import me.croabeast.inventory.nms.util.ObservableValue;
-import me.croabeast.inventory.adventure.TextHolder;
-import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -11,9 +8,9 @@ import java.util.function.Consumer;
 /**
  * An anvil inventory
  *
- * @since 0.8.0
+ * @since 0.1.0
  */
-public abstract class AnvilInventory {
+public abstract class AnvilInventory implements CustomInventory {
 
     /**
      * The name input text.
@@ -32,41 +29,28 @@ public abstract class AnvilInventory {
      * even if the player does not have the specified amount of levels. The cost must be a non-negative number.
      *
      * @param cost the cost
-     * @since 0.10.8
+     * @since 0.1.0
      * @throws IllegalArgumentException when the cost is less than zero
      */
     public void setCost(short cost) {
-        if (cost < 0){
+        if (cost < 0)
             throw new IllegalArgumentException("Cost must be non-negative");
-        }
 
         this.cost = cost;
     }
 
     /**
-     * Creates an anvil inventory.
-     *
-     * @param title the title of the inventory
-     * @return the inventory
-     * @since 0.11.0
-     */
-    @NotNull
-    public abstract Inventory createInventory(@NotNull TextHolder title);
-
-    /**
      * Gets the text shown in the rename slot of the anvil
      *
      * @return the rename text
-     * @since 0.8.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public String getRenameText() {
         String text = observableText.get();
 
-        if (text == null) {
+        if (text == null)
             throw new IllegalStateException("Rename text is null");
-        }
 
         return text;
     }
@@ -75,7 +59,7 @@ public abstract class AnvilInventory {
      * Subscribes to changes of the name input.
      *
      * @param onNameInputChanged the consumer to call when the name input changes
-     * @since 0.10.10
+     * @since 0.1.0
      */
     public void subscribeToNameInputChanges(@NotNull Consumer<? super String> onNameInputChanged) {
         this.observableText.subscribe(onNameInputChanged);
