@@ -7,3 +7,10 @@ updates:
     target-branch: "main"
     commit-message:
       prefix: "build"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "main"
+    commit-message:
+      prefix: "ci"
