@@ -82,3 +82,13 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build --build-cache --parallel -Porg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
+
+      # Picked up by release.yml, so the release does not run BuildTools and Gradle again
+      - name: Upload release jar
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-jar
+          path: core/build/libs/InventoryFramework-*[0-9].jar
+          if-no-files-found: error
+          retention-days: 7
