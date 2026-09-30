@@ -1,5 +1,7 @@
 package me.croabeast.inventory.adventure;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import com.google.gson.JsonElement;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -9,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,8 +19,9 @@ import java.util.Objects;
 /**
  * Wrapper of an Adventure {@link Component}.
  *
- * @since 0.10.0
+ * @since 0.1.0
  */
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public abstract class ComponentHolder extends TextHolder {
     
     /**
@@ -43,10 +45,9 @@ public abstract class ComponentHolder extends TextHolder {
      *
      * @param value the value to wrap
      * @return an instance that wraps the specified value
-     * @since 0.10.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public static ComponentHolder of(@NotNull Component value) {
         Validate.notNull(value, "value mustn't be null");
         return isNativeAdventureSupport()
@@ -60,22 +61,13 @@ public abstract class ComponentHolder extends TextHolder {
      * is a valid method.
      *
      * @return whether the server platform natively supports Adventure
-     * @since 0.10.0
+     * @since 0.1.0
      */
     private static boolean isNativeAdventureSupport() {
-        if (nativeAdventureSupport == null) {
+        if (nativeAdventureSupport == null)
             try {
-                Component component = Component.text("test");
-                NativeComponentHolder holder = new NativeComponentHolder(component);
-                
-                //If NoSuchMethodError or something is thrown we can assume that
-                //Adventure components are not natively supported by the server platform
-                
-                //noinspection unused
-                Object ignored1 = holder.asInventoryTitle(null, 9);
-                //noinspection unused
-                Object ignored2 = holder.asInventoryTitle(null, InventoryType.HOPPER);
-                
+                NativeComponentHolder holder = getComponentHolder();
+
                 ItemMeta meta = new ItemStack(Material.STONE).getItemMeta();
                 holder.asItemDisplayName(meta);
                 holder.asItemLoreAtEnd(meta);
@@ -84,16 +76,30 @@ public abstract class ComponentHolder extends TextHolder {
             } catch (Throwable t) {
                 nativeAdventureSupport = false;
             }
-        }
+
         return nativeAdventureSupport;
     }
-    
+
+    private static NativeComponentHolder getComponentHolder() {
+        Component component = Component.text("test");
+        NativeComponentHolder holder = new NativeComponentHolder(component);
+
+        //If NoSuchMethodError or something is thrown we can assume that
+        //Adventure components are not natively supported by the server platform
+
+        //noinspection unused
+        Object ignored1 = holder.asInventoryTitle(null, 9);
+        //noinspection unused
+        Object ignored2 = holder.asInventoryTitle(null, InventoryType.HOPPER);
+        return holder;
+    }
+
     /**
      * Gets the serializer to use when converting wrapped values to legacy strings.
      * Main use case being the implementation of {@link #asLegacyString()}.
      *
      * @return a serializer for converting wrapped values to legacy strings
-     * @since 0.10.0
+     * @since 0.1.0
      */
     private static LegacyComponentSerializer getLegacySerializer() {
         if (legacySerializer == null) {
@@ -101,8 +107,7 @@ public abstract class ComponentHolder extends TextHolder {
                     .character(LegacyComponentSerializer.SECTION_CHAR);
             if (!net.md_5.bungee.api.ChatColor.class.isEnum()) {
                 //1.16+ Spigot (or Paper), hex colors are supported, no need to down sample them
-                builder.hexColors()
-                        .useUnusualXRepeatedCharacterHexFormat();
+                builder.hexColors().useUnusualXRepeatedCharacterHexFormat();
             }
             legacySerializer = builder.build();
         }
@@ -114,25 +119,14 @@ public abstract class ComponentHolder extends TextHolder {
      */
     @NotNull
     protected final Component value;
-    
-    /**
-     * Creates and initializes a new instance.
-     *
-     * @param value the Adventure component this instance should wrap
-     * @since 0.10.0
-     */
-    ComponentHolder(@NotNull Component value) {
-        this.value = value;
-    }
-    
+        
     /**
      * Gets the Adventure component this instance wraps.
      *
      * @return the contained Adventure component
-     * @since 0.10.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public Component getComponent() {
         return value;
     }
@@ -141,17 +135,14 @@ public abstract class ComponentHolder extends TextHolder {
      * Gets the wrapped Adventure component in a JSON representation.
      *
      * @return the contained Adventure component as JSON
-     * @since 0.10.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public JsonElement asJson() {
         return GsonComponentSerializer.gson().serializeToTree(value);
     }
     
     @NotNull
-    @Contract(pure = true)
-    @Override
     public String toString() {
         return getClass().getSimpleName() + "{" + value + "}";
     }
@@ -168,8 +159,6 @@ public abstract class ComponentHolder extends TextHolder {
     }
     
     @NotNull
-    @Contract(pure = true)
-    @Override
     public String asLegacyString() {
         return getLegacySerializer().serialize(value);
     }

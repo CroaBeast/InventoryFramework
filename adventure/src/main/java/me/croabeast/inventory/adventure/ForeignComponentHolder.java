@@ -1,13 +1,11 @@
 package me.croabeast.inventory.adventure;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * Adventure components are converted to legacy Strings before passed to the Bukkit API.
  *
  * @see NativeComponentHolder
- * @since 0.10.0
+ * @since 0.1.0
  */
 class ForeignComponentHolder extends ComponentHolder {
     
@@ -30,7 +28,7 @@ class ForeignComponentHolder extends ComponentHolder {
      * Creates and initializes a new instance.
      *
      * @param value the Adventure component this instance should wrap
-     * @since 0.10.0
+     * @since 0.1.0
      */
     ForeignComponentHolder(@NotNull Component value) {
         super(value);
@@ -38,22 +36,16 @@ class ForeignComponentHolder extends ComponentHolder {
     }
     
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory asInventoryTitle(InventoryHolder holder, InventoryType type) {
         return legacy.asInventoryTitle(holder, type);
     }
     
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory asInventoryTitle(InventoryHolder holder, int size) {
         return legacy.asInventoryTitle(holder, size);
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Merchant asMerchantTitle() {
         return legacy.asMerchantTitle();
     }

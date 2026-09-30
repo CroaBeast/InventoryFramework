@@ -7,7 +7,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import java.util.Objects;
  * Adventure components are directly passed to the Bukkit (Paper) API.
  *
  * @see ForeignComponentHolder
- * @since 0.10.0
+ * @since 0.1.0
  */
 class NativeComponentHolder extends ComponentHolder {
     
@@ -27,29 +26,23 @@ class NativeComponentHolder extends ComponentHolder {
      * Creates and initializes a new instance.
      *
      * @param value the Adventure component this instance should wrap
-     * @since 0.10.0
+     * @since 0.1.0
      */
     NativeComponentHolder(@NotNull Component value) {
         super(value);
     }
     
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory asInventoryTitle(InventoryHolder holder, InventoryType type) {
         return Bukkit.createInventory(holder, type, value);
     }
     
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory asInventoryTitle(InventoryHolder holder, int size) {
         return Bukkit.createInventory(holder, size, value);
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Merchant asMerchantTitle() {
         return Bukkit.createMerchant(value);
     }
