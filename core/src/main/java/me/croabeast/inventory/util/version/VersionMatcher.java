@@ -277,7 +277,7 @@ public class VersionMatcher {
     static {
         ANVIL_INVENTORIES = new EnumMap<>(Version.class);
         ANVIL_INVENTORIES.put(Version.V1_16_5,
-            me.croabeast.inventory.nms.v1_16_5.AnvilInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_16_4_5.AnvilInventoryImpl.class);
         ANVIL_INVENTORIES.put(Version.V1_17_1,
             me.croabeast.inventory.nms.v1_17_1.AnvilInventoryImpl.class);
         ANVIL_INVENTORIES.put(Version.V1_18_2,
@@ -317,7 +317,7 @@ public class VersionMatcher {
 
         BEACON_INVENTORIES = new EnumMap<>(Version.class);
         BEACON_INVENTORIES.put(Version.V1_16_5,
-            me.croabeast.inventory.nms.v1_16_5.BeaconInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_16_4_5.BeaconInventoryImpl.class);
         BEACON_INVENTORIES.put(Version.V1_17_1,
             me.croabeast.inventory.nms.v1_17_1.BeaconInventoryImpl.class);
         BEACON_INVENTORIES.put(Version.V1_18_2,
@@ -357,7 +357,7 @@ public class VersionMatcher {
 
         CARTOGRAPHY_TABLE_INVENTORIES = new EnumMap<>(Version.class);
         CARTOGRAPHY_TABLE_INVENTORIES.put(Version.V1_16_5,
-            me.croabeast.inventory.nms.v1_16_5.CartographyTableInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_16_4_5.CartographyTableInventoryImpl.class);
         CARTOGRAPHY_TABLE_INVENTORIES.put(Version.V1_17_1,
             me.croabeast.inventory.nms.v1_17_1.CartographyTableInventoryImpl.class);
         CARTOGRAPHY_TABLE_INVENTORIES.put(Version.V1_18_2,
@@ -397,7 +397,7 @@ public class VersionMatcher {
 
         ENCHANTING_TABLE_INVENTORIES = new EnumMap<>(Version.class);
         ENCHANTING_TABLE_INVENTORIES.put(Version.V1_16_5,
-            me.croabeast.inventory.nms.v1_16_5.EnchantingTableInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_16_4_5.EnchantingTableInventoryImpl.class);
         ENCHANTING_TABLE_INVENTORIES.put(Version.V1_17_1,
             me.croabeast.inventory.nms.v1_17_1.EnchantingTableInventoryImpl.class);
         ENCHANTING_TABLE_INVENTORIES.put(Version.V1_18_2,
@@ -437,7 +437,7 @@ public class VersionMatcher {
 
         GRINDSTONE_INVENTORIES = new EnumMap<>(Version.class);
         GRINDSTONE_INVENTORIES.put(Version.V1_16_5,
-            me.croabeast.inventory.nms.v1_16_5.GrindstoneInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_16_4_5.GrindstoneInventoryImpl.class);
         GRINDSTONE_INVENTORIES.put(Version.V1_17_1,
             me.croabeast.inventory.nms.v1_17_1.GrindstoneInventoryImpl.class);
         GRINDSTONE_INVENTORIES.put(Version.V1_18_2,
@@ -477,7 +477,7 @@ public class VersionMatcher {
 
         LOOM_INVENTORIES = new EnumMap<>(Version.class);
         LOOM_INVENTORIES.put(Version.V1_16_5,
-            me.croabeast.inventory.nms.v1_16_5.LoomInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_16_4_5.LoomInventoryImpl.class);
         LOOM_INVENTORIES.put(Version.V1_17_1,
             me.croabeast.inventory.nms.v1_17_1.LoomInventoryImpl.class);
         LOOM_INVENTORIES.put(Version.V1_18_2,
@@ -517,7 +517,7 @@ public class VersionMatcher {
 
         MERCHANT_INVENTORIES = new EnumMap<>(Version.class);
         MERCHANT_INVENTORIES.put(Version.V1_16_5,
-            me.croabeast.inventory.nms.v1_16_5.MerchantInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_16_4_5.MerchantInventoryImpl.class);
         MERCHANT_INVENTORIES.put(Version.V1_17_1,
             me.croabeast.inventory.nms.v1_17_1.MerchantInventoryImpl.class);
         MERCHANT_INVENTORIES.put(Version.V1_18_2,
@@ -591,7 +591,7 @@ public class VersionMatcher {
 
         LEGACY_SMITHING_TABLE_INVENTORIES = new EnumMap<>(Version.class);
         LEGACY_SMITHING_TABLE_INVENTORIES.put(Version.V1_16_5,
-            me.croabeast.inventory.nms.v1_16_5.SmithingTableInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_16_4_5.SmithingTableInventoryImpl.class);
         LEGACY_SMITHING_TABLE_INVENTORIES.put(Version.V1_17_1,
             me.croabeast.inventory.nms.v1_17_1.SmithingTableInventoryImpl.class);
         LEGACY_SMITHING_TABLE_INVENTORIES.put(Version.V1_18_2,
@@ -601,7 +601,7 @@ public class VersionMatcher {
 
         STONECUTTER_INVENTORIES = new EnumMap<>(Version.class);
         STONECUTTER_INVENTORIES.put(Version.V1_16_5,
-            me.croabeast.inventory.nms.v1_16_5.StonecutterInventoryImpl.class);
+            me.croabeast.inventory.nms.v1_16_4_5.StonecutterInventoryImpl.class);
         STONECUTTER_INVENTORIES.put(Version.V1_17_1,
             me.croabeast.inventory.nms.v1_17_1.StonecutterInventoryImpl.class);
         STONECUTTER_INVENTORIES.put(Version.V1_18_2,

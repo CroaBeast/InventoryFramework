@@ -1,4 +1,4 @@
-package me.croabeast.inventory.nms.v1_16_5.util;
+package me.croabeast.inventory.nms.v1_16_4_5.util;
 
 import me.croabeast.inventory.adventure.ComponentHolder;
 import me.croabeast.inventory.adventure.StringHolder;

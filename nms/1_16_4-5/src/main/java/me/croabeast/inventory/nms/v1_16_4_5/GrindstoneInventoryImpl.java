@@ -1,11 +1,10 @@
-package me.croabeast.inventory.nms.v1_16_5;
+package me.croabeast.inventory.nms.v1_16_4_5;
 
-import me.croabeast.inventory.nms.SmithingTableInventory;
+import me.croabeast.inventory.nms.GrindstoneInventory;
 import me.croabeast.inventory.adventure.TextHolder;
-import me.croabeast.inventory.nms.v1_16_5.util.TextHolderUtil;
+import me.croabeast.inventory.nms.v1_16_4_5.util.TextHolderUtil;
 import net.minecraft.server.v1_16_R3.*;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventorySmithing;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryGrindstone;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -15,17 +14,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Internal smithing table inventory for 1.16 R3
+ * Internal grindstone inventory for 1.16 R3
  *
  * @since 0.8.0
  */
-public class SmithingTableInventoryImpl extends SmithingTableInventory {
+public class GrindstoneInventoryImpl extends GrindstoneInventory {
 
     @NotNull
     @Contract(pure = true)
     @Override
     public Inventory createInventory(@NotNull TextHolder title) {
-        InventoryCraftResult resultSlot = new InventoryCraftResult();
+        InventorySubcontainer resultSlot = new InventorySubcontainer(1);
 
         IInventory container = new InventoryViewProvider() {
             @NotNull
@@ -36,7 +35,7 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
                     @Nullable PlayerInventory inventory,
                     @NotNull EntityHuman player
             ) {
-                return new ContainerSmithingTableImpl(containerId, player, this, resultSlot);
+                return new ContainerGrindstoneImpl(containerId, player, this, resultSlot);
             }
 
             @NotNull
@@ -47,12 +46,12 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
             }
         };
 
-        return new CraftInventorySmithing(null, container, resultSlot) {
+        return new CraftInventoryGrindstone(container, resultSlot) {
             @NotNull
             @Contract(pure = true)
             @Override
             public InventoryType getType() {
-                return InventoryType.SMITHING;
+                return InventoryType.GRINDSTONE;
             }
 
             @Override
@@ -72,7 +71,7 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
     private abstract static class InventoryViewProvider extends InventorySubcontainer implements ITileInventory {
 
         /**
-         * Creates a new inventory view provider with three slots.
+         * Creates a new inventory view provider with two slots.
          *
          * @since 0.11.0
          */
@@ -82,11 +81,11 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
     }
 
     /**
-     * A custom container smithing table
+     * A custom container grindstone
      *
      * @since 0.8.0
      */
-    private static class ContainerSmithingTableImpl extends ContainerSmithing {
+    private static class ContainerGrindstoneImpl extends ContainerGrindstone {
 
         /**
          * The human entity viewing this menu.
@@ -104,7 +103,7 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
          * The container for the result slot.
          */
         @NotNull
-        private final InventoryCraftResult resultSlot;
+        private final InventorySubcontainer resultSlot;
 
         /**
          * The corresponding Bukkit view. Will be not null after the first call to {@link #getBukkitView()} and null
@@ -114,7 +113,7 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
         private CraftInventoryView bukkitEntity;
 
         /**
-         * Creates a new custom smithing table container for the specified player
+         * Creates a new custom grindstone container for the specified player.
          *
          * @param containerId the container id
          * @param player the player
@@ -122,11 +121,11 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
          * @param resultSlot the result slot
          * @since 0.11.0
          */
-        public ContainerSmithingTableImpl(
+        public ContainerGrindstoneImpl(
                 int containerId,
                 @NotNull EntityHuman player,
                 @NotNull InventorySubcontainer itemsSlots,
-                @NotNull InventoryCraftResult resultSlot
+                @NotNull InventorySubcontainer resultSlot
         ) {
             super(containerId, player.inventory, ContainerAccess.at(player.getWorld(), BlockPosition.ZERO));
 
@@ -150,41 +149,21 @@ public class SmithingTableInventoryImpl extends SmithingTableInventory {
                 return this.bukkitEntity;
             }
 
-            CraftInventory inventory = new CraftInventorySmithing(
-                    super.containerAccess.getLocation(),
-                    this.itemsSlots,
-                    this.resultSlot
-            );
+            CraftInventoryGrindstone inventory = new CraftInventoryGrindstone(this.itemsSlots, this.resultSlot);
 
             this.bukkitEntity = new CraftInventoryView(this.humanEntity, inventory, this);
 
             return this.bukkitEntity;
         }
 
-        @Contract(pure = true, value = "_ -> true")
         @Override
-        public boolean canUse(@Nullable EntityHuman nmsPlayer) {
-            return true;
-        }
+        public void a(@Nullable IInventory container) {}
 
         @Override
-        public void a(IInventory container) {}
+        public void b(@Nullable EntityHuman player) {}
 
         @Override
-        public void b(EntityHuman nmsPlayer) {}
-
-        @Override
-        public void e() {}
-
-        @Override
-        protected ItemStack a(EntityHuman player, ItemStack stack) {
-            return stack;
-        }
-
-        @Override
-        protected boolean b(EntityHuman player, boolean present) {
-            return true;
-        }
+        protected void a(@Nullable EntityHuman player, @Nullable World world, @Nullable IInventory container) {}
 
         /**
          * Updates the current slot at the specified index to a new slot. The new slot will have the same slot, x, y,

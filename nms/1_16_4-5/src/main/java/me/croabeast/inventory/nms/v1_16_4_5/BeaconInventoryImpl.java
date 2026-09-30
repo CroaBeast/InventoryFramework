@@ -1,4 +1,4 @@
-package me.croabeast.inventory.nms.v1_16_5;
+package me.croabeast.inventory.nms.v1_16_4_5;
 
 import me.croabeast.inventory.nms.BeaconInventory;
 import net.minecraft.server.v1_16_R3.BlockPosition;

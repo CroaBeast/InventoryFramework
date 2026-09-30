@@ -1,8 +1,8 @@
-package me.croabeast.inventory.nms.v1_16_5;
+package me.croabeast.inventory.nms.v1_16_4_5;
 
 import me.croabeast.inventory.nms.MerchantInventory;
 import me.croabeast.inventory.adventure.TextHolder;
-import me.croabeast.inventory.nms.v1_16_5.util.TextHolderUtil;
+import me.croabeast.inventory.nms.v1_16_4_5.util.TextHolderUtil;
 import net.minecraft.server.v1_16_R3.Container;
 import net.minecraft.server.v1_16_R3.ContainerMerchant;
 import net.minecraft.server.v1_16_R3.EntityHuman;

@@ -1,10 +1,11 @@
-package me.croabeast.inventory.nms.v1_16_5;
+package me.croabeast.inventory.nms.v1_16_4_5;
 
-import me.croabeast.inventory.nms.StonecutterInventory;
+import me.croabeast.inventory.nms.SmithingTableInventory;
 import me.croabeast.inventory.adventure.TextHolder;
-import me.croabeast.inventory.nms.v1_16_5.util.TextHolderUtil;
+import me.croabeast.inventory.nms.v1_16_4_5.util.TextHolderUtil;
 import net.minecraft.server.v1_16_R3.*;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryStonecutter;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventorySmithing;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -14,17 +15,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Internal stonecutter inventory for 1.16 R3
+ * Internal smithing table inventory for 1.16 R3
  *
  * @since 0.8.0
  */
-public class StonecutterInventoryImpl extends StonecutterInventory {
+public class SmithingTableInventoryImpl extends SmithingTableInventory {
 
     @NotNull
     @Contract(pure = true)
     @Override
     public Inventory createInventory(@NotNull TextHolder title) {
-        InventorySubcontainer resultSlot = new InventorySubcontainer(1);
+        InventoryCraftResult resultSlot = new InventoryCraftResult();
 
         IInventory container = new InventoryViewProvider() {
             @NotNull
@@ -35,7 +36,7 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
                     @Nullable PlayerInventory inventory,
                     @NotNull EntityHuman player
             ) {
-                return new ContainerStonecutterImpl(containerId, player, this, resultSlot);
+                return new ContainerSmithingTableImpl(containerId, player, this, resultSlot);
             }
 
             @NotNull
@@ -46,12 +47,12 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
             }
         };
 
-        return new CraftInventoryStonecutter(container, resultSlot) {
+        return new CraftInventorySmithing(null, container, resultSlot) {
             @NotNull
             @Contract(pure = true)
             @Override
             public InventoryType getType() {
-                return InventoryType.STONECUTTER;
+                return InventoryType.SMITHING;
             }
 
             @Override
@@ -76,16 +77,16 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
          * @since 0.11.0
          */
         public InventoryViewProvider() {
-            super(1);
+            super(2);
         }
     }
 
     /**
-     * A custom container enchanting table
+     * A custom container smithing table
      *
      * @since 0.8.0
      */
-    private static class ContainerStonecutterImpl extends ContainerStonecutter {
+    private static class ContainerSmithingTableImpl extends ContainerSmithing {
 
         /**
          * The human entity viewing this menu.
@@ -97,13 +98,13 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
          * The container for the items slots.
          */
         @NotNull
-        private final InventorySubcontainer inputSlot;
+        private final InventorySubcontainer itemsSlots;
 
         /**
          * The container for the result slot.
          */
         @NotNull
-        private final InventorySubcontainer resultSlot;
+        private final InventoryCraftResult resultSlot;
 
         /**
          * The corresponding Bukkit view. Will be not null after the first call to {@link #getBukkitView()} and null
@@ -113,32 +114,33 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
         private CraftInventoryView bukkitEntity;
 
         /**
-         * Creates a new custom stonecutter container for the specified player
+         * Creates a new custom smithing table container for the specified player
          *
          * @param containerId the container id
          * @param player the player
-         * @param inputSlot the input slot
+         * @param itemsSlots the items slots
          * @param resultSlot the result slot
          * @since 0.11.0
          */
-        public ContainerStonecutterImpl(
+        public ContainerSmithingTableImpl(
                 int containerId,
                 @NotNull EntityHuman player,
-                @NotNull InventorySubcontainer inputSlot,
-                @NotNull InventorySubcontainer resultSlot
+                @NotNull InventorySubcontainer itemsSlots,
+                @NotNull InventoryCraftResult resultSlot
         ) {
             super(containerId, player.inventory, ContainerAccess.at(player.getWorld(), BlockPosition.ZERO));
 
             this.humanEntity = player.getBukkitEntity();
-            this.inputSlot = inputSlot;
+            this.itemsSlots = itemsSlots;
             this.resultSlot = resultSlot;
 
             super.checkReachable = false;
 
-            InventoryLargeChest container = new InventoryLargeChest(inputSlot, resultSlot);
+            InventoryLargeChest container = new InventoryLargeChest(itemsSlots, resultSlot);
 
             updateSlot(0, container);
             updateSlot(1, container);
+            updateSlot(2, container);
         }
 
         @NotNull
@@ -148,7 +150,11 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
                 return this.bukkitEntity;
             }
 
-            CraftInventoryStonecutter inventory = new CraftInventoryStonecutter(this.inputSlot, this.resultSlot);
+            CraftInventory inventory = new CraftInventorySmithing(
+                    super.containerAccess.getLocation(),
+                    this.itemsSlots,
+                    this.resultSlot
+            );
 
             this.bukkitEntity = new CraftInventoryView(this.humanEntity, inventory, this);
 
@@ -167,10 +173,17 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
         @Override
         public void b(EntityHuman nmsPlayer) {}
 
-        @Contract(value = "_, _ -> false", pure = true)
         @Override
-        public boolean a(@Nullable EntityHuman player, int index) {
-            return false;
+        public void e() {}
+
+        @Override
+        protected ItemStack a(EntityHuman player, ItemStack stack) {
+            return stack;
+        }
+
+        @Override
+        protected boolean b(EntityHuman player, boolean present) {
+            return true;
         }
 
         /**

@@ -1,11 +1,10 @@
-package me.croabeast.inventory.nms.v1_16_5;
+package me.croabeast.inventory.nms.v1_16_4_5;
 
-import me.croabeast.inventory.nms.LoomInventory;
+import me.croabeast.inventory.nms.CartographyTableInventory;
 import me.croabeast.inventory.adventure.TextHolder;
-import me.croabeast.inventory.nms.v1_16_5.util.TextHolderUtil;
+import me.croabeast.inventory.nms.v1_16_4_5.util.TextHolderUtil;
 import net.minecraft.server.v1_16_R3.*;
-import net.minecraft.server.v1_16_R3.Container;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryLoom;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryCartography;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -15,34 +14,28 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Internal loom inventory for 1.16.5.
+ * Internal cartography table inventory for 1.16 R3
  *
- * @since 0.12.1
+ * @since 0.8.0
  */
-public class LoomInventoryImpl extends LoomInventory {
+public class CartographyTableInventoryImpl extends CartographyTableInventory {
 
     @NotNull
     @Contract(pure = true)
     @Override
     public Inventory createInventory(@NotNull TextHolder title) {
-        InventoryCraftResult resultSlot = new InventoryCraftResult() {
-            @Override
-            public void setItem(int slot, @NotNull ItemStack itemStack) {
-                if (slot == 0 && !itemStack.isEmpty() && !(itemStack.getItem() instanceof ItemBanner)) {
-                    throw new IllegalArgumentException("Only banners can be placed in the result slot");
-                }
-
-                super.setItem(slot, itemStack);
-            }
-        };
+        InventorySubcontainer resultSlot = new InventorySubcontainer(1);
 
         IInventory container = new InventoryViewProvider() {
             @NotNull
             @Contract(pure = true)
             @Override
-            public Container createMenu(int containerId, @Nullable PlayerInventory inventory,
-                                        @NotNull EntityHuman player) {
-                return new ContainerLoomImpl(containerId, player, this, resultSlot);
+            public Container createMenu(
+                    int containerId,
+                    @Nullable PlayerInventory inventory,
+                    @NotNull EntityHuman player
+            ) {
+                return new ContainerCartographyTableImpl(containerId, player, this, resultSlot);
             }
 
             @NotNull
@@ -51,23 +44,14 @@ public class LoomInventoryImpl extends LoomInventory {
             public IChatBaseComponent getScoreboardDisplayName() {
                 return TextHolderUtil.toComponent(title);
             }
-
-            @Override
-            public void setItem(int slot, @NotNull ItemStack itemStack) {
-                if (slot == 0 && !itemStack.isEmpty() && !(itemStack.getItem() instanceof ItemBanner)) {
-                    throw new IllegalArgumentException("Only banners can be placed in the banner slot");
-                }
-
-                super.setItem(slot, itemStack);
-            }
         };
 
-        return new CraftInventoryLoom(container, resultSlot) {
+        return new CraftInventoryCartography(container, resultSlot) {
             @NotNull
             @Contract(pure = true)
             @Override
             public InventoryType getType() {
-                return InventoryType.LOOM;
+                return InventoryType.CARTOGRAPHY;
             }
 
             @Override
@@ -82,26 +66,26 @@ public class LoomInventoryImpl extends LoomInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.12.1
+     * @since 0.11.0
      */
     private abstract static class InventoryViewProvider extends InventorySubcontainer implements ITileInventory {
 
         /**
-         * Creates a new inventory view provider with three slots.
+         * Creates a new inventory view provider with two slots.
          *
-         * @since 0.12.1
+         * @since 0.11.0
          */
         public InventoryViewProvider() {
-            super(3);
+            super(2);
         }
     }
 
     /**
-     * A custom container loom
+     * A custom container cartography table
      *
-     * @since 0.12.1
+     * @since 0.8.0
      */
-    private static class ContainerLoomImpl extends ContainerLoom {
+    private static class ContainerCartographyTableImpl extends ContainerCartography {
 
         /**
          * The human entity viewing this menu.
@@ -110,16 +94,16 @@ public class LoomInventoryImpl extends LoomInventory {
         private final HumanEntity humanEntity;
 
         /**
-         * The container for the items slots.
+         * The container for the input slots.
          */
         @NotNull
-        private final InventorySubcontainer itemsSlots;
+        private final InventorySubcontainer inputSlots;
 
         /**
          * The container for the result slot.
          */
         @NotNull
-        private final InventoryCraftResult resultSlot;
+        private final InventorySubcontainer resultSlot;
 
         /**
          * The corresponding Bukkit view. Will be not null after the first call to {@link #getBukkitView()} and null
@@ -129,66 +113,57 @@ public class LoomInventoryImpl extends LoomInventory {
         private CraftInventoryView bukkitEntity;
 
         /**
-         * Creates a new custom smithing table container for the specified player
+         * Creates a new custom cartography table container for the specified player.
          *
          * @param containerId the container id
          * @param player the player
-         * @param itemsSlots the item slots
+         * @param inputSlots the input slots
          * @param resultSlot the result slot
-         * @since 0.12.1
+         * @since 0.11.0
          */
-        public ContainerLoomImpl(
+        public ContainerCartographyTableImpl(
                 int containerId,
                 @NotNull EntityHuman player,
-                @NotNull InventorySubcontainer itemsSlots,
-                @NotNull InventoryCraftResult resultSlot
+                @NotNull InventorySubcontainer inputSlots,
+                @NotNull InventorySubcontainer resultSlot
         ) {
-            super(containerId, player.inventory, ContainerAccess.at(player.world, BlockPosition.ZERO));
+            super(containerId, player.inventory, ContainerAccess.at(player.getWorld(), BlockPosition.ZERO));
 
             this.humanEntity = player.getBukkitEntity();
-            this.itemsSlots = itemsSlots;
+            this.inputSlots = inputSlots;
             this.resultSlot = resultSlot;
 
             super.checkReachable = false;
 
-            InventoryLargeChest container = new InventoryLargeChest(itemsSlots, resultSlot);
+            InventoryLargeChest container = new InventoryLargeChest(inputSlots, resultSlot);
 
             updateSlot(0, container);
             updateSlot(1, container);
             updateSlot(2, container);
-            updateSlot(3, container);
         }
 
+        @NotNull
         @Override
         public CraftInventoryView getBukkitView() {
             if (this.bukkitEntity != null) {
                 return this.bukkitEntity;
             }
 
-            org.bukkit.inventory.LoomInventory inventory = new CraftInventoryLoom(this.itemsSlots, this.resultSlot);
+            CraftInventoryCartography inventory = new CraftInventoryCartography(this.inputSlots, this.resultSlot);
 
             this.bukkitEntity = new CraftInventoryView(this.humanEntity, inventory, this);
 
             return this.bukkitEntity;
         }
 
-        @Contract(pure = true, value = "_ -> true")
         @Override
-        public boolean canUse(@Nullable EntityHuman nmsPlayer) {
-            return true;
-        }
+        public void a(@Nullable IInventory container) {}
 
         @Override
-        public void a(@NotNull IInventory container) {}
+        public void b(@Nullable EntityHuman player) {}
 
         @Override
-        public void b(@NotNull EntityHuman nmsPlayer) {}
-
-        @Contract(pure = true)
-        @Override
-        public boolean a(@NotNull EntityHuman player, int buttonId) {
-            return false;
-        }
+        protected void a(@Nullable EntityHuman player, @Nullable World world, @Nullable IInventory container) {}
 
         /**
          * Updates the current slot at the specified index to a new slot. The new slot will have the same slot, x, y,
@@ -196,15 +171,16 @@ public class LoomInventoryImpl extends LoomInventory {
          *
          * @param slotIndex the slot index to update
          * @param container the container of the new slot
-         * @since 0.12.1
+         * @since 0.11.0
          */
         private void updateSlot(int slotIndex, @NotNull IInventory container) {
             Slot slot = super.slots.get(slotIndex);
 
-            Slot newSlot = new Slot(container, slotIndex, slot.e, slot.f);
+            Slot newSlot = new Slot(container, slot.index, slot.e, slot.f);
             newSlot.rawSlotIndex = slot.rawSlotIndex;
 
             super.slots.set(slotIndex, newSlot);
         }
+
     }
 }

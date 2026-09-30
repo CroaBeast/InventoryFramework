@@ -1,10 +1,10 @@
-package me.croabeast.inventory.nms.v1_16_5;
+package me.croabeast.inventory.nms.v1_16_4_5;
 
-import me.croabeast.inventory.nms.CartographyTableInventory;
+import me.croabeast.inventory.nms.StonecutterInventory;
 import me.croabeast.inventory.adventure.TextHolder;
-import me.croabeast.inventory.nms.v1_16_5.util.TextHolderUtil;
+import me.croabeast.inventory.nms.v1_16_4_5.util.TextHolderUtil;
 import net.minecraft.server.v1_16_R3.*;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryCartography;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryStonecutter;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -14,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Internal cartography table inventory for 1.16 R3
+ * Internal stonecutter inventory for 1.16 R3
  *
  * @since 0.8.0
  */
-public class CartographyTableInventoryImpl extends CartographyTableInventory {
+public class StonecutterInventoryImpl extends StonecutterInventory {
 
     @NotNull
     @Contract(pure = true)
@@ -35,7 +35,7 @@ public class CartographyTableInventoryImpl extends CartographyTableInventory {
                     @Nullable PlayerInventory inventory,
                     @NotNull EntityHuman player
             ) {
-                return new ContainerCartographyTableImpl(containerId, player, this, resultSlot);
+                return new ContainerStonecutterImpl(containerId, player, this, resultSlot);
             }
 
             @NotNull
@@ -46,12 +46,12 @@ public class CartographyTableInventoryImpl extends CartographyTableInventory {
             }
         };
 
-        return new CraftInventoryCartography(container, resultSlot) {
+        return new CraftInventoryStonecutter(container, resultSlot) {
             @NotNull
             @Contract(pure = true)
             @Override
             public InventoryType getType() {
-                return InventoryType.CARTOGRAPHY;
+                return InventoryType.STONECUTTER;
             }
 
             @Override
@@ -71,21 +71,21 @@ public class CartographyTableInventoryImpl extends CartographyTableInventory {
     private abstract static class InventoryViewProvider extends InventorySubcontainer implements ITileInventory {
 
         /**
-         * Creates a new inventory view provider with two slots.
+         * Creates a new inventory view provider with three slots.
          *
          * @since 0.11.0
          */
         public InventoryViewProvider() {
-            super(2);
+            super(1);
         }
     }
 
     /**
-     * A custom container cartography table
+     * A custom container enchanting table
      *
      * @since 0.8.0
      */
-    private static class ContainerCartographyTableImpl extends ContainerCartography {
+    private static class ContainerStonecutterImpl extends ContainerStonecutter {
 
         /**
          * The human entity viewing this menu.
@@ -94,10 +94,10 @@ public class CartographyTableInventoryImpl extends CartographyTableInventory {
         private final HumanEntity humanEntity;
 
         /**
-         * The container for the input slots.
+         * The container for the items slots.
          */
         @NotNull
-        private final InventorySubcontainer inputSlots;
+        private final InventorySubcontainer inputSlot;
 
         /**
          * The container for the result slot.
@@ -113,33 +113,32 @@ public class CartographyTableInventoryImpl extends CartographyTableInventory {
         private CraftInventoryView bukkitEntity;
 
         /**
-         * Creates a new custom cartography table container for the specified player.
+         * Creates a new custom stonecutter container for the specified player
          *
          * @param containerId the container id
          * @param player the player
-         * @param inputSlots the input slots
+         * @param inputSlot the input slot
          * @param resultSlot the result slot
          * @since 0.11.0
          */
-        public ContainerCartographyTableImpl(
+        public ContainerStonecutterImpl(
                 int containerId,
                 @NotNull EntityHuman player,
-                @NotNull InventorySubcontainer inputSlots,
+                @NotNull InventorySubcontainer inputSlot,
                 @NotNull InventorySubcontainer resultSlot
         ) {
             super(containerId, player.inventory, ContainerAccess.at(player.getWorld(), BlockPosition.ZERO));
 
             this.humanEntity = player.getBukkitEntity();
-            this.inputSlots = inputSlots;
+            this.inputSlot = inputSlot;
             this.resultSlot = resultSlot;
 
             super.checkReachable = false;
 
-            InventoryLargeChest container = new InventoryLargeChest(inputSlots, resultSlot);
+            InventoryLargeChest container = new InventoryLargeChest(inputSlot, resultSlot);
 
             updateSlot(0, container);
             updateSlot(1, container);
-            updateSlot(2, container);
         }
 
         @NotNull
@@ -149,21 +148,30 @@ public class CartographyTableInventoryImpl extends CartographyTableInventory {
                 return this.bukkitEntity;
             }
 
-            CraftInventoryCartography inventory = new CraftInventoryCartography(this.inputSlots, this.resultSlot);
+            CraftInventoryStonecutter inventory = new CraftInventoryStonecutter(this.inputSlot, this.resultSlot);
 
             this.bukkitEntity = new CraftInventoryView(this.humanEntity, inventory, this);
 
             return this.bukkitEntity;
         }
 
+        @Contract(pure = true, value = "_ -> true")
         @Override
-        public void a(@Nullable IInventory container) {}
+        public boolean canUse(@Nullable EntityHuman nmsPlayer) {
+            return true;
+        }
 
         @Override
-        public void b(@Nullable EntityHuman player) {}
+        public void a(IInventory container) {}
 
         @Override
-        protected void a(@Nullable EntityHuman player, @Nullable World world, @Nullable IInventory container) {}
+        public void b(EntityHuman nmsPlayer) {}
+
+        @Contract(value = "_, _ -> false", pure = true)
+        @Override
+        public boolean a(@Nullable EntityHuman player, int index) {
+            return false;
+        }
 
         /**
          * Updates the current slot at the specified index to a new slot. The new slot will have the same slot, x, y,
@@ -181,6 +189,5 @@ public class CartographyTableInventoryImpl extends CartographyTableInventory {
 
             super.slots.set(slotIndex, newSlot);
         }
-
     }
 }
