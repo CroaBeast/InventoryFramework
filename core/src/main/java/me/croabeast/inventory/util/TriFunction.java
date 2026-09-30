@@ -7,7 +7,7 @@ package me.croabeast.inventory.util;
  * @param <B> the type of the second argument
  * @param <C> the type of the third argument
  * @param <R> the type of the result
- * @since 0.10.8
+ * @since 0.1.0
  */
 @FunctionalInterface
 public interface TriFunction<A, B, C, R> {
@@ -19,7 +19,7 @@ public interface TriFunction<A, B, C, R> {
      * @param b the second argument
      * @param c the third argument
      * @return the result value
-     * @since 0.10.8
+     * @since 0.1.0
      */
     R apply(A a, B b, C c);
 }

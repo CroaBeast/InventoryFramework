@@ -1,5 +1,6 @@
 package me.croabeast.inventory.util;
 
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -14,18 +15,12 @@ import java.util.regex.Pattern;
 /**
  * A utility class for reading csv files
  *
- * @since 0.5.0
+ * @since 0.1.0
  */
-public final class CSVUtil {
+@UtilityClass
+public class CSVUtil {
 
-    /**
-     * A private constructor to ensure this utility class is never instantiated
-     *
-     * @since 0.5.0
-     */
-    private CSVUtil() {}
-
-    private static final Pattern UNICODE_CHARACTER_PATTERN = Pattern.compile("\\\\u([0-9A-Fa-f]{4})");
+    private final Pattern UNICODE_CHARACTER_PATTERN = Pattern.compile("\\\\u([0-9A-Fa-f]{4})");
 
     /**
      * Reads the entire file and returns it as a list of strings.
@@ -33,18 +28,17 @@ public final class CSVUtil {
      * @param inputStream the input stream to read from
      * @return a list of strings containing the values inside the file
      * @throws IOException when reading fails for any reason
-     * @since 0.5.0
+     * @since 0.1.0
      */
     @NotNull
-    public static List<String[]> readAll(@NotNull InputStream inputStream) throws IOException {
+    public List<String[]> readAll(@NotNull InputStream inputStream) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             List<String[]> strings = new ArrayList<>();
             String line;
 
             while ((line = reader.readLine()) != null) {
-                if (line.isEmpty()) {
+                if (line.isEmpty())
                     continue;
-                }
 
                 List<Integer> splittingIndices = new ArrayList<>();
                 char[] chars = line.toCharArray();
@@ -67,9 +61,8 @@ public final class CSVUtil {
                 for (int i = 0; i < array.length; i++) {
                     array[i] = array[i].trim();
 
-                    if (array[i].startsWith("\"") && array[i].endsWith("\"")) {
+                    if (array[i].startsWith("\"") && array[i].endsWith("\""))
                         array[i] = array[i].substring(1, array[i].length() - 1);
-                    }
 
                     array[i] = array[i].replace("\"\"", "\"");
 

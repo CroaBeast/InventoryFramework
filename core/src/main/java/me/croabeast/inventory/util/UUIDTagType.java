@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * A {@link PersistentDataType} implementation that adds support for {@link UUID}s.
  *
- * @since 0.6.0
+ * @since 0.1.0
  */
 public final class UUIDTagType implements PersistentDataType<byte[], UUID> {
 	
@@ -27,19 +27,16 @@ public final class UUIDTagType implements PersistentDataType<byte[], UUID> {
 	private UUIDTagType() {}
 	
 	@NotNull
-	@Override
 	public Class<byte[]> getPrimitiveType() {
 		return byte[].class;
 	}
 	
 	@NotNull
-	@Override
 	public Class<UUID> getComplexType() {
 		return UUID.class;
 	}
 	
 	@NotNull
-	@Override
 	public byte[] toPrimitive(@NotNull UUID complex, @NotNull PersistentDataAdapterContext context) {
 		ByteBuffer buffer = ByteBuffer.wrap(new byte[16]);
 		buffer.putLong(complex.getMostSignificantBits());
@@ -48,7 +45,6 @@ public final class UUIDTagType implements PersistentDataType<byte[], UUID> {
 	}
 	
 	@NotNull
-	@Override
 	public UUID fromPrimitive(@NotNull byte[] primitive, @NotNull PersistentDataAdapterContext context) {
 		ByteBuffer buffer = ByteBuffer.wrap(primitive);
 		long most = buffer.getLong();

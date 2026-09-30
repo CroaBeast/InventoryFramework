@@ -1,11 +1,12 @@
 package me.croabeast.inventory.util;
 
-import org.jetbrains.annotations.Contract;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractMap;
 import java.util.Map;
 
+@UtilityClass
 public class GeometryUtil {
 
     /**
@@ -19,8 +20,7 @@ public class GeometryUtil {
      * @return a pair of new coordinates, with the x coordinate being the key and the y coordinate being the value
      */
     @NotNull
-    @Contract(pure = true)
-    public static Map.Entry<Integer, Integer> processClockwiseRotation(int x, int y, int length, int height,
+    public Map.Entry<Integer, Integer> processClockwiseRotation(int x, int y, int length, int height,
                                                                        int rotation) {
         int newX = x, newY = y;
 
@@ -52,8 +52,7 @@ public class GeometryUtil {
      * @return a pair of new coordinates, with the x coordinate being the key and the y coordinate being the value
      */
     @NotNull
-    @Contract(pure = true)
-    public static Map.Entry<Integer, Integer> processCounterClockwiseRotation(int x, int y, int length, int height,
+    public Map.Entry<Integer, Integer> processCounterClockwiseRotation(int x, int y, int length, int height,
                                                                               int rotation) {
         return processClockwiseRotation(x, y, length, height, 360 - rotation);
     }

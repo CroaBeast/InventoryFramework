@@ -1,5 +1,6 @@
 package me.croabeast.inventory.util;
 
+import lombok.experimental.UtilityClass;
 import me.croabeast.inventory.util.version.Version;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -24,16 +25,10 @@ import java.util.UUID;
 /**
  * A utility class for working with skulls
  *
- * @since 0.5.0
+ * @since 0.1.0
  */
-public final class SkullUtil {
-
-    /**
-     * A private constructor to ensure this class isn't instantiated
-     *
-     * @since 0.5.0
-     */
-    private SkullUtil() {}
+@UtilityClass
+public class SkullUtil {
 
     /**
      * Gets a skull from the specified id. The id is the value from the textures.minecraft.net website after the last
@@ -41,10 +36,10 @@ public final class SkullUtil {
      *
      * @param id the skull id
      * @return the skull item
-     * @since 0.5.0
+     * @since 0.1.0
      */
     @NotNull
-    public static ItemStack getSkull(@NotNull String id) {
+    public ItemStack getSkull(@NotNull String id) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         ItemMeta itemMeta = Objects.requireNonNull(item.getItemMeta());
         setSkull(itemMeta, id);
@@ -59,7 +54,7 @@ public final class SkullUtil {
      * @param meta the meta to change
      * @param id the skull id
      */
-    public static void setSkull(@NotNull ItemMeta meta, @NotNull String id) {
+    public void setSkull(@NotNull ItemMeta meta, @NotNull String id) {
         if (Version.getVersion().isOlderThan(Version.V1_18_2)) {
             setSkullReflection(meta, id);
         } else {
@@ -72,12 +67,11 @@ public final class SkullUtil {
      *
      * @param meta the {@link ItemMeta} of the skull to set
      * @param id the ID of the skin URL to apply
-     * @since 0.11.6
+     * @since 0.1.0
      */
-    private static void setSkullProfile(@NotNull ItemMeta meta, @NotNull String id) {
-        if (!(meta instanceof SkullMeta)) {
+    private void setSkullProfile(@NotNull ItemMeta meta, @NotNull String id) {
+        if (!(meta instanceof SkullMeta))
             throw new IllegalArgumentException("Provided item meta is not of a skull");
-        }
 
         PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID());
         PlayerTextures textures = profile.getTextures();
@@ -98,9 +92,9 @@ public final class SkullUtil {
      *
      * @param meta the {@link ItemMeta} of the skull to set
      * @param id the ID of the skin URL to apply
-     * @since 0.11.6
+     * @since 0.1.0
      */
-    private static void setSkullReflection(@NotNull ItemMeta meta, @NotNull String id) {
+    private void setSkullReflection(@NotNull ItemMeta meta, @NotNull String id) {
         GameProfile profile = new GameProfile(UUID.randomUUID(), "");
         byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}",
                 "http://textures.minecraft.net/texture/" + id).getBytes());

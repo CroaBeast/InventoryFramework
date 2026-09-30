@@ -1,9 +1,9 @@
 package me.croabeast.inventory.util;
 
+import lombok.experimental.UtilityClass;
 import me.croabeast.inventory.exception.XMLLoadException;
 import me.croabeast.inventory.exception.XMLReflectionException;
 import org.bukkit.event.Event;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
+@UtilityClass
 public class XMLUtil {
 
     /**
@@ -26,8 +27,7 @@ public class XMLUtil {
      * @param <T> the type of the event
      */
     @Nullable
-    @Contract(pure = true)
-    public static <T extends Event> Consumer<T> loadOnEventAttribute(@NotNull Object instance, @NotNull Element element,
+    public <T extends Event> Consumer<T> loadOnEventAttribute(@NotNull Object instance, @NotNull Element element,
                                                                      @NotNull Class<T> eventType, @NotNull String name) {
         String attribute = element.getAttribute(name);
         for (Method method : instance.getClass().getMethods()) {
@@ -71,10 +71,10 @@ public class XMLUtil {
      * @param methodName the name of the method to invoke
      * @param argument the argument to provide for the invocation
      * @param parameter the parameter of the method
-     * @since 0.10.3
+     * @since 0.1.0
      * @throws XMLLoadException if the method cannot be accessed or found
      */
-    public static void invokeMethod(@NotNull Object instance, @NotNull String methodName, @NotNull Object argument,
+    public void invokeMethod(@NotNull Object instance, @NotNull String methodName, @NotNull Object argument,
                                     @NotNull Class<?> parameter) {
         try {
             Method method = instance.getClass().getMethod(methodName, parameter);
@@ -93,7 +93,7 @@ public class XMLUtil {
      * @param element the element from which the field is specified
      * @param value the field's new value
      */
-    public static void loadFieldAttribute(@NotNull Object instance, @NotNull Element element, @Nullable Object value) {
+    public void loadFieldAttribute(@NotNull Object instance, @NotNull Element element, @Nullable Object value) {
         try {
             Field field = instance.getClass().getField(element.getAttribute("field"));
 
