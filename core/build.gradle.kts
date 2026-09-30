@@ -24,7 +24,7 @@ dependencies {
 
     compileOnly("net.kyori:adventure-api:$adventureVersion")
     // Provided, but commons-lang3 is not accessible on the server
-    compileOnly("org.spigotmc:spigot-api:1.20.3-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot-api:26.3-R0.1-SNAPSHOT") {
         exclude("org.apache.commons", "commons-lang3")
     }
     compileOnly("com.mojang:authlib:1.5.26") {
