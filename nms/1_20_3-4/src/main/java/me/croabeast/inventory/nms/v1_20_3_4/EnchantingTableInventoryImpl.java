@@ -1,6 +1,6 @@
 package me.croabeast.inventory.nms.v1_20_3_4;
 
-import me.croabeast.inventory.nms.EnchantingTableInventory;
+import me.croabeast.inventory.nms.CustomInventory;
 import me.croabeast.inventory.adventure.TextHolder;
 import me.croabeast.inventory.nms.v1_20_3_4.util.TextHolderUtil;
 import net.minecraft.core.BlockPos;
@@ -18,25 +18,20 @@ import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Internal enchanting table inventory for 1.20.3
  *
- * @since 0.10.13
+ * @since 0.1.0
  */
-public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
+public class EnchantingTableInventoryImpl implements CustomInventory {
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory createInventory(@NotNull TextHolder title) {
         Container container = new InventoryViewProvider() {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public AbstractContainerMenu createMenu(
                     int containerId,
                     @Nullable net.minecraft.world.entity.player.Inventory inventory,
@@ -46,8 +41,6 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
             }
 
             @NotNull
-            @Contract(pure = true)
-            @Override
             public Component getDisplayName() {
                 return TextHolderUtil.toComponent(title);
             }
@@ -55,8 +48,6 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
 
         return new CraftInventoryEnchanting(container) {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public InventoryType getType() {
                 return InventoryType.ENCHANTING;
             }
@@ -73,14 +64,14 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.11.0
+     * @since 0.1.0
      */
     private abstract static class InventoryViewProvider extends SimpleContainer implements MenuProvider {
 
         /**
          * Creates a new inventory view provider with two slots.
          *
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public InventoryViewProvider() {
             super(2);
@@ -90,7 +81,7 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
     /**
      * A custom container enchanting table
      *
-     * @since 0.10.13
+     * @since 0.1.0
      */
     private static class ContainerEnchantingTableImpl extends EnchantmentMenu {
 
@@ -119,7 +110,7 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
          * @param containerId the container id
          * @param player the player
          * @param inputSlots the input slots
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public ContainerEnchantingTableImpl(
                 int containerId,
@@ -138,11 +129,9 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
         }
 
         @NotNull
-        @Override
         public CraftInventoryView getBukkitView() {
-            if (this.bukkitEntity != null) {
+            if (this.bukkitEntity != null)
                 return this.bukkitEntity;
-            }
 
             CraftInventoryEnchanting inventory = new CraftInventoryEnchanting(this.inputSlots);
 
@@ -166,7 +155,7 @@ public class EnchantingTableInventoryImpl extends EnchantingTableInventory {
          *
          * @param slotIndex the slot index to update
          * @param container the container of the new slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         private void updateSlot(int slotIndex, @NotNull Container container) {
             Slot slot = super.slots.get(slotIndex);

@@ -20,28 +20,23 @@ import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventoryAnvil;
 import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventoryView;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Internal anvil inventory for 1.20.6
  *
- * @since 0.10.14
+ * @since 0.1.0
  */
 public class AnvilInventoryImpl extends AnvilInventory {
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory createInventory(@NotNull TextHolder title) {
         SimpleContainer inputSlots = new SimpleContainer(2);
         SimpleContainer resultSlot = new SimpleContainer(1);
 
         return new CraftInventoryAnvil(null, inputSlots, resultSlot, null) {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public InventoryType getType() {
                 return InventoryType.ANVIL;
             }
@@ -50,8 +45,6 @@ public class AnvilInventoryImpl extends AnvilInventory {
             public Container getInventory() {
                 return new InventoryViewProvider() {
                     @NotNull
-                    @Contract(pure = true)
-                    @Override
                     public AbstractContainerMenu createMenu(
                             int containerId,
                             @Nullable net.minecraft.world.entity.player.Inventory inventory,
@@ -61,8 +54,6 @@ public class AnvilInventoryImpl extends AnvilInventory {
                     }
 
                     @NotNull
-                    @Contract(pure = true)
-                    @Override
                     public Component getDisplayName() {
                         return TextHolderUtil.toComponent(title);
                     }
@@ -76,14 +67,14 @@ public class AnvilInventoryImpl extends AnvilInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.11.0
+     * @since 0.1.0
      */
     private abstract static class InventoryViewProvider extends SimpleContainer implements MenuProvider {}
 
     /**
      * A custom container anvil for responding to item renaming
      *
-     * @since 0.10.14
+     * @since 0.1.0
      */
     private class ContainerAnvilImpl extends AnvilMenu {
 
@@ -113,7 +104,7 @@ public class AnvilInventoryImpl extends AnvilInventory {
          * @param player the player
          * @param inputSlots the input slots
          * @param resultSlot the result slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public ContainerAnvilImpl(
                 int containerId,
@@ -138,9 +129,8 @@ public class AnvilInventoryImpl extends AnvilInventory {
 
         @Override
         public CraftInventoryView getBukkitView() {
-            if (this.bukkitEntity != null) {
+            if (this.bukkitEntity != null)
                 return this.bukkitEntity;
-            }
 
             CraftInventoryAnvil inventory = new CraftInventoryAnvil(
                     this.access.getLocation(),
@@ -174,9 +164,8 @@ public class AnvilInventoryImpl extends AnvilInventory {
 
             /* Only update if the name is actually different. This may be called even if the name is not different,
                particularly when putting an item in the first slot. */
-            if (!name.equals(AnvilInventoryImpl.super.observableText.get())) {
+            if (!name.equals(AnvilInventoryImpl.super.observableText.get()))
                 AnvilInventoryImpl.super.observableText.set(name);
-            }
 
             //the client predicts the output result, so we broadcast the state again to override it
             broadcastFullState();
@@ -214,7 +203,7 @@ public class AnvilInventoryImpl extends AnvilInventory {
          *
          * @param slotIndex the slot index to update
          * @param container the container of the new slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         private void updateSlot(int slotIndex, @NotNull Container container) {
             Slot slot = super.slots.get(slotIndex);

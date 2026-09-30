@@ -1,6 +1,6 @@
 package me.croabeast.inventory.nms.v1_20_2;
 
-import me.croabeast.inventory.nms.LoomInventory;
+import me.croabeast.inventory.nms.CustomInventory;
 import me.croabeast.inventory.adventure.TextHolder;
 import me.croabeast.inventory.nms.v1_20_2.util.TextHolderUtil;
 import net.minecraft.core.BlockPos;
@@ -18,27 +18,23 @@ import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Internal loom inventory for 1.20.2.
  *
- * @since 0.12.1
+ * @since 0.1.0
  */
-public class LoomInventoryImpl extends LoomInventory {
+public class LoomInventoryImpl implements CustomInventory {
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory createInventory(@NotNull TextHolder title) {
         ResultContainer resultSlot = new ResultContainer() {
             @Override
             public void setItem(int slot, @NotNull ItemStack itemStack) {
-                if (slot == 0 && !itemStack.isEmpty() && !(itemStack.getItem() instanceof BannerItem)) {
+                if (slot == 0 && !itemStack.isEmpty() && !(itemStack.getItem() instanceof BannerItem))
                     throw new IllegalArgumentException("Only banners can be placed in the result slot");
-                }
 
                 super.setItem(slot, itemStack);
             }
@@ -46,8 +42,6 @@ public class LoomInventoryImpl extends LoomInventory {
 
         Container container = new InventoryViewProvider() {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public AbstractContainerMenu createMenu(
                     int containerId,
                     @Nullable net.minecraft.world.entity.player.Inventory inventory,
@@ -57,17 +51,14 @@ public class LoomInventoryImpl extends LoomInventory {
             }
 
             @NotNull
-            @Contract(pure = true)
-            @Override
             public Component getDisplayName() {
                 return TextHolderUtil.toComponent(title);
             }
 
             @Override
             public void setItem(int slot, @NotNull ItemStack itemStack) {
-                if (slot == 0 && !itemStack.isEmpty() && !(itemStack.getItem() instanceof BannerItem)) {
+                if (slot == 0 && !itemStack.isEmpty() && !(itemStack.getItem() instanceof BannerItem))
                     throw new IllegalArgumentException("Only banners can be placed in the banner slot");
-                }
 
                 super.setItem(slot, itemStack);
             }
@@ -75,8 +66,6 @@ public class LoomInventoryImpl extends LoomInventory {
 
         return new CraftInventoryLoom(container, resultSlot) {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public InventoryType getType() {
                 return InventoryType.LOOM;
             }
@@ -93,14 +82,14 @@ public class LoomInventoryImpl extends LoomInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.12.1
+     * @since 0.1.0
      */
     private abstract static class InventoryViewProvider extends SimpleContainer implements MenuProvider {
 
         /**
          * Creates a new inventory view provider with three slots.
          *
-         * @since 0.12.1
+         * @since 0.1.0
          */
         public InventoryViewProvider() {
             super(3);
@@ -110,7 +99,7 @@ public class LoomInventoryImpl extends LoomInventory {
     /**
      * A custom container loom
      *
-     * @since 0.12.1
+     * @since 0.1.0
      */
     private static class ContainerLoomImpl extends LoomMenu {
 
@@ -146,7 +135,7 @@ public class LoomInventoryImpl extends LoomInventory {
          * @param player the player
          * @param itemsSlots the item slots
          * @param resultSlot the result slot
-         * @since 0.12.1
+         * @since 0.1.0
          */
         public ContainerLoomImpl(
                 int containerId,
@@ -171,11 +160,9 @@ public class LoomInventoryImpl extends LoomInventory {
         }
 
         @NotNull
-        @Override
         public CraftInventoryView getBukkitView() {
-            if (this.bukkitEntity != null) {
+            if (this.bukkitEntity != null)
                 return this.bukkitEntity;
-            }
 
             org.bukkit.inventory.LoomInventory inventory = new CraftInventoryLoom(this.itemsSlots, this.resultSlot);
 
@@ -184,7 +171,6 @@ public class LoomInventoryImpl extends LoomInventory {
             return this.bukkitEntity;
         }
 
-        @Contract(pure = true, value = "_ -> true")
         @Override
         public boolean stillValid(@Nullable Player nmsPlayer) {
             return true;
@@ -196,7 +182,6 @@ public class LoomInventoryImpl extends LoomInventory {
         @Override
         public void removed(@NotNull Player nmsPlayer) {}
 
-        @Contract(pure = true)
         @Override
         public boolean clickMenuButton(@NotNull Player player, int buttonId) {
             return false;
@@ -208,7 +193,7 @@ public class LoomInventoryImpl extends LoomInventory {
          *
          * @param slotIndex the slot index to update
          * @param container the container of the new slot
-         * @since 0.12.1
+         * @since 0.1.0
          */
         private void updateSlot(int slotIndex, @NotNull Container container) {
             Slot slot = super.slots.get(slotIndex);
