@@ -74,5 +74,11 @@ jobs:
           path: ~/.m2/repository/org/spigotmc
           key: ${{ steps.cache-spigot.outputs.cache-primary-key }}
 
+      # Caches the Gradle home, including the build cache, so unchanged NMS modules are not compiled and remapped again
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+
       - name: Build with Gradle
-        run: ./gradlew build -Porg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
+        run: ./gradlew build --build-cache --parallel -Porg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
