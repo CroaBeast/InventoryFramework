@@ -1,6 +1,10 @@
-# IF <a href="https://discord.gg/RXmy4HdR4x"><img align="right" src="https://img.shields.io/discord/780514939293925407" alt="Discord guild"></a>
+# InventoryFramework
 
-*This framework works for Minecraft versions 1.16.5, 1.17.1, 1.18.2, 1.19.4, 1.20-1.21, and 26*
+> **Hard fork of [stefvanschie/IF](https://github.com/stefvanschie/IF).** This project started from IF 0.12.2 and is
+> developed independently: it uses its own coordinates and packages, and it is not API-compatible with the original.
+> All credit for the original framework goes to Stef van Schie and the IF contributors.
+
+*This framework works for Minecraft versions 1.14-1.16, 1.17.1, 1.18.2, 1.19.4, 1.20-1.21, and 26.1-26.3*
 
 An inventory framework for managing GUIs
 
@@ -8,190 +12,125 @@ This framework is based on a pane principle. This means that the GUI is divided 
 
 Next to those panes, GUIs can also be created from XML files by simple loading them in. This allows for easy GUI creation with little code.
 
-## Maven dependency
-To add this project as a dependency to your pom.xml, add the following to your pom.xml:
-```XML
-<dependency>
-    <groupId>com.github.stefvanschie.inventoryframework</groupId>
-    <artifactId>IF</artifactId>
-    <version>0.12.1</version>
-</dependency>
-```
-The project is in the Central Repository, so specifying a repository is not needed.
+## What changed from IF
+The fork is being restructured and improved, so the API can still change until 1.0.0. So far:
 
-Now in order to shade the project into your project, add the following to your pom.xml:
-```XML
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-shade-plugin</artifactId>
-    <version>3.5.2</version>
-    <configuration>
-        <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
-        <relocations>
-            <relocation>
-                <pattern>com.github.stefvanschie.inventoryframework</pattern>
-                <shadedPattern>[YOUR PACKAGE].inventoryframework</shadedPattern>
-            </relocation>
-        </relocations>
-    </configuration>
-    <executions>
-        <execution>
-            <phase>package</phase>
-            <goals>
-                <goal>shade</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-```
-Replace [YOUR PACKAGE] with the top-level package of your project.
-
-If your plugin is a Paper plugin targeting a Minecraft version before 26.1, you must set the `paperweight-mappings-namespace` in `META-INF/MANIFEST.MF` to `spigot`. You can do this by adding the following transformer configuration inside the shade plugin’s `<configuration>` section:
-```XML
-<transformers>
-    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-        <manifestEntries>
-            <paperweight-mappings-namespace>spigot</paperweight-mappings-namespace>
-        </manifestEntries>
-    </transformer>
-</transformers>
-```
+- **Build:** Gradle (Kotlin DSL) instead of Maven. Every NMS module compiles against the Spigot server installed by
+  BuildTools; 1.17 - 1.21.x are compiled against Mojang names and remapped to Spigot names on build.
+- **Coordinates and packages:** published as `me.croabeast.inventory:framework`, with all classes under
+  `me.croabeast.inventory`. Versioning restarted at 0.1.0.
+- **Older versions are back:** 1.14.x, 1.15.x, 1.16.1, 1.16.2 - 1.16.3 and 1.16.4 are supported again. 1.14 and 1.15
+  were ported to the current NMS layer, and the loom GUI now works on every supported version.
+- **Simpler NMS layer:** the per-block abstract classes were merged into a single `CustomInventory` interface (plus
+  `AnvilInventory` and `MerchantInventory`, which keep their extra state), and `VersionMatcher` resolves every
+  inventory through `newInventory(VersionMatcher.Type, Version)`.
+- **Less boilerplate:** accessors and plain constructors use Lombok, alongside the JetBrains nullability annotations.
+- **Module layout:** `core` (the framework itself), `adventure` (text holders) and `nms` (one module per Minecraft
+  version). `InventoryView`, a class before 1.21 and an interface since, is handled in `core` through method handles
+  instead of two separately compiled modules.
+- **Builders:** `me.croabeast.inventory.builder` has fluent builders for items (`ItemBuilder`), paginated chests
+  (`ChestBuilder`), toggle buttons (`ToggleBuilder`), anvil text prompts (`AnvilInputBuilder`) and confirmation
+  dialogs (`ConfirmBuilder`).
 
 ## Gradle dependency
-To add this project as a dependency for your Gradle project, make sure your `dependencies` section of your build.gradle looks like the following:
-```Groovy
-dependencies {
-    implementation 'com.github.stefvanschie.inventoryframework:IF:0.12.1'
-    // ...
-}
-```
-The project is in Maven Central, so ensure your `repositories` section resembles the following:
-```Groovy
+InventoryFramework is built with Gradle (Kotlin DSL). Install it into your local Maven repository with `./gradlew publishToMavenLocal`
+(see [Building from source](#building-from-source)), then add it to your `build.gradle.kts`:
+```kotlin
 repositories {
-    mavenCentral()
-    // ...
+    mavenLocal()
+}
+
+dependencies {
+    implementation("me.croabeast.inventory:framework:0.1.0")
 }
 ```
-In order to include the project in your own project, you will need to use the `shadowJar` plugin. If you don't have it already, add the following to the top of your file:
-```Groovy
+In order to include the project in your own project, you will need to use the `shadowJar` plugin and relocate the
+framework to your own namespace, with [YOUR PACKAGE] being the top-level package of your project:
+```kotlin
 plugins {
-    // ...
-    id "com.gradleup.shadow" version "9.4.1"
+    id("com.gradleup.shadow") version "9.4.1"
 }
-```
-To relocate the project's classes to your own namespace, add the following, with [YOUR PACKAGE] being the top-level package of your project:
-```Groovy
-shadowJar {
-    relocate 'com.github.stefvanschie.inventoryframework', '[YOUR PACKAGE].inventoryframework'
+
+tasks.shadowJar {
+    relocate("me.croabeast.inventory", "[YOUR PACKAGE].inventory")
 }
 ```
 
-If your plugin is a Paper plugin targeting a Minecraft version before 26.1, you must set the `paperweight-mappings-namespace` in `META-INF/MANIFEST.MF` to `spigot`. You can do this by changing your `shadowJar` block to look like the following:
-```Groovy
-shadowJar {
-    relocate 'com.github.stefvanschie.inventoryframework', '[YOUR PACKAGE].inventoryframework'
+If your plugin is a Paper plugin targeting a Minecraft version before 26.1, you must set the `paperweight-mappings-namespace` in `META-INF/MANIFEST.MF` to `spigot`:
+```kotlin
+tasks.shadowJar {
+    relocate("me.croabeast.inventory", "[YOUR PACKAGE].inventory")
 
     manifest {
-        attributes 'paperweight-mappings-namespace': 'spigot'
+        attributes("paperweight-mappings-namespace" to "spigot")
     }
 }
 ```
 
+## Maven dependency
+```XML
+<dependency>
+    <groupId>me.croabeast.inventory</groupId>
+    <artifactId>framework</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+Shade it with the `maven-shade-plugin` and relocate `me.croabeast.inventory` to `[YOUR PACKAGE].inventory`.
+
 ## Dependency via plugin.yml
-IF does **not** support declaring the dependency via the libraries section in the plugin.yml. Please make use of a build tool as described above to use IF as a dependency.
+InventoryFramework does **not** support declaring the dependency via the libraries section in the plugin.yml. Please make use of a build tool as described above to use it as a dependency.
 
 ## Building from source
-If you want to build this project from source, run the following:
+This project relies on NMS, for which the dependencies are not available online. Every NMS module compiles against a
+Spigot server installed into your local Maven repository by [BuildTools](https://www.spigotmc.org/wiki/buildtools/).
+The Spigot version of each module is listed in `nmsVersions` in `build.gradle.kts`.
 
-    git clone https://github.com/stefvanschie/IF.git
-
-This will clone this repository to your device. This project relies on NMS, for which the dependencies are not available online. Because of this, you'll need to follow additional steps to obtain all these dependencies locally.
-
-### Installing Paper manually
-For versions 1.15-1.16, we have to manually install Paper. Run the following scripts for each version to install the dependencies locally. Running these commands generate additional files in the folder where you execute them. To ensure that you don't accidentallly overwrite other files, execute this in an empty folder. The files that get created can be deleted afterwards (either after installing a single version or after installing all of them), since they're no longer necessary.
-
-#### 1.16.5
-```
-wget https://api.papermc.io/v2/projects/paper/versions/1.16.5/builds/794/downloads/paper-1.16.5-794.jar -O paperclip/paper-1.16.5.jar
-java -jar paper-1.16.5.jar
-mvn install:install-file -Dfile=cache/patched_1.16.5.jar -DgroupId="io.papermc" -DartifactId="paper" -Dversion="1.16.5-R0.1-SNAPSHOT" -Dpackaging="jar"  -DgeneratePom="true"
-```
-
-### Installing Paper via the maven plugin
-For versions 1.17-1.20.4, we use Paper via the [paper-nms-maven-plugin](https://github.com/Alvinn8/paper-nms-maven-plugin). To install these versions locally, we must run a few maven commands. These commands should be ran in the root directory of the project.
-```
-mvn paper-nms:init -pl nms/1_17_1
-mvn paper-nms:init -pl nms/1_18_2
-mvn paper-nms:init -pl nms/1_19_4
-mvn paper-nms:init -pl nms/1_20_0-1
-mvn paper-nms:init -pl nms/1_20_2
-mvn paper-nms:init -pl nms/1_20_3-4
-```
-
-### Installing Spigot via BuildTools
-For versions 1.20.5-1.21.11 and 26.1, we use BuildTools. To install these versions, we run the following commands.
+Run these in an empty folder. Each Minecraft version needs a Java version BuildTools accepts for it.
 ```
 wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar -O BuildTools.jar
-        
-git clone https://hub.spigotmc.org/stash/scm/spigot/bukkit.git Bukkit
-cd Bukkit
-git checkout 304e83eb384c338546aa96eea51388e0e8407e26
-cd ..
 
-git clone https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git CraftBukkit
-cd CraftBukkit
-git checkout 91b1fc3f1cf89e2591367dca1fa7362fe376f289
-cd ..
+# Java 11
+java -jar BuildTools.jar --rev 1.14.4
+java -jar BuildTools.jar --rev 1.15.2
+java -jar BuildTools.jar --rev 1.16.1
+java -jar BuildTools.jar --rev 1.16.3
+java -jar BuildTools.jar --rev 1.16.5
 
-git clone https://hub.spigotmc.org/stash/scm/spigot/spigot.git Spigot
-cd Spigot
-git checkout b698b49caf14f97a717afd67e13fd7ac59f51089
-cd ..
+# --rev 1.20, 1.20.5 and 1.21 resolve to 1.20.1, 1.20.6 and 1.21.1; build numbers pin the original releases
+# Java 17
+java -jar BuildTools.jar --rev 1.17.1 --remapped
+java -jar BuildTools.jar --rev 1.18.2 --remapped
+java -jar BuildTools.jar --rev 1.19.4 --remapped
+java -jar BuildTools.jar --rev 3798 --remapped   # 1.20
+java -jar BuildTools.jar --rev 1.20.1 --remapped
+java -jar BuildTools.jar --rev 1.20.2 --remapped
+java -jar BuildTools.jar --rev 1.20.4 --remapped
 
-git clone https://hub.spigotmc.org/stash/scm/spigot/builddata.git BuildData
-cd BuildData
-git checkout a7f7c2118b877fde4cf0f32f1f730ffcdee8e9ee
-cd ..
+# Java 21
+java -jar BuildTools.jar --rev 4132 --remapped   # 1.20.5
+java -jar BuildTools.jar --rev 1.20.6 --remapped
+java -jar BuildTools.jar --rev 4289 --remapped   # 1.21
+java -jar BuildTools.jar --rev 1.21.1 --remapped
+java -jar BuildTools.jar --rev 1.21.3 --remapped
+java -jar BuildTools.jar --rev 1.21.4 --remapped
+java -jar BuildTools.jar --rev 1.21.5 --remapped
+java -jar BuildTools.jar --rev 1.21.8 --remapped
+java -jar BuildTools.jar --rev 1.21.10 --remapped
+java -jar BuildTools.jar --rev 1.21.11 --remapped
 
-java -jar BuildTools.jar --remapped --disable-java-check --dont-update
-java -jar BuildTools.jar --rev 1.20.6 --remapped --disable-java-check
-
-cd Bukkit
-git checkout 2ec53f498e32b3af989cb24672fc54dfab087154
-cd ..
-
-cd CraftBukkit
-git checkout 8ee6fd1b8db9896590aa321d0199453de1fc35db
-cd ..
-
-cd Spigot
-git checkout fb8fb722a327a2f9f097f2ded700ac5de8157408
-cd ..
-
-cd BuildData
-git checkout ae1e7b1e31cd3a3892bb05a6ccdcecc48c73c455
-cd ..
-
-java -jar BuildTools.jar --remapped --disable-java-check --dont-update
-java -jar BuildTools.jar --rev 1.21.1 --remapped --disable-java-check
-java -jar BuildTools.jar --rev 1.21.3 --remapped --disable-java-check
-java -jar BuildTools.jar --rev 1.21.4 --remapped --disable-java-check
-java -jar BuildTools.jar --rev 1.21.5 --remapped --disable-java-check
-java -jar BuildTools.jar --rev 1.21.8 --remapped --disable-java-check
-java -jar BuildTools.jar --rev 1.21.10 --remapped --disable-java-check
-java -jar BuildTools.jar --rev 1.21.11 --remapped --disable-java-check
-java -jar BuildTools.jar --rev 26.1.2 --remapped --disable-java-check
+# Java 25
+java -jar BuildTools.jar --rev 26.1.2
 ```
 
 Your environment is now set up correctly. To create a build, run the following inside the root folder of the project.
 ```
-mvn clean package
+./gradlew build
 ```
-Your build is now available in the /IF/target folder.
+Your build is now available as `core/build/libs/InventoryFramework-0.1.0.jar`.
 
 ## Adventure support
 
-IF supports [Adventure](https://github.com/KyoriPowered/adventure), but does not shade it in itself.
+InventoryFramework supports [Adventure](https://github.com/KyoriPowered/adventure), but does not shade it in itself.
 The use of Adventure `Component`s instead of legacy `String`s is completely optional.
 If you do not wish to use Adventure you can safely ignore all `TextHolder` related methods.
 
@@ -222,7 +161,7 @@ Example of migration from legacy `String` to Adventure `Component`:
  - legacy: `namedGui.setTitle("My Title!");`
  - Adventure: `namedGui.setTitle(ComponentHolder.of(Component.text("My Title!")));`
 
-We apologize for the boilerplate (the `ComponentHolder.of(...)` call), but that was the only way to not make IF hard-depend on Adventure.
+We apologize for the boilerplate (the `ComponentHolder.of(...)` call), but that was the only way to not make InventoryFramework hard-depend on Adventure.
 
 Full Adventure support is only achieved when your server natively supports Adventure (it is running Paper) and your plugin depends on Paper (instead of Spigot).
 In other words, you won't benefit from Adventure as much if you use Spigot instead of Paper.
