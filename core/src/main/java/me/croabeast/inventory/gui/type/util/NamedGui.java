@@ -101,28 +101,4 @@ public abstract class NamedGui extends Gui {
     public TextHolder getTitleHolder() {
         return title;
     }
-
-    /**
-     * Gets whether this title is dirty or not i.e. whether the title has changed.
-     *
-     * @deprecated use {@link Gui#isDirty()} instead.
-     * @return whether the title is dirty
-     * @since 0.1.0
-     */
-    @Deprecated
-    public boolean isDirty() {
-        return super.dirty;
-    }
-
-    /**
-     * Marks that the changes present here have been accepted. This sets dirty to false. If dirty was already false,
-     * this will do nothing.
-     *
-     * @deprecated use {@link Gui#markChanges()} instead.
-     * @since 0.1.0
-     */
-    @Deprecated
-    public void markChanges() {
-        super.dirty = false;
-    }
 }

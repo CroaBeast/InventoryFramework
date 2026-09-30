@@ -54,11 +54,6 @@ public class ChestGui extends NamedGui implements MergedGui, InventoryBased {
     private GuiComponent guiComponent;
 
     /**
-     * Whether the amount of rows are dirty i.e. has been changed
-     */
-    private boolean dirtyRows = false;
-
-    /**
      * Constructs a new chest GUI
      *
      * @param rows the amount of rows this gui should contain, in range 1..6.
@@ -118,7 +113,6 @@ public class ChestGui extends NamedGui implements MergedGui, InventoryBased {
         if (isDirty()) {
             Inventory oldInventory = this.inventory;
             this.inventory = createInventory();
-            this.dirtyRows = false;
 
             if (oldInventory != null) {
                 for (HumanEntity viewer : new ArrayList<>(oldInventory.getViewers())) {
@@ -229,7 +223,6 @@ public class ChestGui extends NamedGui implements MergedGui, InventoryBased {
         }
 
         this.guiComponent = guiComponent;
-        this.dirtyRows = true;
         super.dirty = true;
     }
 
@@ -386,13 +379,4 @@ public class ChestGui extends NamedGui implements MergedGui, InventoryBased {
     public static ChestGui load(@NotNull Object instance, @NotNull Element element) {
         return load(instance, element, JavaPlugin.getProvidingPlugin(ChestGui.class));
     }
-
-    /**
-     * @deprecated use {@link Gui#isDirty()} instead
-     */
-    @Deprecated
-    public boolean isDirtyRows() {
-        return dirtyRows;
-    }
-
 }

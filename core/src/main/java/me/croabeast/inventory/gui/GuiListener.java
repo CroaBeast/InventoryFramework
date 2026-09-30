@@ -363,9 +363,8 @@ public class GuiListener implements Listener {
     }
 
     private boolean isNamedGuiUpdatingDirtily(@NotNull Gui gui) {
-        boolean dirtyTitle = gui instanceof NamedGui && (((NamedGui) gui).isDirty());
-        boolean dirtyRows = gui instanceof ChestGui && ((ChestGui) gui).isDirtyRows();
-        return gui.isUpdating() && (dirtyTitle || dirtyRows);
+        // Changing the title or the rows of a chest marks the gui as dirty
+        return gui.isUpdating() && gui instanceof NamedGui && gui.isDirty();
     }
 
 }
