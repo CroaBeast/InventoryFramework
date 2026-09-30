@@ -1,6 +1,6 @@
 package me.croabeast.inventory.nms.v1_19_4;
 
-import me.croabeast.inventory.nms.SmithingTableInventory;
+import me.croabeast.inventory.nms.CustomInventory;
 import me.croabeast.inventory.adventure.TextHolder;
 import me.croabeast.inventory.nms.v1_19_4.util.TextHolderUtil;
 import net.minecraft.core.BlockPos;
@@ -10,11 +10,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.LegacySmithingMenu;
-import net.minecraft.world.inventory.ResultContainer;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventorySmithing;
@@ -22,29 +18,25 @@ import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Internal smithing table inventory for 1.19.4. This smithing table is for prior to Minecraft 1.20.
  *
- * @since 0.10.9
+ * @since 0.1.0
  * @deprecated this type of smithing table will be removed in Minecraft 1.20
  */
+@SuppressWarnings("all")
 @Deprecated
-public class LegacySmithingTableInventoryImpl extends SmithingTableInventory {
+public class LegacySmithingTableInventoryImpl implements CustomInventory {
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory createInventory(@NotNull TextHolder title) {
         ResultContainer resultSlot = new ResultContainer();
 
         Container container = new InventoryViewProvider() {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public AbstractContainerMenu createMenu(
                     int containerId,
                     @Nullable net.minecraft.world.entity.player.Inventory inventory,
@@ -54,8 +46,6 @@ public class LegacySmithingTableInventoryImpl extends SmithingTableInventory {
             }
 
             @NotNull
-            @Contract(pure = true)
-            @Override
             public Component getDisplayName() {
                 return TextHolderUtil.toComponent(title);
             }
@@ -63,8 +53,6 @@ public class LegacySmithingTableInventoryImpl extends SmithingTableInventory {
 
         return new CraftInventorySmithing(null, container, resultSlot) {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public InventoryType getType() {
                 return InventoryType.SMITHING;
             }
@@ -81,14 +69,14 @@ public class LegacySmithingTableInventoryImpl extends SmithingTableInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.11.0
+     * @since 0.1.0
      */
     private abstract static class InventoryViewProvider extends SimpleContainer implements MenuProvider {
 
         /**
          * Creates a new inventory view provider with three slots.
          *
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public InventoryViewProvider() {
             super(2);
@@ -98,7 +86,7 @@ public class LegacySmithingTableInventoryImpl extends SmithingTableInventory {
     /**
      * A custom container smithing table
      *
-     * @since 0.10.9
+     * @since 0.1.0
      */
     private static class ContainerSmithingTableImpl extends LegacySmithingMenu {
 
@@ -134,7 +122,7 @@ public class LegacySmithingTableInventoryImpl extends SmithingTableInventory {
          * @param player the player
          * @param itemsSlots the items slots
          * @param resultSlot the result slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public ContainerSmithingTableImpl(
                 int containerId,
@@ -158,11 +146,9 @@ public class LegacySmithingTableInventoryImpl extends SmithingTableInventory {
         }
 
         @NotNull
-        @Override
         public CraftInventoryView getBukkitView() {
-            if (this.bukkitEntity != null) {
+            if (this.bukkitEntity != null)
                 return this.bukkitEntity;
-            }
 
             CraftInventory inventory = new CraftInventorySmithing(
                     this.access.getLocation(),
@@ -175,7 +161,6 @@ public class LegacySmithingTableInventoryImpl extends SmithingTableInventory {
             return this.bukkitEntity;
         }
 
-        @Contract(pure = true, value = "_ -> true")
         @Override
         public boolean stillValid(@Nullable net.minecraft.world.entity.player.Player nmsPlayer) {
             return true;
@@ -204,7 +189,7 @@ public class LegacySmithingTableInventoryImpl extends SmithingTableInventory {
          *
          * @param slotIndex the slot index to update
          * @param container the container of the new slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         private void updateSlot(int slotIndex, @NotNull Container container) {
             Slot slot = super.slots.get(slotIndex);

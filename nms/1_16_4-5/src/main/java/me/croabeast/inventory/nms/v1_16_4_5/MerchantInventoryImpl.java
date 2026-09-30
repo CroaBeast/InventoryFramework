@@ -27,7 +27,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,20 +36,16 @@ import java.util.Map;
 /**
  * Internal merchant inventory for 1.16.4 - 1.16.5
  *
- * @since 0.10.1
+ * @since 0.1.0
  */
 public class MerchantInventoryImpl extends MerchantInventory {
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory createInventory(@NotNull TextHolder title) {
         IMerchant merchant = new MerchantWrapper(null);
 
         InventoryMerchant container = new InventoryViewProvider(merchant) {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public Container createMenu(
                     int containerId,
                     @Nullable PlayerInventory inventory,
@@ -60,8 +55,6 @@ public class MerchantInventoryImpl extends MerchantInventory {
             }
 
             @NotNull
-            @Contract(pure = true)
-            @Override
             public IChatBaseComponent getScoreboardDisplayName() {
                 return TextHolderUtil.toComponent(title);
             }
@@ -69,8 +62,6 @@ public class MerchantInventoryImpl extends MerchantInventory {
 
         return new CraftInventoryMerchant(merchant, container) {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public InventoryType getType() {
                 return InventoryType.MERCHANT;
             }
@@ -92,24 +83,21 @@ public class MerchantInventoryImpl extends MerchantInventory {
             MerchantRecipe recipe = entry.getKey();
             List<ItemStack> ingredients = recipe.getIngredients();
 
-            if (ingredients.size() < 1) {
+            if (ingredients.size() < 1)
                 throw new IllegalStateException("Merchant recipe has no ingredients");
-            }
 
             ItemStack itemA = ingredients.get(0);
             ItemStack itemB = null;
 
-            if (ingredients.size() >= 2) {
+            if (ingredients.size() >= 2)
                 itemB = ingredients.get(1);
-            }
 
             net.minecraft.server.v1_16_R3.ItemStack nmsItemA = CraftItemStack.asNMSCopy(itemA);
             net.minecraft.server.v1_16_R3.ItemStack nmsItemB = net.minecraft.server.v1_16_R3.ItemStack.b;
             net.minecraft.server.v1_16_R3.ItemStack nmsItemResult = CraftItemStack.asNMSCopy(recipe.getResult());
 
-            if (itemB != null) {
+            if (itemB != null)
                 nmsItemB = CraftItemStack.asNMSCopy(itemB);
-            }
 
             int uses = recipe.getUses();
             int maxUses = recipe.getMaxUses();
@@ -134,10 +122,9 @@ public class MerchantInventoryImpl extends MerchantInventory {
      *
      * @param player the player to get the entity player from
      * @return the entity player
-     * @since 0.10.1
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     private EntityPlayer getEntityPlayer(@NotNull Player player) {
         return ((CraftPlayer) player).getHandle();
     }
@@ -147,9 +134,8 @@ public class MerchantInventoryImpl extends MerchantInventory {
      *
      * @param entityPlayer the player to get the window id for
      * @return the window id
-     * @since 0.10.1
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     private int getWindowId(@NotNull EntityPlayer entityPlayer) {
         return entityPlayer.activeContainer.windowId;
     }
@@ -159,7 +145,7 @@ public class MerchantInventoryImpl extends MerchantInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.11.0
+     * @since 0.1.0
      */
     private abstract static class InventoryViewProvider extends InventoryMerchant implements ITileInventory {
 
@@ -167,7 +153,7 @@ public class MerchantInventoryImpl extends MerchantInventory {
          * Creates a new inventory view provider with two slots.
          *
          * @param merchant the merchant
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public InventoryViewProvider(@NotNull IMerchant merchant) {
             super(merchant);
@@ -177,7 +163,7 @@ public class MerchantInventoryImpl extends MerchantInventory {
     /**
      * A custom container merchant
      *
-     * @since 0.11.0
+     * @since 0.1.0
      */
     private static class ContainerMerchantImpl extends ContainerMerchant {
 
@@ -213,7 +199,7 @@ public class MerchantInventoryImpl extends MerchantInventory {
          * @param player      the player
          * @param container   the items slots
          * @param merchant the merchant
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public ContainerMerchantImpl(
                 int containerId,
@@ -235,13 +221,11 @@ public class MerchantInventoryImpl extends MerchantInventory {
             Slot slot = super.slots.get(2);
 
             Slot newSlot = new Slot(container, slot.index, slot.e, slot.f) {
-                @Contract(value = "_ -> false", pure = true)
                 @Override
                 public boolean isAllowed(@Nullable EntityHuman player) {
                     return false;
                 }
 
-                @Contract(value = "_ -> false", pure = true)
                 @Override
                 public boolean isAllowed(@Nullable net.minecraft.server.v1_16_R3.ItemStack itemStack) {
                     return false;
@@ -253,11 +237,9 @@ public class MerchantInventoryImpl extends MerchantInventory {
         }
 
         @NotNull
-        @Override
         public CraftInventoryView getBukkitView() {
-            if (this.bukkitEntity != null) {
+            if (this.bukkitEntity != null)
                 return this.bukkitEntity;
-            }
 
             CraftInventoryMerchant inventory = new CraftInventoryMerchant(this.merchant, this.container);
 
@@ -287,7 +269,7 @@ public class MerchantInventoryImpl extends MerchantInventory {
          *
          * @param slotIndex the slot index to update
          * @param container the container of the new slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         private void updateSlot(int slotIndex, @NotNull IInventory container) {
             Slot slot = super.slots.get(slotIndex);

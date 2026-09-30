@@ -1,6 +1,7 @@
 package me.croabeast.inventory.nms.v1_16_4_5;
 
-import me.croabeast.inventory.nms.BeaconInventory;
+import me.croabeast.inventory.nms.CustomInventory;
+import me.croabeast.inventory.adventure.TextHolder;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.ChatComponentText;
 import net.minecraft.server.v1_16_R3.Container;
@@ -18,24 +19,20 @@ import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryBeacon;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Internal beacon inventory for 1.16 R3
  *
- * @since 0.8.0
+ * @since 0.1.0
  */
-public class BeaconInventoryImpl extends BeaconInventory {
+public class BeaconInventoryImpl implements CustomInventory {
 
     @NotNull
-    @Override
-    public Inventory createInventory() {
+    public Inventory createInventory(@NotNull TextHolder title) {
         IInventory container = new InventoryViewProvider() {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public Container createMenu(
                     int containerId,
                     @Nullable PlayerInventory inventory,
@@ -45,8 +42,6 @@ public class BeaconInventoryImpl extends BeaconInventory {
             }
 
             @NotNull
-            @Contract(pure = true)
-            @Override
             public IChatBaseComponent getScoreboardDisplayName() {
                 return new ChatComponentText("Beacon");
             }
@@ -56,8 +51,6 @@ public class BeaconInventoryImpl extends BeaconInventory {
 
         return new CraftInventoryBeacon(container) {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public InventoryType getType() {
                 return InventoryType.BEACON;
             }
@@ -74,14 +67,14 @@ public class BeaconInventoryImpl extends BeaconInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.11.0
+     * @since 0.1.0
      */
     private abstract static class InventoryViewProvider extends InventorySubcontainer implements ITileInventory {
 
         /**
          * Creates a new inventory view provider with one slot.
          *
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public InventoryViewProvider() {
             super(1);
@@ -91,7 +84,7 @@ public class BeaconInventoryImpl extends BeaconInventory {
     /**
      * A custom container beacon
      *
-     * @since 0.8.0
+     * @since 0.1.0
      */
     private static class ContainerBeaconImpl extends ContainerBeacon {
 
@@ -120,7 +113,7 @@ public class BeaconInventoryImpl extends BeaconInventory {
          * @param containerId the container id
          * @param player the player
          * @param inputSlot the input slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public ContainerBeaconImpl(
                 int containerId,
@@ -144,11 +137,9 @@ public class BeaconInventoryImpl extends BeaconInventory {
         }
 
         @NotNull
-        @Override
         public CraftInventoryView getBukkitView() {
-            if (this.bukkitEntity != null) {
+            if (this.bukkitEntity != null)
                 return this.bukkitEntity;
-            }
 
             CraftInventoryBeacon inventory = new CraftInventoryBeacon(this.inputSlot);
 

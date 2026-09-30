@@ -1,6 +1,6 @@
 package me.croabeast.inventory.nms.v1_16_4_5;
 
-import me.croabeast.inventory.nms.StonecutterInventory;
+import me.croabeast.inventory.nms.CustomInventory;
 import me.croabeast.inventory.adventure.TextHolder;
 import me.croabeast.inventory.nms.v1_16_4_5.util.TextHolderUtil;
 import net.minecraft.server.v1_16_R3.*;
@@ -9,27 +9,22 @@ import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Internal stonecutter inventory for 1.16 R3
  *
- * @since 0.8.0
+ * @since 0.1.0
  */
-public class StonecutterInventoryImpl extends StonecutterInventory {
+public class StonecutterInventoryImpl implements CustomInventory {
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory createInventory(@NotNull TextHolder title) {
         InventorySubcontainer resultSlot = new InventorySubcontainer(1);
 
         IInventory container = new InventoryViewProvider() {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public Container createMenu(
                     int containerId,
                     @Nullable PlayerInventory inventory,
@@ -39,8 +34,6 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
             }
 
             @NotNull
-            @Contract(pure = true)
-            @Override
             public IChatBaseComponent getScoreboardDisplayName() {
                 return TextHolderUtil.toComponent(title);
             }
@@ -48,8 +41,6 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
 
         return new CraftInventoryStonecutter(container, resultSlot) {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public InventoryType getType() {
                 return InventoryType.STONECUTTER;
             }
@@ -66,14 +57,14 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.11.0
+     * @since 0.1.0
      */
     private abstract static class InventoryViewProvider extends InventorySubcontainer implements ITileInventory {
 
         /**
          * Creates a new inventory view provider with three slots.
          *
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public InventoryViewProvider() {
             super(1);
@@ -83,7 +74,7 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
     /**
      * A custom container enchanting table
      *
-     * @since 0.8.0
+     * @since 0.1.0
      */
     private static class ContainerStonecutterImpl extends ContainerStonecutter {
 
@@ -119,7 +110,7 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
          * @param player the player
          * @param inputSlot the input slot
          * @param resultSlot the result slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public ContainerStonecutterImpl(
                 int containerId,
@@ -142,11 +133,9 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
         }
 
         @NotNull
-        @Override
         public CraftInventoryView getBukkitView() {
-            if (this.bukkitEntity != null) {
+            if (this.bukkitEntity != null)
                 return this.bukkitEntity;
-            }
 
             CraftInventoryStonecutter inventory = new CraftInventoryStonecutter(this.inputSlot, this.resultSlot);
 
@@ -155,7 +144,6 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
             return this.bukkitEntity;
         }
 
-        @Contract(pure = true, value = "_ -> true")
         @Override
         public boolean canUse(@Nullable EntityHuman nmsPlayer) {
             return true;
@@ -167,7 +155,6 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
         @Override
         public void b(EntityHuman nmsPlayer) {}
 
-        @Contract(value = "_, _ -> false", pure = true)
         @Override
         public boolean a(@Nullable EntityHuman player, int index) {
             return false;
@@ -179,7 +166,7 @@ public class StonecutterInventoryImpl extends StonecutterInventory {
          *
          * @param slotIndex the slot index to update
          * @param container the container of the new slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         private void updateSlot(int slotIndex, @NotNull IInventory container) {
             Slot slot = super.slots.get(slotIndex);

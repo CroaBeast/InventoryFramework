@@ -25,7 +25,6 @@ import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryAnvil;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryView;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,21 +34,17 @@ import java.util.List;
 /**
  * Internal anvil inventory for 1.16 R3
  *
- * @since 0.8.0
+ * @since 0.1.0
  */
 public class AnvilInventoryImpl extends AnvilInventory {
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Inventory createInventory(@NotNull TextHolder title) {
         InventorySubcontainer inputSlots = new InventorySubcontainer(2);
         InventorySubcontainer resultSlot = new InventorySubcontainer(1);
 
         return new CraftInventoryAnvil(null, inputSlots, resultSlot, null) {
             @NotNull
-            @Contract(pure = true)
-            @Override
             public InventoryType getType() {
                 return InventoryType.ANVIL;
             }
@@ -58,8 +53,6 @@ public class AnvilInventoryImpl extends AnvilInventory {
             public IInventory getInventory() {
                 return new InventoryViewProvider() {
                     @NotNull
-                    @Contract(pure = true)
-                    @Override
                     public Container createMenu(
                             int containerId,
                             @Nullable PlayerInventory inventory,
@@ -69,8 +62,6 @@ public class AnvilInventoryImpl extends AnvilInventory {
                     }
 
                     @NotNull
-                    @Contract(pure = true)
-                    @Override
                     public IChatBaseComponent getScoreboardDisplayName() {
                         return TextHolderUtil.toComponent(title);
                     }
@@ -84,14 +75,14 @@ public class AnvilInventoryImpl extends AnvilInventory {
      * provider, CraftBukkit will allow us to create a custom menu, rather than picking one of the built-in options.
      * That way, we can provide a menu with custom behaviour.
      *
-     * @since 0.11.0
+     * @since 0.1.0
      */
     private abstract static class InventoryViewProvider extends InventorySubcontainer implements ITileInventory {}
 
     /**
      * A custom container anvil for responding to item renaming
      *
-     * @since 0.8.0
+     * @since 0.1.0
      */
     private class ContainerAnvilImpl extends ContainerAnvil {
 
@@ -133,7 +124,7 @@ public class AnvilInventoryImpl extends AnvilInventory {
          * @param player the player
          * @param inputSlots the input slots
          * @param resultSlot the result slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         public ContainerAnvilImpl(
                 int containerId,
@@ -167,11 +158,9 @@ public class AnvilInventoryImpl extends AnvilInventory {
         }
 
         @NotNull
-        @Override
         public CraftInventoryView getBukkitView() {
-            if (this.bukkitEntity != null) {
+            if (this.bukkitEntity != null)
                 return this.bukkitEntity;
-            }
 
             CraftInventoryAnvil inventory = new CraftInventoryAnvil(
                     this.containerAccess.getLocation(),
@@ -205,9 +194,8 @@ public class AnvilInventoryImpl extends AnvilInventory {
 
             /* Only update if the name is actually different. This may be called even if the name is not different,
                particularly when putting an item in the first slot. */
-            if (!name.equals(AnvilInventoryImpl.super.observableText.get())) {
+            if (!name.equals(AnvilInventoryImpl.super.observableText.get()))
                 AnvilInventoryImpl.super.observableText.set(name);
-            }
 
             //the client predicts the output result, so we broadcast the state again to override it
             broadcastFullState();
@@ -245,7 +233,7 @@ public class AnvilInventoryImpl extends AnvilInventory {
         /**
          * Broadcasts the full menu state to the client.
          *
-         * @since 0.11.0
+         * @since 0.1.0
          */
         private void broadcastFullState() {
             List<ContainerProperty> properties;
@@ -271,9 +259,8 @@ public class AnvilInventoryImpl extends AnvilInventory {
                 }
             }
 
-            if (super.player instanceof EntityPlayer) {
+            if (super.player instanceof EntityPlayer)
                 ((EntityPlayer) super.player).updateInventory(this);
-            }
         }
 
         /**
@@ -282,7 +269,7 @@ public class AnvilInventoryImpl extends AnvilInventory {
          *
          * @param slotIndex the slot index to update
          * @param container the container of the new slot
-         * @since 0.11.0
+         * @since 0.1.0
          */
         private void updateSlot(int slotIndex, @NotNull IInventory container) {
             Slot slot = super.slots.get(slotIndex);
