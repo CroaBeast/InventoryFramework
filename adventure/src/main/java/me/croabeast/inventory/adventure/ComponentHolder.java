@@ -54,6 +54,19 @@ public abstract class ComponentHolder extends TextHolder {
                 ? new NativeComponentHolder(value)
                 : new ForeignComponentHolder(value);
     }
+
+    /**
+     * Wraps the specified string as a plain text component. The string is not parsed, so legacy color codes and
+     * MiniMessage tags are shown as they are written.
+     *
+     * @param string the text to wrap
+     * @return an instance that wraps a text component with the specified string
+     * @since 0.1.0
+     */
+    @NotNull
+    public static ComponentHolder fromString(@NotNull String string) {
+        return of(Component.text(string));
+    }
     
     /**
      * Gets whether the server platform natively supports Adventure.
