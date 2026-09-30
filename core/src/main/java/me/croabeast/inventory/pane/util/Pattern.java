@@ -1,8 +1,9 @@
 package me.croabeast.inventory.pane.util;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import me.croabeast.inventory.exception.XMLLoadException;
 import me.croabeast.inventory.pane.PatternPane;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,8 +17,9 @@ import java.util.List;
  * A mask for {@link PatternPane}s that specifies in which positions the items should be placed. Objects of this class
  * are immutable.
  *
- * @since 0.9.8
+ * @since 0.1.0
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Pattern {
 
     /**
@@ -37,7 +39,7 @@ public class Pattern {
      *
      * @param pattern a var-arg of strings that represent this pattern
      * @throws IllegalArgumentException when strings have different lengths
-     * @since 0.9.8
+     * @since 0.1.0
      */
     public Pattern(@NotNull String @NotNull ... pattern) {
         int rows = pattern.length;
@@ -45,9 +47,8 @@ public class Pattern {
 
         this.pattern = new int[rows][zeroRows ? 0 : pattern[0].codePointCount(0, pattern[0].length())];
 
-        if (zeroRows) {
+        if (zeroRows)
             return;
-        }
 
         int globalLength = this.pattern[0].length;
 
@@ -73,17 +74,6 @@ public class Pattern {
     }
 
     /**
-     * Creates a pattern based on the two-dimensional int array provided. Each array is a row for the pattern and each
-     * index is a cell of that row that indicates a slot for the pattern.
-     *
-     * @param pattern a two-dimensional int array that represent this pattern
-     * @since 0.9.8
-     */
-    private Pattern(int @NotNull [] @NotNull [] pattern) {
-        this.pattern = pattern;
-    }
-
-    /**
      * Creates a new pattern with the specified height. If the new height is smaller than the previous height, the
      * excess values will be truncated. If the new height is longer than the previous height, additional values will be
      * added which are the same as the current bottom row. If the height is the same as the previous pattern, this will
@@ -91,10 +81,9 @@ public class Pattern {
      *
      * @param height the new height of the pattern
      * @return a new pattern with the specified height
-     * @since 0.9.8
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public Pattern setHeight(int height) {
         int[][] newRows = new int[height][getLength()];
 
@@ -119,10 +108,9 @@ public class Pattern {
      *
      * @param length the new length of the pattern
      * @return a new pattern with the specified length
-     * @since 0.9.8
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public Pattern setLength(int length) {
         int[][] newRows = new int[getHeight()][length];
 
@@ -151,13 +139,11 @@ public class Pattern {
      * @param index the column index
      * @return the column of this pattern
      * @throws IllegalArgumentException when the index is outside the pattern's range
-     * @since 0.9.8
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public int @NotNull [] getColumn(int index) {
-        if (index >= getLength()) {
+        if (index >= getLength())
             throw new IllegalArgumentException("Index " + index + " exceeds pattern length");
-        }
 
         int[] column = new int[pattern[0].length];
 
@@ -174,15 +160,13 @@ public class Pattern {
      *
      * @param character the character to look for
      * @return whether the provided character is present
-     * @since 0.9.8
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public boolean contains(int character) {
         for (int[] row : pattern) {
             for (int cell : row) {
-                if (cell != character) {
+                if (cell != character)
                     continue;
-                }
 
                 return true;
             }
@@ -199,13 +183,11 @@ public class Pattern {
      * @param index the row index
      * @return the row of this pattern
      * @throws IllegalArgumentException when the index is outside the pattern's range
-     * @since 0.9.8
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public int @NotNull [] getRow(int index) {
-        if (index >= getHeight()) {
+        if (index >= getHeight())
             throw new IllegalArgumentException("Index " + index + " exceeds pattern height");
-        }
 
         int[] row = pattern[index];
 
@@ -220,13 +202,11 @@ public class Pattern {
      * @param y the y position
      * @return the character at the specified position
      * @throws IllegalArgumentException when the position is out of range
-     * @since 0.9.8
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public int getCharacter(int x, int y) {
-        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight()) {
+        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight())
             throw new IllegalArgumentException("Position " + x + ", " + y + " is out of range");
-        }
 
         return this.pattern[y][x];
     }
@@ -235,9 +215,8 @@ public class Pattern {
      * Gets the length of this pattern
      *
      * @return the length
-     * @since 0.9.8
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public int getLength() {
         return pattern[0].length;
     }
@@ -246,22 +225,19 @@ public class Pattern {
      * Gets the height of this pattern
      *
      * @return the height
-     * @since 0.9.8
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public int getHeight() {
         return pattern.length;
     }
 
     @Override
     public boolean equals(Object object) {
-        if (this == object) {
+        if (this == object)
             return true;
-        }
 
-        if (object == null || getClass() != object.getClass()) {
+        if (object == null || getClass() != object.getClass())
             return false;
-        }
 
         Pattern pattern = (Pattern) object;
 
@@ -285,10 +261,9 @@ public class Pattern {
      *
      * @param element the xml element
      * @return the loaded pattern
-     * @since 0.9.8
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public static Pattern load(@NotNull Element element) {
         ArrayList<String> rows = new ArrayList<>();
         NodeList childNodes = element.getChildNodes();
@@ -296,16 +271,14 @@ public class Pattern {
         for (int itemIndex = 0; itemIndex < childNodes.getLength(); itemIndex++) {
             Node item = childNodes.item(itemIndex);
 
-            if (item.getNodeType() != Node.ELEMENT_NODE) {
+            if (item.getNodeType() != Node.ELEMENT_NODE)
                 continue;
-            }
 
             Element child = (Element) item;
             String name = child.getNodeName();
 
-            if (!name.equals("row")) {
+            if (!name.equals("row"))
                 throw new XMLLoadException("Pattern contains unknown tag " + name);
-            }
 
             rows.add(child.getTextContent());
         }

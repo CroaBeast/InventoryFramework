@@ -1,5 +1,6 @@
 package me.croabeast.inventory.pane;
 
+import lombok.Getter;
 import me.croabeast.inventory.gui.GuiComponent;
 import me.croabeast.inventory.gui.type.util.Gui;
 import me.croabeast.inventory.gui.GuiItem;
@@ -14,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -38,6 +38,7 @@ public class PaginatedPane extends Pane {
     /**
      * The current page
      */
+    @Getter
     private int page;
 
     /**
@@ -46,7 +47,7 @@ public class PaginatedPane extends Pane {
      * @param length the length of the pane
      * @param height the height of the pane
      * @param priority the priority of the pane
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public PaginatedPane(int length, int height, @NotNull Priority priority) {
         super(length, height, priority);
@@ -57,19 +58,10 @@ public class PaginatedPane extends Pane {
      *
      * @param length the length of the pane
      * @param height the height of the pane
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public PaginatedPane(int length, int height) {
         this(length, height, Priority.NORMAL);
-    }
-
-    /**
-     * Returns the current page
-     *
-     * @return the current page
-     */
-    public int getPage() {
-        return page;
     }
 
     /**
@@ -88,7 +80,7 @@ public class PaginatedPane extends Pane {
      *
      * @param slot the slot of the pane
      * @param pane the pane to add to a new page
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public void addPage(@NotNull Slot slot, @NotNull Pane pane) {
         List<PositionedPane> list = new ArrayList<>(1);
@@ -120,13 +112,11 @@ public class PaginatedPane extends Pane {
      * index
      */
     public void addPane(int page, @NotNull Slot slot, @NotNull Pane pane) {
-        if (page < 0) {
+        if (page < 0)
             throw new IllegalArgumentException("Non-positive page indexes are not allowed");
-        }
 
-        if (page > this.panes.size()) {
+        if (page > this.panes.size())
             throw new IllegalArgumentException("Page index outside range of existing pages");
-        }
 
         if (page == this.panes.size()) {
             addPage(slot, pane);
@@ -145,9 +135,8 @@ public class PaginatedPane extends Pane {
      * @throws ArrayIndexOutOfBoundsException if the page does not exist
      */
     public void setPage(int page) {
-        if (page < 0 || page >= this.panes.size()) {
+        if (page < 0 || page >= this.panes.size())
             throw new ArrayIndexOutOfBoundsException("Page outside of range");
-        }
 
 		this.page = page;
     }
@@ -159,7 +148,7 @@ public class PaginatedPane extends Pane {
 	 * @param items The list to populate the pane with
      * @param plugin the plugin that will be the owner of the items created
      * @see #populateWithItemStacks(List)
-     * @since 0.10.8
+     * @since 0.1.0
 	 */
 	public void populateWithItemStacks(@NotNull List<@NotNull ItemStack> items, @NotNull Plugin plugin) {
 		//Don't do anything if the list is empty
@@ -204,12 +193,10 @@ public class PaginatedPane extends Pane {
      *
      * @param items The list to populate the pane with
      */
-    @Contract("null -> fail")
     public void populateWithGuiItems(@NotNull List<GuiItem> items) {
         //Don't do anything if the list is empty
-        if (items.isEmpty()) {
+        if (items.isEmpty())
             return;
-        }
 
         int itemsPerPage = this.height * this.length;
         int pagesNeeded = (int) Math.max(Math.ceil(items.size() / (double) itemsPerPage), 1);
@@ -221,9 +208,8 @@ public class PaginatedPane extends Pane {
                 int index = i * itemsPerPage + j;
 
 				//Check if the loop reached the end of the list
-                if (index >= items.size()) {
+                if (index >= items.size())
                     break;
-                }
 
                 page.addItem(items.get(index));
             }
@@ -241,7 +227,7 @@ public class PaginatedPane extends Pane {
 	 * @param material The material to use for the {@link org.bukkit.inventory.ItemStack}s
      * @param plugin the plugin that will be the owner of the created items
      * @see #populateWithNames(List, Material)
-     * @since 0.10.8
+     * @since 0.1.0
 	 */
 	public void populateWithNames(@NotNull List<String> displayNames, @Nullable Material material,
                                   @NotNull Plugin plugin) {
@@ -269,26 +255,22 @@ public class PaginatedPane extends Pane {
     }
 
     @NotNull
-    @Override
     public GuiItemContainer display() {
         GuiItemContainer container = new GuiItemContainer(getLength(), getHeight());
 
-        if (this.page < 0 || this.page >= this.panes.size()) {
+        if (this.page < 0 || this.page >= this.panes.size())
             return container;
-        }
 
         List<PositionedPane> panes = this.panes.get(page);
 
-        if (panes == null) {
+        if (panes == null)
             return container;
-        }
 
         for (PositionedPane positionedPane : panes) {
             Pane pane = positionedPane.getPane();
 
-            if (!pane.isVisible()) {
+            if (!pane.isVisible())
                 continue;
-            }
 
             Slot slot = positionedPane.getSlot();
 
@@ -305,24 +287,21 @@ public class PaginatedPane extends Pane {
         int y = slot.getY(getLength());
 
         //this isn't our item
-        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight()) {
+        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight())
             return false;
-        }
 
 		callOnClick(event);
 
         boolean success = false;
 
-        if (this.page < 0 || this.page >= this.panes.size()) {
+        if (this.page < 0 || this.page >= this.panes.size())
             return false;
-        }
 
         for (PositionedPane positionedPane : this.panes.get(this.page)) {
             Pane pane = positionedPane.getPane();
 
-            if (!pane.isVisible()) {
+            if (!pane.isVisible())
                 continue;
-            }
 
             Slot paneSlot = positionedPane.getSlot();
             Slot innerSlot = Slot.fromXY(x - paneSlot.getX(getLength()), y - paneSlot.getY(getLength()));
@@ -334,8 +313,6 @@ public class PaginatedPane extends Pane {
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public PaginatedPane copy() {
 	    PaginatedPane paginatedPane = new PaginatedPane(this.length, this.height, getPriority());
 
@@ -364,19 +341,16 @@ public class PaginatedPane extends Pane {
      * nothing.
      *
      * @param page the page to delete
-     * @since 0.10.5
+     * @since 0.1.0
      */
     public void deletePage(int page) {
-        if (page < 0 || page >= this.panes.size()) {
+        if (page < 0 || page >= this.panes.size())
             return;
-        }
 
         this.panes.remove(page);
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Collection<Pane> getPanes() {
         Collection<Pane> panes = new HashSet<>();
 
@@ -399,21 +373,18 @@ public class PaginatedPane extends Pane {
      *
      * @param page the panes of this page will be returned
      * @return a collection of panes belonging to the specified page
-     * @since 0.5.13
+     * @since 0.1.0
      * @throws IllegalArgumentException if the page does not exist
      */
     @NotNull
-    @Contract(pure = true)
     public Collection<Pane> getPanes(int page) {
-        if (page < 0 || this.page >= this.panes.size()) {
+        if (page < 0 || this.page >= this.panes.size())
             throw new IllegalArgumentException("Invalid page");
-        }
 
         Collection<? extends PositionedPane> positionedPanes = this.panes.get(page);
 
-        if (positionedPanes == null) {
+        if (positionedPanes == null)
             throw new IllegalArgumentException("Invalid page");
-        }
 
         Collection<Pane> panes = new HashSet<>(positionedPanes.size());
 
@@ -425,8 +396,6 @@ public class PaginatedPane extends Pane {
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Collection<GuiItem> getItems() {
         return getPanes().stream().flatMap(pane -> pane.getItems().stream()).collect(Collectors.toList());
     }
@@ -443,17 +412,15 @@ public class PaginatedPane extends Pane {
      * @param element the element
      * @param plugin the plugin that will be used to create the items
      * @return the paginated pane
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
     public static PaginatedPane load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
-        if (!element.hasAttribute("length")) {
+        if (!element.hasAttribute("length"))
             throw new XMLLoadException("Paginated pane XML tag does not have the mandatory length attribute");
-        }
 
-        if (!element.hasAttribute("height")) {
+        if (!element.hasAttribute("height"))
             throw new XMLLoadException("Paginated pane XML tag does not have the mandatory height attribute");
-        }
 
         int length;
         int height;
@@ -479,9 +446,8 @@ public class PaginatedPane extends Pane {
             element.setUserData("pane", paginatedPane, null);
         }
 
-        if (element.hasAttribute("populate")) {
+        if (element.hasAttribute("populate"))
             return paginatedPane;
-        }
 
         int pageCount = 0;
 
@@ -499,9 +465,8 @@ public class PaginatedPane extends Pane {
             for (int j = 0; j < innerNodes.getLength(); j++) {
                 Node innerNode = innerNodes.item(j);
 
-                if (innerNode.getNodeType() != Node.ELEMENT_NODE) {
+                if (innerNode.getNodeType() != Node.ELEMENT_NODE)
                     continue;
-                }
 
                 Pane pane = Gui.loadPane(instance, innerNode, plugin);
 

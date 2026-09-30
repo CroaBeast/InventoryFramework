@@ -1,7 +1,6 @@
 package me.croabeast.inventory.pane.util;
 
 import me.croabeast.inventory.exception.XMLLoadException;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -11,7 +10,7 @@ import java.util.Objects;
 /**
  * A slot represents a position in some type of container. Implementors of this class represent slots in different ways.
  *
- * @since 0.10.8
+ * @since 0.1.0
  */
 public interface Slot {
 
@@ -20,9 +19,8 @@ public interface Slot {
      *
      * @param length the length of the parent container
      * @return the x coordinate of this slot
-     * @since 0.10.8
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     int getX(int length);
 
     /**
@@ -30,9 +28,8 @@ public interface Slot {
      *
      * @param length the length of the parent container
      * @return the y coordinate of this slot
-     * @since 0.10.8
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     int getY(int length);
 
     /**
@@ -50,7 +47,6 @@ public interface Slot {
      *                          the "x", "y", or "index" attribute contain a value that is not an integer.
      */
     @NotNull
-    @Contract(value = "_ -> new", pure = true)
     static Slot deserialize(@NotNull Element element) {
         boolean hasX = element.hasAttribute("x");
         boolean hasY = element.hasAttribute("y");
@@ -95,10 +91,9 @@ public interface Slot {
      * @param x the x coordinate
      * @param y the y coordinate
      * @return the slot representing this position
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(value = "_, _ -> new", pure = true)
     static Slot fromXY(int x, int y) {
         return new XY(x, y);
     }
@@ -108,10 +103,9 @@ public interface Slot {
      *
      * @param index the index
      * @return the slot representing this relative position
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
-    @Contract("_ -> new")
     static Slot fromIndex(int index) {
         return new Indexed(index);
     }
@@ -119,7 +113,7 @@ public interface Slot {
     /**
      * A class representing a slot based on an (x, y) coordinate pair.
      *
-     * @since 0.10.8
+     * @since 0.1.0
      */
     class XY implements Slot {
 
@@ -133,7 +127,7 @@ public interface Slot {
          *
          * @param x the x coordinate
          * @param y the y coordinate
-         * @since 0.10.8
+         * @since 0.1.0
          */
         private XY(int x, int y) {
             this.x = x;
@@ -152,13 +146,11 @@ public interface Slot {
 
         @Override
         public boolean equals(@Nullable Object object) {
-            if (this == object) {
+            if (this == object)
                 return true;
-            }
 
-            if (object == null || getClass() != object.getClass()) {
+            if (object == null || getClass() != object.getClass())
                 return false;
-            }
 
             XY xy = (XY) object;
 
@@ -174,7 +166,7 @@ public interface Slot {
     /**
      * A class representing a slot based on an index.
      *
-     * @since 0.10.8
+     * @since 0.1.0
      */
     class Indexed implements Slot {
 
@@ -187,7 +179,7 @@ public interface Slot {
          * Creates a new slot based on an index.
          *
          * @param index the index of this slot
-         * @since 0.10.8
+         * @since 0.1.0
          */
         private Indexed(int index) {
             this.index = index;
@@ -203,11 +195,9 @@ public interface Slot {
          * @throws IllegalArgumentException when {@code length} is zero
          */
         @Override
-        @Contract(pure = true)
         public int getX(int length) {
-            if (length == 0) {
+            if (length == 0)
                 throw new IllegalArgumentException("Length may not be zero");
-            }
 
             return this.index % length;
         }
@@ -222,24 +212,20 @@ public interface Slot {
          * @throws IllegalArgumentException when {@code length} is zero
          */
         @Override
-        @Contract(pure = true)
         public int getY(int length) {
-            if (length == 0) {
+            if (length == 0)
                 throw new IllegalArgumentException("Length may not be zero");
-            }
 
             return this.index / length;
         }
 
         @Override
         public boolean equals(@Nullable Object object) {
-            if (this == object) {
+            if (this == object)
                 return true;
-            }
 
-            if (object == null || getClass() != object.getClass()) {
+            if (object == null || getClass() != object.getClass())
                 return false;
-            }
 
             Indexed indexed = (Indexed) object;
 

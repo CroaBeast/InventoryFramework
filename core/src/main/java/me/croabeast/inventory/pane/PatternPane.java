@@ -1,5 +1,6 @@
 package me.croabeast.inventory.pane;
 
+import lombok.Getter;
 import me.croabeast.inventory.exception.XMLLoadException;
 import me.croabeast.inventory.gui.GuiItem;
 import me.croabeast.inventory.gui.GuiComponent;
@@ -11,7 +12,6 @@ import me.croabeast.inventory.util.GeometryUtil;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -22,7 +22,7 @@ import java.util.*;
 /**
  * A pattern pane allows you to specify a textual pattern and assign items to individual characters.
  *
- * @since 0.9.8
+ * @since 0.1.0
  */
 public class PatternPane extends Pane implements Flippable, Rotatable {
 
@@ -30,6 +30,7 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
      * The pattern of this pane.
      */
     @NotNull
+    @Getter
     private Pattern pattern;
 
     /**
@@ -42,16 +43,19 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
     /**
      * The amount of degrees this pane is rotated by. This will always be between [0,360) and a multiple of 90.
      */
+    @Getter
     private int rotation;
 
     /**
      * Whether this pane is flipped horizontally.
      */
+    @Getter
     private boolean flippedHorizontally;
 
     /**
      * Whether this pane is flipped vertically.
      */
+    @Getter
     private boolean flippedVertically;
 
     /**
@@ -62,7 +66,7 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
      * @param priority the priority of the pane
      * @param pattern the pattern of the pane
      * @throws IllegalArgumentException when the pane and pattern dimensions don't match
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public PatternPane(int length, int height, @NotNull Priority priority, @NotNull Pattern pattern) {
         super(length, height, priority);
@@ -83,14 +87,13 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
      * @param height the height of the pane
      * @param pattern the pattern of the pane
      * @throws IllegalArgumentException when the pane and pattern dimensions don't match
-     * @since 0.9.8
+     * @since 0.1.0
      */
     public PatternPane(int length, int height, @NotNull Pattern pattern) {
         this(length, height, Priority.NORMAL, pattern);
     }
 
     @NotNull
-    @Override
     public GuiItemContainer display() {
         GuiItemContainer container = new GuiItemContainer(getLength(), getHeight());
 
@@ -98,19 +101,16 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
             for (int y = 0; y < getHeight(); y++) {
                 GuiItem item = this.bindings.get(pattern.getCharacter(x, y));
 
-                if (item == null || !item.isVisible()) {
+                if (item == null || !item.isVisible())
                     continue;
-                }
 
                 int newX = x, newY = y;
 
-                if (isFlippedHorizontally()) {
+                if (isFlippedHorizontally())
                     newX = getLength() - x - 1;
-                }
 
-                if (isFlippedVertically()) {
+                if (isFlippedVertically())
                     newY = getHeight() - y - 1;
-                }
 
                 Map.Entry<Integer, Integer> coordinates = GeometryUtil.processClockwiseRotation(newX, newY, getLength(),
                     getHeight(), rotation);
@@ -129,23 +129,20 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
         int y = slot.getY(getLength());
 
         //this isn't our item
-        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight()) {
+        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight())
             return false;
-        }
 
         callOnClick(event);
 
         ItemStack itemStack = event.getCurrentItem();
 
-        if (itemStack == null) {
+        if (itemStack == null)
             return false;
-        }
 
         GuiItem clickedItem = findMatchingItem(getItems(), itemStack);
 
-        if (clickedItem == null) {
+        if (clickedItem == null)
             return false;
-        }
 
         clickedItem.callAction(event);
 
@@ -153,8 +150,6 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public PatternPane copy() {
         PatternPane patternPane = new PatternPane(getLength(), getHeight(), getPriority(), getPattern());
 
@@ -172,13 +167,11 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
 
     @Override
     public void setRotation(int rotation) {
-        if (getLength() != getHeight()) {
+        if (getLength() != getHeight())
             throw new IllegalArgumentException("Rotations can only be applied to square panes");
-        }
 
-        if (rotation >= 0 && rotation % 90 != 0) {
+        if (rotation >= 0 && rotation % 90 != 0)
             throw new IllegalArgumentException("Rotation must be non-negative and be a multiple of 90");
-        }
 
         this.rotation = rotation % 360;
     }
@@ -190,17 +183,15 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
      * where 'x' does not appear in the pattern will not be returned.
      *
      * @return the bounded and used items
-     * @since 0.9.8
+     * @since 0.1.0
      */
     @NotNull
-    @Override
     public Collection<GuiItem> getItems() {
         Set<GuiItem> items = new HashSet<>();
 
         for (Map.Entry<Integer, GuiItem> binding : bindings.entrySet()) {
-            if (pattern.contains(binding.getKey())) {
+            if (pattern.contains(binding.getKey()))
                 items.add(binding.getValue());
-            }
         }
 
         return Collections.unmodifiableCollection(items);
@@ -211,7 +202,7 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
      *
      * @param pattern the new pattern to set
      * @throws IllegalArgumentException when the pane and pattern dimensions don't match
-     * @since 0.9.8
+     * @since 0.1.0
      */
     public void setPattern(@NotNull Pattern pattern) {
         if (pattern.getLength() != getLength() || pattern.getHeight() != getHeight()) {
@@ -243,7 +234,7 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
      *
      * @param character the character
      * @param item the item this represents
-     * @since 0.9.8
+     * @since 0.1.0
      */
     public void bindItem(char character, @NotNull GuiItem item) {
         this.bindings.put((int) character, item);
@@ -255,7 +246,7 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
      *
      * @param character the character
      * @param item the item this represents
-     * @since 0.9.8
+     * @since 0.1.0
      * @see PatternPane#bindItem(char, GuiItem)
      */
     public void bindItem(int character, @NotNull GuiItem item) {
@@ -278,36 +269,8 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
     }
 
     @NotNull
-    @Override
     public Collection<Pane> getPanes() {
         return Collections.emptySet();
-    }
-
-    /**
-     * Gets the pattern.
-     *
-     * @return the pattern
-     * @since 0.9.8
-     */
-    @NotNull
-    @Contract(pure = true)
-    public Pattern getPattern() {
-        return pattern;
-    }
-
-    @Override
-    public boolean isFlippedHorizontally() {
-        return this.flippedHorizontally;
-    }
-
-    @Override
-    public boolean isFlippedVertically() {
-        return this.flippedVertically;
-    }
-
-    @Override
-    public int getRotation() {
-        return this.rotation;
     }
 
     /**
@@ -317,7 +280,7 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
      * @param element the element
      * @param plugin the plugin that will own the underlying items
      * @return the pattern pane
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
     public static PatternPane load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
@@ -329,9 +292,8 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
 
-            if (item.getNodeType() != Node.ELEMENT_NODE) {
+            if (item.getNodeType() != Node.ELEMENT_NODE)
                 continue;
-            }
 
             Element child = (Element) item;
             String name = item.getNodeName();
@@ -339,15 +301,13 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
             if (name.equals("pattern")) {
                 pattern = Pattern.load(child);
             } else if (name.equals("binding")) {
-                if (!child.hasAttribute("char")) {
+                if (!child.hasAttribute("char"))
                     throw new XMLLoadException("Tag binding is missing char attribute");
-                }
 
                 String character = child.getAttribute("char");
 
-                if (character.codePointCount(0, character.length()) != 1) {
+                if (character.codePointCount(0, character.length()) != 1)
                     throw new XMLLoadException("Char attribute doesn't have one character");
-                }
 
                 NodeList children = child.getChildNodes();
                 GuiItem guiItem = null;
@@ -355,13 +315,11 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
                 for (int index = 0; index < children.getLength(); index++) {
                     Node guiItemNode = children.item(index);
 
-                    if (guiItemNode.getNodeType() != Node.ELEMENT_NODE) {
+                    if (guiItemNode.getNodeType() != Node.ELEMENT_NODE)
                         continue;
-                    }
 
-                    if (guiItem != null) {
+                    if (guiItem != null)
                         throw new XMLLoadException("Binding has multiple inner tags, one expected");
-                    }
 
                     guiItem = GuiItem.loadItem(instance, (Element) guiItemNode, plugin);
                 }
@@ -373,17 +331,14 @@ public class PatternPane extends Pane implements Flippable, Rotatable {
             }
         }
 
-        if (pattern == null) {
+        if (pattern == null)
             throw new XMLLoadException("Pattern pane doesn't have a pattern");
-        }
 
-        if (!element.hasAttribute("length")) {
+        if (!element.hasAttribute("length"))
             throw new XMLLoadException("Pattern pane XML tag does not have the mandatory length attribute");
-        }
 
-        if (!element.hasAttribute("height")) {
+        if (!element.hasAttribute("height"))
             throw new XMLLoadException("Pattern pane XML tag does not have the mandatory height attribute");
-        }
 
         int length;
         int height;

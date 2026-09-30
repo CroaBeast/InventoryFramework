@@ -1,5 +1,7 @@
 package me.croabeast.inventory.pane;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.croabeast.inventory.gui.GuiComponent;
 import me.croabeast.inventory.gui.type.util.Gui;
 import me.croabeast.inventory.gui.GuiItem;
@@ -12,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -29,27 +30,34 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
      * A set of items inside this pane
      */
     @NotNull
+    @Getter
     private final List<GuiItem> items;
 
     /**
      * The orientation of the items in this pane
      */
     @NotNull
+    @Getter
+    @Setter
     private Orientation orientation;
 
     /**
      * The clockwise rotation of this pane in degrees
      */
+    @Getter
     private int rotation;
 
     /**
      * The amount of empty spots in between each item
      */
+    @Getter
+    @Setter
     private int gap;
 
     /**
      * Whether the items should be repeated to fill the entire pane
      */
+    @Setter
     private boolean repeat;
 
     /**
@@ -61,12 +69,14 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
      * The alignment of this pane
      */
     @NotNull
+    @Getter
     private Alignment alignment = Alignment.BEGIN;
 
     /**
      * The mask for this pane
      */
     @NotNull
+    @Getter
     private Mask mask;
 
     /**
@@ -75,7 +85,7 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
      * @param length the length of the pane
      * @param height the height of the pane
      * @param priority the priority of the pane
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public OutlinePane(int length, int height, @NotNull Priority priority) {
         super(length, height, priority);
@@ -101,14 +111,13 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
      *
      * @param length the length of the pane
      * @param height the height of the pane
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public OutlinePane(int length, int height) {
         this(length, height, Priority.NORMAL);
     }
 
     @NotNull
-    @Override
     public GuiItemContainer display() {
         GuiItemContainer container = new GuiItemContainer(getLength(), getHeight());
 
@@ -139,9 +148,8 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
             int enabled = 0;
 
             for (boolean bool : maskLine) {
-                if (bool) {
+                if (bool)
                     enabled++;
-                }
             }
 
             GuiItem[] items;
@@ -160,9 +168,8 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
 
                     itemIndex++;
 
-                    if (doesRepeat() && itemIndex >= getItems().size()) {
+                    if (doesRepeat() && itemIndex >= getItems().size())
                         itemIndex = 0;
-                    }
 
                     gapCount = getGap();
                 } else {
@@ -183,9 +190,8 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
             }
 
             for (int opposingVectorIndex = 0; opposingVectorIndex < maskLine.length; opposingVectorIndex++) {
-                if (!maskLine[opposingVectorIndex]) {
+                if (!maskLine[opposingVectorIndex])
                     continue;
-                }
 
                 if (index >= 0 && index < items.length && items[index] != null) {
                     int x, y;
@@ -200,13 +206,11 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
                         throw new IllegalStateException("Unknown orientation '" + getOrientation() + "'");
                     }
 
-                    if (flipHorizontally) {
+                    if (flipHorizontally)
                         x = getLength() - x - 1;
-                    }
 
-                    if (flipVertically) {
+                    if (flipVertically)
                         y = getHeight() - y - 1;
-                    }
 
                     Map.Entry<Integer, Integer> coordinates = GeometryUtil.processClockwiseRotation(x, y,
                             getLength(), getHeight(), rotation);
@@ -217,9 +221,8 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
                     if (x >= 0 && x < getLength() && y >= 0 && y < getHeight()) {
                         GuiItem item = items[index];
 
-                        if (item.isVisible()) {
+                        if (item.isVisible())
                             container.setItem(item, x, y);
-                        }
                     }
                 }
 
@@ -237,23 +240,20 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
         int y = slot.getY(getLength());
 
         //this isn't our item
-        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight()) {
+        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight())
             return false;
-        }
 
         callOnClick(event);
 
         ItemStack itemStack = event.getCurrentItem();
 
-        if (itemStack == null) {
+        if (itemStack == null)
             return false;
-        }
 
         GuiItem item = findMatchingItem(items, itemStack);
 
-        if (item == null) {
+        if (item == null)
             return false;
-        }
 
         item.callAction(event);
 
@@ -261,8 +261,6 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public OutlinePane copy() {
         OutlinePane outlinePane = new OutlinePane(getLength(), getHeight(), getPriority());
 
@@ -289,13 +287,11 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
 
     @Override
     public void setRotation(int rotation) {
-        if (length != height) {
+        if (length != height)
             throw new UnsupportedOperationException("length and height are different");
-        }
 
-        if (rotation % 90 != 0) {
+        if (rotation % 90 != 0)
             throw new IllegalArgumentException("rotation isn't divisible by 90");
-        }
 
         this.rotation = rotation % 360;
     }
@@ -323,7 +319,7 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
      * Removes the specified item from the pane
      *
      * @param item the item to remove
-     * @since 0.5.8
+     * @since 0.1.0
      */
     public void removeItem(@NotNull GuiItem item) {
         items.remove(item);
@@ -340,12 +336,11 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
      *
      * @param mask the mask to apply to this pane
      * @throws IllegalArgumentException when the mask's dimension is incorrect
-     * @since 0.5.16
+     * @since 0.1.0
      */
     public void applyMask(@NotNull Mask mask) {
-        if (length != mask.getLength() || height != mask.getHeight()) {
+        if (length != mask.getLength() || height != mask.getHeight())
             throw new IllegalArgumentException("Mask's dimension must be the same as the pane's dimension");
-        }
 
         this.mask = mask;
     }
@@ -368,7 +363,7 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
      * Aligns the pane in the way specified by the provided alignment.
      *
      * @param alignment the new alignment
-     * @since 0.10.1
+     * @since 0.1.0
      */
     public void align(@NotNull Alignment alignment) {
         this.alignment = alignment;
@@ -384,46 +379,9 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
         this.flipVertically = flipVertically;
     }
 
-    /**
-     * Sets the gap of the pane
-     *
-     * @param gap the new gap
-     */
-    public void setGap(int gap) {
-        this.gap = gap;
-    }
-
-    @Override
-    public void setOrientation(@NotNull Orientation orientation) {
-        this.orientation = orientation;
-    }
-
-    /**
-     * Sets whether this pane should repeat itself
-     *
-     * @param repeat whether the pane should repeat
-     */
-    public void setRepeat(boolean repeat) {
-        this.repeat = repeat;
-    }
-
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Collection<Pane> getPanes() {
         return new HashSet<>();
-    }
-
-    /**
-     * Gets the alignment set on this pane.
-     *
-     * @return the alignment
-     * @since 0.10.1
-     */
-    @NotNull
-    @Contract(pure = true)
-    public Alignment getAlignment() {
-        return this.alignment;
     }
 
     /**
@@ -431,64 +389,15 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
      *
      * @return true if this pane repeats, false otherwise
      */
-    @Contract(pure = true)
     public boolean doesRepeat() {
         return repeat;
     }
 
-    /**
-     * Gets the gap of the pane
-     *
-     * @return the gap
-     */
-    @Contract(pure = true)
-    public int getGap() {
-        return gap;
-    }
-
-    @NotNull
-    @Override
-    public List<GuiItem> getItems() {
-        return items;
-    }
-
-    /**
-     * Gets the mask applied to this pane.
-     *
-     * @return the mask
-     * @since 0.6.2
-     */
-    @NotNull
-    @Contract(pure = true)
-    public Mask getMask() {
-        return mask;
-    }
-
-    /**
-     * Gets the orientation of this outline pane
-     *
-     * @return the orientation
-     */
-    @NotNull
-    @Contract(pure = true)
-    @Override
-    public Orientation getOrientation() {
-        return orientation;
-    }
-
-    @Contract(pure = true)
-    @Override
-    public int getRotation() {
-        return rotation;
-    }
-
-    @Contract(pure = true)
     @Override
     public boolean isFlippedHorizontally() {
         return flipHorizontally;
     }
 
-    @Contract(pure = true)
     @Override
     public boolean isFlippedVertically() {
         return flipVertically;
@@ -501,17 +410,15 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
      * @param element the element
      * @param plugin the plugin that will be the owner of the created items
      * @return the outline pane
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
     public static OutlinePane load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
-        if (!element.hasAttribute("length")) {
+        if (!element.hasAttribute("length"))
             throw new XMLLoadException("Outline pane XML tag does not have the mandatory length attribute");
-        }
 
-        if (!element.hasAttribute("height")) {
+        if (!element.hasAttribute("height"))
             throw new XMLLoadException("Outline pane XML tag does not have the mandatory height attribute");
-        }
 
         int length;
         int height;
@@ -577,14 +484,14 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
     /**
      * An enum containing different alignments that can be used on the outline pane.
      *
-     * @since 0.10.1
+     * @since 0.1.0
      */
     public enum Alignment {
 
         /**
          * Aligns the items at the start of the pane.
          *
-         * @since 0.10.1
+         * @since 0.1.0
          */
         BEGIN,
 
@@ -592,7 +499,7 @@ public class OutlinePane extends Pane implements Flippable, Orientable, Rotatabl
          * Aligns the items in the center of the pane. If there is no exact center, this will preference the left (for a
          * horizontal orientation) or the top (for a vertical orientation).
          *
-         * @since 0.10.1
+         * @since 0.1.0
          */
         CENTER
     }

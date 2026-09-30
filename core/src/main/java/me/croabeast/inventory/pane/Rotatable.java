@@ -1,14 +1,13 @@
 package me.croabeast.inventory.pane;
 
 import me.croabeast.inventory.exception.XMLLoadException;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
 /**
  * An interface for panes that are rotatable
  *
- * @since 0.3.0
+ * @since 0.1.0
  */
 public interface Rotatable {
 
@@ -22,7 +21,7 @@ public interface Rotatable {
      * @param rotation the rotation of this pane, must be divisible by 90.
      * @throws UnsupportedOperationException when the length and height of the pane are not the same
      * @throws IllegalArgumentException when the rotation isn't a multiple of 90
-     * @since 0.3.0
+     * @since 0.1.0
      */
     void setRotation(int rotation);
 
@@ -31,9 +30,8 @@ public interface Rotatable {
      * rotation, 0 is returned.
      *
      * @return the rotation for this pane
-     * @since 0.3.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     int getRotation();
 
     /**
@@ -42,7 +40,7 @@ public interface Rotatable {
      *
      * @param rotatable the rotatable pane's elements to be applied
      * @param element the XML element for this pane
-     * @since 0.3.0
+     * @since 0.1.0
      */
     static void load(@NotNull Rotatable rotatable, @NotNull Element element) {
         if (element.hasAttribute("rotation")) {

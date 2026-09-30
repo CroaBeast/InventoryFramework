@@ -1,7 +1,6 @@
 package me.croabeast.inventory.pane;
 
 import me.croabeast.inventory.exception.XMLLoadException;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
@@ -10,7 +9,7 @@ import java.util.Locale;
 /**
  * An interface for panes that can have different orientations
  *
- * @since 0.3.0
+ * @since 0.1.0
  */
 public interface Orientable {
 
@@ -18,17 +17,16 @@ public interface Orientable {
      * Gets the orientation of this outline pane
      *
      * @return the orientation
-     * @since 0.3.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     Orientation getOrientation();
 
     /**
      * Sets the orientation of this outline pane
      *
      * @param orientation the new orientation
-     * @since 0.3.0
+     * @since 0.1.0
      */
     void setOrientation(@NotNull Orientation orientation);
 
@@ -38,7 +36,7 @@ public interface Orientable {
      *
      * @param orientable the orientable pane's elements to be applied
      * @param element the XML element for this pane
-     * @since 0.3.0
+     * @since 0.1.0
      */
     static void load(@NotNull Orientable orientable, @NotNull Element element) {
         if (element.hasAttribute("orientation")) {
@@ -54,21 +52,21 @@ public interface Orientable {
     /**
      * An orientation for outline panes
      *
-     * @since 0.3.0
+     * @since 0.1.0
      */
     enum Orientation {
 
         /**
          * A horizontal orientation, will outline every item from the top-left corner going to the right and down
          *
-         * @since 0.3.0
+         * @since 0.1.0
          */
         HORIZONTAL,
 
         /**
          * A vertical orientation, will outline every item from the top-left corner going down and to the right
          *
-         * @since 0.3.0
+         * @since 0.1.0
          */
         VERTICAL
     }

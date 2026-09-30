@@ -1,5 +1,6 @@
 package me.croabeast.inventory.pane.component;
 
+import lombok.Getter;
 import me.croabeast.inventory.gui.GuiComponent;
 import me.croabeast.inventory.gui.type.util.Gui;
 import me.croabeast.inventory.gui.GuiItem;
@@ -13,7 +14,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 /**
  * A button that toggles between an enabled and disabled state.
  *
- * @since 0.5.0
+ * @since 0.1.0
  */
 public class ToggleButton extends Pane {
 
@@ -36,6 +36,7 @@ public class ToggleButton extends Pane {
     /**
      * Whether the button is enabled or disabled
      */
+    @Getter
     private boolean enabled;
 
     /**
@@ -51,7 +52,7 @@ public class ToggleButton extends Pane {
      * @param priority the priority
      * @param enabled whether the button should start in its enabled or disabled state
      * @param plugin the plugin that will be the owner of this button's items
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public ToggleButton(int length, int height, @NotNull Priority priority, boolean enabled, @NotNull Plugin plugin) {
         super(length, height, priority);
@@ -74,7 +75,7 @@ public class ToggleButton extends Pane {
      * @param height the height
      * @param priority the priority
      * @param plugin the plugin that will be the owner of this button's items
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public ToggleButton(int length, int height, @NotNull Priority priority, @NotNull Plugin plugin) {
         this(length, height, priority, false, plugin);
@@ -87,7 +88,7 @@ public class ToggleButton extends Pane {
      * @param height the height
      * @param enabled whether the button should start in its enabled or disabled state
      * @param plugin the plugin that will be the owner of this button's items
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public ToggleButton(int length, int height, boolean enabled, @NotNull Plugin plugin) {
         this(length, height, Priority.NORMAL, enabled, plugin);
@@ -99,7 +100,7 @@ public class ToggleButton extends Pane {
      * @param length the length
      * @param height the height
      * @param plugin the plugin that will be the owner of this button's items
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public ToggleButton(int length, int height, @NotNull Plugin plugin) {
         this(length, height, false, plugin);
@@ -112,7 +113,7 @@ public class ToggleButton extends Pane {
      * @param height the height
      * @param priority the priority
      * @param enabled whether the button should start in its enabled or disabled state
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public ToggleButton(int length, int height, @NotNull Priority priority, boolean enabled) {
         this(length, height, priority, enabled, JavaPlugin.getProvidingPlugin(ToggleButton.class));
@@ -124,7 +125,7 @@ public class ToggleButton extends Pane {
      * @param length the length
      * @param height the height
      * @param priority the priority
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public ToggleButton(int length, int height, @NotNull Priority priority) {
         this(length, height, priority, false);
@@ -136,7 +137,7 @@ public class ToggleButton extends Pane {
      * @param length the length
      * @param height the height
      * @param enabled whether the button should start in its enabled or disabled state
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public ToggleButton(int length, int height, boolean enabled) {
         this(length, height, Priority.NORMAL, enabled);
@@ -147,14 +148,13 @@ public class ToggleButton extends Pane {
      *
      * @param length the length
      * @param height the height
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public ToggleButton(int length, int height) {
         this(length, height, false);
     }
 
     @NotNull
-    @Override
     public GuiItemContainer display() {
         if (enabled) {
             return this.enabledPane.display();
@@ -170,13 +170,11 @@ public class ToggleButton extends Pane {
         int y = slot.getY(getLength());
 
         //this isn't our item
-        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight()) {
+        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight())
             return false;
-        }
 
-        if (this.allowToggle) {
+        if (this.allowToggle)
             toggle();
-        }
 
         callOnClick(event);
 
@@ -198,8 +196,6 @@ public class ToggleButton extends Pane {
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public ToggleButton copy() {
         ToggleButton toggleButton = new ToggleButton(getLength(), getHeight(), getPriority(), isEnabled());
 
@@ -236,7 +232,7 @@ public class ToggleButton extends Pane {
      * Sets the item to use when the button is set to disabled
      *
      * @param item the disabled item
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public void setDisabledItem(@NotNull GuiItem item) {
         disabledPane.clear();
@@ -248,7 +244,7 @@ public class ToggleButton extends Pane {
      * Sets the item to use when the button is set to enabled
      *
      * @param item the enabled item
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public void setEnabledItem(@NotNull GuiItem item) {
         enabledPane.clear();
@@ -257,13 +253,11 @@ public class ToggleButton extends Pane {
     }
 
     @NotNull
-    @Override
     public Collection<GuiItem> getItems() {
         return getPanes().stream().flatMap(pane -> pane.getItems().stream()).collect(Collectors.toSet());
     }
 
     @NotNull
-    @Override
     public Collection<Pane> getPanes() {
         return Stream.of(enabledPane, disabledPane).collect(Collectors.toSet());
     }
@@ -273,27 +267,16 @@ public class ToggleButton extends Pane {
      * prevent toggling the button programmatically with methods such as {@link #toggle()}.
      *
      * @param allowToggle whether this button can be toggled
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public void allowToggle(boolean allowToggle) {
         this.allowToggle = allowToggle;
     }
 
     /**
-     * Gets whether this toggle button is currently enabled or disabled.
-     *
-     * @return whether the button is enabled or disabled
-     * @since 0.9.6
-     */
-    @Contract(pure = true)
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
      * Toggles between the enabled and disabled states
      *
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public void toggle() {
         enabled = !enabled;
@@ -309,18 +292,15 @@ public class ToggleButton extends Pane {
      * @param element the element
      * @param plugin the plugin that will be the owner of the underlying items
      * @return the toggle button
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public static ToggleButton load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
-        if (!element.hasAttribute("length")) {
+        if (!element.hasAttribute("length"))
             throw new XMLLoadException("Toggle button XML tag does not have the mandatory length attribute");
-        }
 
-        if (!element.hasAttribute("height")) {
+        if (!element.hasAttribute("height"))
             throw new XMLLoadException("Toggle button XML tag does not have the mandatory height attribute");
-        }
 
         int length;
         int height;

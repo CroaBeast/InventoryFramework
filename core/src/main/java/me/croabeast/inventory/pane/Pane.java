@@ -1,5 +1,7 @@
 package me.croabeast.inventory.pane;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.croabeast.inventory.gui.GuiComponent;
 import me.croabeast.inventory.gui.type.util.Gui;
 import me.croabeast.inventory.gui.GuiItem;
@@ -13,12 +15,10 @@ import me.croabeast.inventory.util.XMLUtil;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
-import java.lang.UnsupportedOperationException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -37,18 +37,23 @@ public abstract class Pane {
     /**
      * The visibility state of the pane
      */
+    @Getter
+    @Setter
     private boolean visible;
 
     /**
      * The priority of the pane, determines when it will be rendered
      */
     @NotNull
+    @Getter
+    @Setter
     private Priority priority;
 
     /**
      * The consumer that will be called once a players clicks in this pane
      */
     @Nullable
+    @Setter
     protected Consumer<? super InventoryClickEvent> onClick;
 
     /**
@@ -62,12 +67,11 @@ public abstract class Pane {
      * @param length the length of the pane
      * @param height the height of the pane
      * @param priority the priority of the pane
-     * @since 0.12.0
+     * @since 0.1.0
      */
     protected Pane(int length, int height, @NotNull Priority priority) {
-        if (length == 0 || height == 0) {
+        if (length == 0 || height == 0)
             throw new IllegalArgumentException("Length and height of pane must be greater than zero");
-        }
 
         this.length = length;
         this.height = height;
@@ -85,9 +89,8 @@ public abstract class Pane {
      * @param height the height of the pane
      */
     protected Pane(int length, int height) {
-        if (length == 0 || height == 0) {
+        if (length == 0 || height == 0)
             throw new IllegalArgumentException("Length and height of pane must be greater than zero");
-        }
 
         this.length = length;
         this.height = height;
@@ -103,10 +106,9 @@ public abstract class Pane {
 	 * panes and/or items will be copied as well. The returned pane will never be reference equal to the current pane.
 	 *
 	 * @return a copy of this pane
-	 * @since 0.6.2
+	 * @since 0.1.0
 	 */
 	@NotNull
-	@Contract(pure = true)
     public Pane copy() {
 		throw new UnsupportedOperationException("The implementing pane hasn't overridden the copy method");
 	}
@@ -134,7 +136,6 @@ public abstract class Pane {
      *
      * @return the length
      */
-    @Contract(pure = true)
     public int getLength() {
         return length;
     }
@@ -144,7 +145,6 @@ public abstract class Pane {
      *
      * @return the height
      */
-    @Contract(pure = true)
     public int getHeight() {
         return height;
     }
@@ -153,10 +153,9 @@ public abstract class Pane {
      * Gets the {@link UUID} associated with this pane.
      *
      * @return the uuid
-     * @since 0.7.1
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public UUID getUUID() {
         return uuid;
     }
@@ -165,29 +164,10 @@ public abstract class Pane {
      * Returns a {@link GuiItemContainer} with all the items that should be displayed of this pane.
      *
      * @return a container containing all the items to be displayed
-     * @since 0.12.0
+     * @since 0.1.0
      */
     @NotNull
     public abstract GuiItemContainer display();
-
-    /**
-     * Returns the pane's visibility state
-     *
-     * @return the pane's visibility
-     */
-    @Contract(pure = true)
-    public boolean isVisible() {
-        return visible;
-    }
-
-    /**
-     * Sets whether this pane is visible or not
-     *
-     * @param visible the pane's visibility
-     */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
 
     /**
      * Called whenever there is being clicked on this pane
@@ -200,15 +180,6 @@ public abstract class Pane {
      */
     public abstract boolean click(@NotNull Gui gui, @NotNull GuiComponent guiComponent,
                                   @NotNull InventoryClickEvent event, @NotNull Slot slot);
-
-    /**
-     * Sets the priority of this pane
-     *
-     * @param priority the priority
-     */
-    public void setPriority(@NotNull Priority priority) {
-        this.priority = priority;
-    }
 
     public static void load(@NotNull Pane pane, @NotNull Object instance, @NotNull Element element) {
         if (element.hasAttribute("priority")) {
@@ -246,9 +217,8 @@ public abstract class Pane {
                 found = true;
             }
 
-            if (!found) {
+            if (!found)
                 throw new XMLLoadException("Specified method could not be found");
-            }
         }
     }
 
@@ -261,15 +231,13 @@ public abstract class Pane {
      * @param guiItem the gui item to check
      * @param item the item which the gui item should be checked against
      * @return true if the {@link GuiItem} matches the {@link ItemStack}, false otherwise
-     * @since 0.10.14
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     protected static boolean matchesItem(@NotNull GuiItem guiItem, @NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
 
-        if (meta == null) {
+        if (meta == null)
             return false;
-        }
 
         return guiItem.getUUID().equals(meta.getPersistentDataContainer().get(guiItem.getKey(), UUIDTagType.INSTANCE));
     }
@@ -287,28 +255,16 @@ public abstract class Pane {
      * @param item the item for which an {@link GuiItem} should be found
      * @param <T> a type of GuiItem, which will be used in the provided collection and as return type
      * @return the found type of {@link GuiItem} or null if none was found
-     * @since 0.5.14
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     protected static <T extends GuiItem> T findMatchingItem(@NotNull Collection<T> items, @NotNull ItemStack item) {
         for (T guiItem : items) {
-            if (matchesItem(guiItem, item)) {
+            if (matchesItem(guiItem, item))
                 return guiItem;
-            }
         }
 
         return null;
-    }
-
-    /**
-     * Returns the priority of the pane
-     *
-     * @return the priority
-     */
-    @NotNull
-    public Priority getPriority() {
-        return priority;
     }
 
     /**
@@ -319,7 +275,6 @@ public abstract class Pane {
      * @return all items
      */
     @NotNull
-    @Contract(pure = true)
     public abstract Collection<GuiItem> getItems();
 
     /**
@@ -330,37 +285,25 @@ public abstract class Pane {
      * @return all panes
      */
     @NotNull
-    @Contract(pure = true)
     public abstract Collection<Pane> getPanes();
 
     /**
      * Clears the entire pane of any items/panes. Underlying panes will not be cleared.
      *
-     * @since 0.3.2
+     * @since 0.1.0
      */
     public abstract void clear();
 
-    /**
-     * Set the consumer that should be called whenever this pane is clicked in.
-     *
-     * @param onClick the consumer that gets called
-     * @since 0.4.0
-     */
-    public void setOnClick(@Nullable Consumer<? super InventoryClickEvent> onClick) {
-        this.onClick = onClick;
-    }
-    
     /**
      * Calls the consumer (if it's not null) that was specified using {@link #setOnClick(Consumer)},
      * so the consumer that should be called whenever this pane is clicked in.
      *
      * @param event the event to handle
-     * @since 0.6.0
+     * @since 0.1.0
      */
     protected void callOnClick(@NotNull InventoryClickEvent event) {
-        if (onClick == null) {
+        if (onClick == null)
             return;
-        }
 
 
         try {
@@ -368,7 +311,7 @@ public abstract class Pane {
         } catch (Throwable t) {
             throw new RuntimeException(
                     "Exception while handling click event in inventory '"
-                    + InventoryViewUtil.getInstance().getTitle(event.getView()) + "', slot=" + event.getSlot() +
+                    + InventoryViewUtil.getTitle(event.getView()) + "', slot=" + event.getSlot() +
                     ", for " + getClass().getSimpleName() + ", length=" + length + ", height=" + height,
                     t
             );
@@ -384,29 +327,24 @@ public abstract class Pane {
      * @param height the height of the pane
      * @param item the item of which the border is made
      * @return the created pane which displays a border
-     * @since 0.12.0
+     * @since 0.1.0
      * @throws IllegalArgumentException if length or height is negative
      */
     @NotNull
-    @Contract(pure = true)
     public static Pane createBorder(int length, int height, @NotNull GuiItem item) {
-        if (length < 0) {
+        if (length < 0)
             throw new IllegalArgumentException("Length should be non-negative");
-        }
 
-        if (height < 0) {
+        if (height < 0)
             throw new IllegalArgumentException("Height should be non-negative");
-        }
 
         String[] mask = new String[height];
 
-        if (height > 0) {
+        if (height > 0)
             mask[0] = createLine(length);
-        }
 
-        if (height > 1) {
+        if (height > 1)
             mask[height - 1] = createLine(length);
-        }
 
         for (int yIndex = 1; yIndex < height - 1; yIndex++) {
             StringBuilder builder = new StringBuilder("1");
@@ -432,15 +370,13 @@ public abstract class Pane {
      *
      * @param length the length of the string
      * @return the string containing '1's
-     * @since 0.10.7
+     * @since 0.1.0
      * @throws IllegalArgumentException if length is negative
      */
     @NotNull
-    @Contract(pure = true)
     private static String createLine(int length) {
-        if (length < 0) {
+        if (length < 0)
             throw new IllegalArgumentException("Length should be non-negative");
-        }
 
         StringBuilder builder = new StringBuilder();
 
@@ -522,9 +458,8 @@ public abstract class Pane {
          *
          * @param priority the priority to compare against
          * @return true if this priority is less than the specified priority, false otherwise
-         * @since 0.8.0
+         * @since 0.1.0
          */
-        @Contract(pure = true)
         public abstract boolean isLessThan(@NotNull Priority priority);
 
         /**
@@ -532,9 +467,8 @@ public abstract class Pane {
          *
          * @param priority the priority to compare against
          * @return true if this priority is greater than the specified priority, false otherwise
-         * @since 0.8.0
+         * @since 0.1.0
          */
-        @Contract(pure = true)
         public boolean isGreaterThan(@NotNull Priority priority) {
             return !isLessThan(priority) && this != priority;
         }

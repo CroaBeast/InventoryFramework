@@ -10,14 +10,13 @@ import me.croabeast.inventory.pane.component.util.VariableBar;
 import me.croabeast.inventory.pane.util.Slot;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
 /**
  * A percentage bar for a graphical interface into what amount of a whole is set.
  *
- * @since 0.5.0
+ * @since 0.1.0
  */
 public class PercentageBar extends VariableBar {
 
@@ -28,7 +27,7 @@ public class PercentageBar extends VariableBar {
      * @param height the height of the bar
      * @param priority the priority of the bar
      * @param plugin the plugin that will be the owner for this percentage bar's items
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public PercentageBar(int length, int height, @NotNull Priority priority, @NotNull Plugin plugin) {
         super(length, height, priority, plugin);
@@ -40,7 +39,7 @@ public class PercentageBar extends VariableBar {
      * @param length the length of the bar
      * @param height the height of the bar
      * @param plugin the plugin that will be the owner for this percentage bar's items
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public PercentageBar(int length, int height, @NotNull Plugin plugin) {
         super(length, height, plugin);
@@ -52,7 +51,7 @@ public class PercentageBar extends VariableBar {
      * @param length the length of the bar
      * @param height the height of the bar
      * @param priority the priority of the bar
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public PercentageBar(int length, int height, @NotNull Priority priority) {
         super(length, height, priority);
@@ -63,7 +62,7 @@ public class PercentageBar extends VariableBar {
      *
      * @param length the length of the bar
      * @param height the height of the bar
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public PercentageBar(int length, int height) {
         super(length, height);
@@ -75,17 +74,15 @@ public class PercentageBar extends VariableBar {
         int x = slot.getX(getLength());
         int y = slot.getY(getLength());
 
-        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight()) {
+        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight())
             return false;
-        }
 
         callOnClick(event);
 
         event.setCancelled(true);
 
-        if (this.fillPane.click(gui, guiComponent, event, slot)) {
+        if (this.fillPane.click(gui, guiComponent, event, slot))
             return true;
-        }
 
         return this.backgroundPane.click(gui, guiComponent, event, slot);
     }
@@ -96,7 +93,7 @@ public class PercentageBar extends VariableBar {
      *
      * @param percentage the new percentage.
      * @throws IllegalArgumentException when the percentage is out of range
-     * @since 0.5.0
+     * @since 0.1.0
      * @see VariableBar#setValue(float) the implementation
      */
     public void setPercentage(float percentage) {
@@ -104,8 +101,6 @@ public class PercentageBar extends VariableBar {
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public PercentageBar copy() {
         PercentageBar percentageBar = new PercentageBar(getLength(), getHeight(), getPriority());
 
@@ -118,7 +113,7 @@ public class PercentageBar extends VariableBar {
      * Gets the percentage as a float in between (0,1) this bar is currently set at.
      *
      * @return the percentage
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public float getPercentage() {
         return value;
@@ -131,18 +126,15 @@ public class PercentageBar extends VariableBar {
      * @param element the element
      * @param plugin the plugin that will be the owner of the underlying items
      * @return the percentage bar
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public static PercentageBar load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
-        if (!element.hasAttribute("length")) {
+        if (!element.hasAttribute("length"))
             throw new XMLLoadException("Percentage bar XML tag does not have the mandatory length attribute");
-        }
 
-        if (!element.hasAttribute("height")) {
+        if (!element.hasAttribute("height"))
             throw new XMLLoadException("Percentage bar XML tag does not have the mandatory height attribute");
-        }
 
         int length;
         int height;
@@ -165,9 +157,8 @@ public class PercentageBar extends VariableBar {
         Orientable.load(percentageBar, element);
         Flippable.load(percentageBar, element);
 
-        if (element.hasAttribute("populate")) {
+        if (element.hasAttribute("populate"))
             return percentageBar;
-        }
 
         if (element.hasAttribute("percentage")) {
             try {

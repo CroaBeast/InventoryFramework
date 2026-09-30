@@ -9,7 +9,6 @@ import me.croabeast.inventory.pane.util.GuiItemContainer;
 import me.croabeast.inventory.pane.util.Slot;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * A button for cycling between different options
  *
- * @since 0.5.0
+ * @since 0.1.0
  */
 public class CycleButton extends Pane {
 
@@ -41,7 +40,7 @@ public class CycleButton extends Pane {
      * @param length the length of the button
      * @param height the height of the button
      * @param priority the priority of the button
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public CycleButton(int length, int height, @NotNull Priority priority) {
         super(length, height, priority);
@@ -52,7 +51,7 @@ public class CycleButton extends Pane {
      *
      * @param length the length of the button
      * @param height the height of the button
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public CycleButton(int length, int height) {
         super(length, height);
@@ -65,17 +64,15 @@ public class CycleButton extends Pane {
         int y = slot.getY(getLength());
 
         //this isn't our item
-        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight()) {
+        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight())
             return false;
-        }
 
         int previousPosition = position;
 
         position++;
 
-        if (position == panes.size()) {
+        if (position == panes.size())
             position = 0;
-        }
 
         callOnClick(event);
 
@@ -88,7 +85,6 @@ public class CycleButton extends Pane {
     }
 
     @NotNull
-    @Override
     public GuiItemContainer display() {
         GuiItemContainer container = new GuiItemContainer(getLength(), getHeight());
 
@@ -98,8 +94,6 @@ public class CycleButton extends Pane {
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public CycleButton copy() {
         CycleButton cycleButton = new CycleButton(getLength(), getHeight(), getPriority());
 
@@ -118,7 +112,6 @@ public class CycleButton extends Pane {
     }
 
     @NotNull
-    @Override
     public Collection<GuiItem> getItems() {
         return getPanes().stream().flatMap(pane -> pane.getItems().stream()).collect(Collectors.toList());
     }
@@ -128,7 +121,7 @@ public class CycleButton extends Pane {
      *
      * @param index the index to insert the pane at
      * @param pane the pane to add
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public void addPane(int index, @NotNull Pane pane) {
         panes.add(index, pane);
@@ -138,7 +131,7 @@ public class CycleButton extends Pane {
      * Adds a pane to the current list of options
      *
      * @param pane the pane to add
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public void addPane(@NotNull Pane pane) {
         panes.add(pane);
@@ -150,7 +143,6 @@ public class CycleButton extends Pane {
     }
 
     @NotNull
-    @Override
     public Collection<Pane> getPanes() {
         return panes;
     }
@@ -158,7 +150,7 @@ public class CycleButton extends Pane {
     /**
      * Cycles through one option, making it go to the next one
      *
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public void cycle() {
         position++;
@@ -171,17 +163,15 @@ public class CycleButton extends Pane {
      * @param element the element
      * @param plugin the plugin that will be the owner of the underlying items
      * @return the cycle button
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
     public static CycleButton load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
-        if (!element.hasAttribute("length")) {
+        if (!element.hasAttribute("length"))
             throw new XMLLoadException("Cycle button XML tag does not have the mandatory length attribute");
-        }
 
-        if (!element.hasAttribute("height")) {
+        if (!element.hasAttribute("height"))
             throw new XMLLoadException("Cycle button XML tag does not have the mandatory height attribute");
-        }
 
         int length;
         int height;
@@ -202,18 +192,16 @@ public class CycleButton extends Pane {
 
         Pane.load(cycleButton, instance, element);
 
-        if (element.hasAttribute("populate")) {
+        if (element.hasAttribute("populate"))
             return cycleButton;
-        }
 
         NodeList childNodes = element.getChildNodes();
 
         for (int j = 0; j < childNodes.getLength(); j++) {
             Node pane = childNodes.item(j);
 
-            if (pane.getNodeType() != Node.ELEMENT_NODE) {
+            if (pane.getNodeType() != Node.ELEMENT_NODE)
                 continue;
-            }
 
             cycleButton.addPane(Gui.loadPane(instance, pane, plugin));
         }

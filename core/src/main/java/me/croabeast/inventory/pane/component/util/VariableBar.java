@@ -1,5 +1,6 @@
 package me.croabeast.inventory.pane.component.util;
 
+import lombok.Getter;
 import me.croabeast.inventory.gui.GuiItem;
 import me.croabeast.inventory.pane.Flippable;
 import me.croabeast.inventory.pane.Orientable;
@@ -19,7 +20,7 @@ import java.util.stream.Stream;
 /**
  * A variable bar for UI elements that require some sort of bar
  *
- * @since 0.5.0
+ * @since 0.1.0
  */
 public abstract class VariableBar extends Pane implements Orientable, Flippable  {
 
@@ -38,6 +39,7 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
      * The orientation of the slider
      */
     @NotNull
+    @Getter
     protected Orientation orientation;
 
     /**
@@ -52,7 +54,7 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
      * @param height the height of the bar
      * @param plugin the plugin that will be the owner for this variable bar's items
      * @see #VariableBar(int, int)
-     * @since 0.10.8
+     * @since 0.1.0
      */
     protected VariableBar(int length, int height, @NotNull Plugin plugin) {
         this(length, height, Priority.NORMAL, plugin);
@@ -65,7 +67,7 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
      * @param height the height of the bar
      * @param priority the priority of the bar
      * @param plugin the plugin that will be the owner for this variable bar's items
-     * @since 0.12.0
+     * @since 0.1.0
      */
     protected VariableBar(int length, int height, @NotNull Priority priority, @NotNull Plugin plugin) {
         super(length, height);
@@ -99,7 +101,7 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
      * @param length the length of the bar
      * @param height the height of the bar
      * @param priority the priority of the bar
-     * @since 0.12.0
+     * @since 0.1.0
      */
     protected VariableBar(int length, int height, @NotNull Priority priority) {
         this(length, height, priority, JavaPlugin.getProvidingPlugin(VariableBar.class));
@@ -111,12 +113,11 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
      *
      * @param value the new value.
      * @throws IllegalArgumentException when the value is out of range
-     * @since 0.9.5
+     * @since 0.1.0
      */
     protected void setValue(float value) {
-        if (value < 0 || value > 1) {
+        if (value < 0 || value > 1)
             throw new IllegalArgumentException("Value is out of range (0,1)");
-        }
 
         this.value = value;
 
@@ -126,18 +127,16 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
 
             this.fillPane.setVisible(positiveLength);
 
-            if (positiveLength) {
+            if (positiveLength)
                 this.fillPane.setLength(length);
-            }
         } else if (orientation == Orientation.VERTICAL) {
             int height = Math.round(getHeight() * value);
             boolean positiveHeight = height != 0;
 
             this.fillPane.setVisible(positiveHeight);
 
-            if (positiveHeight) {
+            if (positiveHeight)
                 this.fillPane.setHeight(height);
-            }
         } else {
             throw new UnsupportedOperationException("Unknown orientation");
         }
@@ -151,9 +150,8 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
 
         this.fillPane.setVisible(isPositive);
 
-        if (isPositive) {
+        if (isPositive)
             this.fillPane.setLength(length);
-        }
 
         this.backgroundPane.setLength(length);
     }
@@ -166,9 +164,8 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
 
         this.fillPane.setVisible(isPositive);
 
-        if (isPositive) {
+        if (isPositive)
             this.fillPane.setHeight(height);
-        }
 
         this.backgroundPane.setHeight(height);
     }
@@ -178,7 +175,7 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
      * be modified.
      *
      * @param copy the copy of the variable bar
-     * @since 0.6.2
+     * @since 0.1.0
      */
     protected void applyContents(@NotNull VariableBar copy) {
         copy.length = length;
@@ -209,17 +206,14 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
     }
 
     @NotNull
-    @Override
     public GuiItemContainer display() {
         GuiItemContainer container = new GuiItemContainer(getLength(), getHeight());
 
-        if (this.backgroundPane.isVisible()) {
+        if (this.backgroundPane.isVisible())
             container.apply(this.backgroundPane.display(), 0, 0);
-        }
 
-        if (this.fillPane.isVisible()) {
+        if (this.fillPane.isVisible())
             container.apply(this.fillPane.display(), 0, 0);
-        }
 
         return container;
     }
@@ -228,7 +222,7 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
      * Sets the fill item (foreground)
      *
      * @param item the new item
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public void setFillItem(@NotNull GuiItem item) {
         fillPane.clear();
@@ -240,7 +234,7 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
      * Sets the background item
      *
      * @param item the new item
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public void setBackgroundItem(@NotNull GuiItem item) {
         backgroundPane.clear();
@@ -249,13 +243,11 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
     }
 
     @NotNull
-    @Override
     public Collection<GuiItem> getItems() {
         return getPanes().stream().flatMap(pane -> pane.getItems().stream()).collect(Collectors.toSet());
     }
 
     @NotNull
-    @Override
     public Collection<Pane> getPanes() {
         return Stream.of(this.fillPane, this.backgroundPane).collect(Collectors.toSet());
     }
@@ -274,12 +266,6 @@ public abstract class VariableBar extends Pane implements Orientable, Flippable 
 
         this.fillPane.flipVertically(flipVertically);
         this.backgroundPane.flipVertically(flipVertically);
-    }
-
-    @NotNull
-    @Override
-    public Orientation getOrientation() {
-        return orientation;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package me.croabeast.inventory.pane.util;
 
 import me.croabeast.inventory.gui.GuiItem;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -11,7 +10,7 @@ import java.util.Arrays;
 /**
  * A container for storing a grid of {@link GuiItem}s.
  *
- * @since 0.12.0
+ * @since 0.1.0
  */
 public class GuiItemContainer {
 
@@ -32,7 +31,7 @@ public class GuiItemContainer {
      *
      * @param length the length of the container
      * @param height the height of the container
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public GuiItemContainer(@Range(from = 0, to = Integer.MAX_VALUE) int length,
                             @Range(from = 0, to = Integer.MAX_VALUE) int height) {
@@ -53,14 +52,12 @@ public class GuiItemContainer {
      * @param from the starting index of the range
      * @param end the ending index of the range
      * @return the new, shrunk container
-     * @since 0.12.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(value = "_, _ -> new", pure = true)
     public GuiItemContainer excludeRows(@Range(from = 0, to = Integer.MAX_VALUE) int from, int end) {
-        if (end >= getHeight()) {
+        if (end >= getHeight())
             throw new IllegalArgumentException("Specified range includes non-existent rows");
-        }
 
         GuiItemContainer newGuiContainer = new GuiItemContainer(getLength(), getHeight() - (end - from + 1));
 
@@ -70,9 +67,8 @@ public class GuiItemContainer {
             for (int y = 0; y < getHeight(); y++) {
                 GuiItem item = getItem(x, y);
 
-                if (y >= from && y <= end) {
+                if (y >= from && y <= end)
                     continue;
-                }
 
                 newGuiContainer.items[x][newY] = item;
                 newY++;
@@ -87,10 +83,9 @@ public class GuiItemContainer {
      * is guaranteed to not reference equals this container.
      *
      * @return the new container
-     * @since 0.12.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(value = "-> new", pure = true)
     public GuiItemContainer copy() {
         GuiItemContainer copy = new GuiItemContainer(getLength(), getHeight());
 
@@ -98,9 +93,8 @@ public class GuiItemContainer {
             for (int y = 0; y < getHeight(); y++) {
                 GuiItem item = getItem(x, y);
 
-                if (item == null) {
+                if (item == null)
                     continue;
-                }
 
                 copy.items[x][y] = item.copy();
             }
@@ -113,15 +107,13 @@ public class GuiItemContainer {
      * Checks whether this container has at least one item. If it does, true is returned; false otherwise.
      *
      * @return {@literal true} if this has an item, {@literal false} otherwise
-     * @since 0.12.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public boolean hasItem() {
         for (int x = 0; x < getLength(); x++) {
             for (int y = 0; y < getHeight(); y++) {
-                if (hasItem(x, y)) {
+                if (hasItem(x, y))
                     return true;
-                }
             }
         }
 
@@ -136,7 +128,7 @@ public class GuiItemContainer {
      * @param guiItem the item to place in this container
      * @param x the x coordinate of the item
      * @param y the y coordinate of the item
-     * @since 0.12.0
+     * @since 0.1.0
      * @throws IllegalArgumentException when the coordinates are out of bounds
      */
     public void setItem(@NotNull GuiItem guiItem, @Range(from = 0, to = Integer.MAX_VALUE) int x,
@@ -159,11 +151,10 @@ public class GuiItemContainer {
      * @param x the x coordinate
      * @param y the y coordinate
      * @return the item or null
-     * @since 0.12.0
+     * @since 0.1.0
      * @throws IllegalArgumentException when the coordinates are out of bounds
      */
     @Nullable
-    @Contract(pure = true)
     public GuiItem getItem(@Range(from = 0, to = Integer.MAX_VALUE) int x,
                            @Range(from = 0, to = Integer.MAX_VALUE) int y) {
         if (!isInBounds(x, y)) {
@@ -177,7 +168,7 @@ public class GuiItemContainer {
     /**
      * Clears the items of this container.
      *
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public void clearItems() {
         for (GuiItem[] items : this.items) {
@@ -192,10 +183,9 @@ public class GuiItemContainer {
      * @param x the x coordinate
      * @param y the y coordinate
      * @return {@literal true} if an item exists at the given coordinates, {@literal false} otherwise
-     * @since 0.12.0
+     * @since 0.1.0
      * @throws IllegalArgumentException when the coordinates are out of bounds
      */
-    @Contract(pure = true)
     public boolean hasItem(@Range(from = 0, to = Integer.MAX_VALUE) int x,
                            @Range(from = 0, to = Integer.MAX_VALUE) int y) {
         return getItem(x, y) != null;
@@ -205,9 +195,8 @@ public class GuiItemContainer {
      * Gets the height of this container.
      *
      * @return the height
-     * @since 0.12.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     @Range(from = 0, to = Integer.MAX_VALUE)
     public int getHeight() {
         return this.height;
@@ -217,9 +206,8 @@ public class GuiItemContainer {
      * Gets the length of this container.
      *
      * @return the length
-     * @since 0.12.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     @Range(from = 0, to = Integer.MAX_VALUE)
     public int getLength() {
         return this.length;
@@ -235,21 +223,19 @@ public class GuiItemContainer {
      * @param container the container to obtain items from
      * @param startX the starting x coordinate
      * @param startY the starting y coordinate
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public void apply(@NotNull GuiItemContainer container, @Range(from = 0, to = Integer.MAX_VALUE) int startX,
                       @Range(from = 0, to = Integer.MAX_VALUE) int startY) {
         for (int x = 0; x < container.getLength(); x++) {
             for (int y = 0; y < container.getHeight(); y++) {
-                if (!isInBounds(x + startX, y + startY)) {
+                if (!isInBounds(x + startX, y + startY))
                     continue;
-                }
 
                 GuiItem item = container.getItem(x, y);
 
-                if (item == null) {
+                if (item == null)
                     continue;
-                }
 
                 this.items[x + startX][y + startY] = item;
             }
@@ -263,9 +249,8 @@ public class GuiItemContainer {
      * @param x the x coordinate
      * @param y the y coordinate
      * @return {@literal true} if the coordinates are in bounds, {@literal false} otherwise
-     * @since 0.12.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     private boolean isInBounds(@Range(from = 0, to = Integer.MAX_VALUE) int x,
                                @Range(from = 0, to = Integer.MAX_VALUE) int y) {
         boolean xBounds = isInBounds(0, getLength() - 1, x);
@@ -281,9 +266,8 @@ public class GuiItemContainer {
      * @param upperBound the upper bound of the range
      * @param value the value to check
      * @return {@literal true} if the value is within the bounds, {@literal false} otherwise
-     * @since 0.12.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     private boolean isInBounds(int lowerBound, int upperBound, int value) {
         return lowerBound <= value && value <= upperBound;
     }

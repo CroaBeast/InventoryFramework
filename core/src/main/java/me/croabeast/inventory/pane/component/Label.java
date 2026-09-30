@@ -1,5 +1,6 @@
 package me.croabeast.inventory.pane.component;
 
+import lombok.Getter;
 import me.croabeast.inventory.gui.GuiComponent;
 import me.croabeast.inventory.gui.type.util.Gui;
 import me.croabeast.inventory.gui.GuiItem;
@@ -12,7 +13,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
@@ -23,7 +23,7 @@ import java.util.function.BiFunction;
 /**
  * A label for displaying text.
  *
- * @since 0.5.0
+ * @since 0.1.0
  */
 public class Label extends Pane {
 
@@ -31,12 +31,14 @@ public class Label extends Pane {
      * The character set used for displaying the characters in this label
      */
     @NotNull
+    @Getter
     private final Font font;
 
     /**
      * The text to be displayed
      */
     @NotNull
+    @Getter
     private String text;
 
     /**
@@ -59,7 +61,7 @@ public class Label extends Pane {
      * @param priority the priority
      * @param font the character set
      * @param plugin the plugin that will be the owner for this label's items
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public Label(int length, int height, @NotNull Priority priority, @NotNull Font font, @NotNull Plugin plugin) {
         super(length, height);
@@ -81,7 +83,7 @@ public class Label extends Pane {
      * @param height the height
      * @param font the character set
      * @param plugin the plugin that will be the owner for this label's items
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public Label(int length, int height, @NotNull Font font, @NotNull Plugin plugin) {
         this(length, height, Priority.NORMAL, font, plugin);
@@ -94,7 +96,7 @@ public class Label extends Pane {
      * @param height the height
      * @param priority the priority
      * @param font the character set
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public Label(int length, int height, @NotNull Priority priority, @NotNull Font font) {
         this(length, height, priority, font, JavaPlugin.getProvidingPlugin(Label.class));
@@ -106,7 +108,7 @@ public class Label extends Pane {
      * @param length the length
      * @param height the height
      * @param font the character set
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public Label(int length, int height, @NotNull Font font) {
         this(length, height, Priority.NORMAL, font);
@@ -120,7 +122,7 @@ public class Label extends Pane {
      *
      * @param text the new text
      * @param processor processes each character before using them
-     * @since 0.10.4
+     * @since 0.1.0
      */
     public void setText(@NotNull String text,
                         @NotNull BiFunction<? super @NotNull Character, ? super @NotNull ItemStack,
@@ -132,17 +134,14 @@ public class Label extends Pane {
         for (char character : text.toCharArray()) {
             ItemStack item = font.toItem(character);
 
-            if (item == null) {
+            if (item == null)
                 item = font.toItem(Character.toUpperCase(character));
-            }
 
-            if (item == null) {
+            if (item == null)
                 item = font.toItem(Character.toLowerCase(character));
-            }
 
-            if (item == null) {
+            if (item == null)
                 item = font.getDefaultItem();
-            }
 
             this.pane.addItem(processor.apply(character, item.clone()));
         }
@@ -153,15 +152,13 @@ public class Label extends Pane {
      *
      * @param text the new text
      * @see #setText(String, BiFunction)
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public void setText(@NotNull String text) {
         setText(text, (character, item) -> new GuiItem(item, this.plugin));
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Label copy() {
         Label label = new Label(getLength(), getHeight(), getPriority(), getFont(), this.plugin);
 
@@ -185,13 +182,11 @@ public class Label extends Pane {
     }
 
     @NotNull
-    @Override
     public GuiItemContainer display() {
         return this.pane.display();
     }
 
     @NotNull
-    @Override
     public Collection<GuiItem> getItems() {
         return this.pane.getItems();
     }
@@ -202,33 +197,8 @@ public class Label extends Pane {
     }
 
     @NotNull
-    @Override
     public Collection<Pane> getPanes() {
         return Collections.emptySet();
-    }
-
-    /**
-     * Gets the text currently displayed in this label
-     *
-     * @return the text in this label
-     * @since 0.5.0
-     */
-    @Contract(pure = true)
-    @NotNull
-    public String getText() {
-        return text;
-    }
-
-    /**
-     * Gets the character set currently used for the text in this label
-     *
-     * @return the character set
-     * @since 0.5.0
-     */
-    @Contract(pure = true)
-    @NotNull
-    public Font getFont() {
-        return font;
     }
 
     /**
@@ -238,18 +208,15 @@ public class Label extends Pane {
      * @param element the element
      * @param plugin the plugin that will be the owner of the underlying items
      * @return the percentage bar
-     * @since 0.10.8
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public static Label load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
-        if (!element.hasAttribute("length")) {
+        if (!element.hasAttribute("length"))
             throw new XMLLoadException("Label XML tag does not have the mandatory length attribute");
-        }
 
-        if (!element.hasAttribute("height")) {
+        if (!element.hasAttribute("height"))
             throw new XMLLoadException("Label XML tag does not have the mandatory height attribute");
-        }
 
         int length;
         int height;
@@ -268,25 +235,21 @@ public class Label extends Pane {
 
         Font font = null;
 
-        if (element.hasAttribute("font")) {
+        if (element.hasAttribute("font"))
             font = Font.fromName(element.getAttribute("font"));
-        }
 
-        if (font == null) {
+        if (font == null)
             throw new XMLLoadException("Incorrect font specified for label");
-        }
 
         Label label = new Label(length, height, font, plugin);
 
         Pane.load(label, instance, element);
 
-        if (element.hasAttribute("populate")) {
+        if (element.hasAttribute("populate"))
             return label;
-        }
 
-        if (element.hasAttribute("text")) {
+        if (element.hasAttribute("text"))
             label.setText(element.getAttribute("text"));
-        }
 
         return label;
     }

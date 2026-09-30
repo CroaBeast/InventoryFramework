@@ -1,5 +1,6 @@
 package me.croabeast.inventory.pane.component;
 
+import lombok.Setter;
 import me.croabeast.inventory.exception.XMLLoadException;
 import me.croabeast.inventory.gui.GuiComponent;
 import me.croabeast.inventory.gui.GuiItem;
@@ -13,7 +14,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
@@ -28,7 +28,7 @@ import java.util.HashSet;
  * or the last page, the backwards respectively the forward button will not show. This does not display the
  * {@link PaginatedPane} itself, but is merely an interface for interacting with it.
  * 
- * @since 0.10.14
+ * @since 0.1.0
  */
 public class PagingButtons extends Pane {
 
@@ -42,12 +42,14 @@ public class PagingButtons extends Pane {
      * The backwards button.
      */
     @NotNull
+    @Setter
     private GuiItem backwardButton;
 
     /**
      * The forwards button.
      */
     @NotNull
+    @Setter
     private GuiItem forwardButton;
 
     /**
@@ -70,15 +72,14 @@ public class PagingButtons extends Pane {
      * @param priority the priority of this interface
      * @param pages the pages to interact with
      * @param plugin the plugin that will be the owner of this interface's items
-     * @since 0.12.0
+     * @since 0.1.0
      * @throws IllegalArgumentException if the length is less than 2
      */
     public PagingButtons(int length, @NotNull Priority priority, @NotNull PaginatedPane pages, @NotNull Plugin plugin) {
         super(length, 1, priority);
 
-        if (length < 2) {
+        if (length < 2)
             throw new IllegalArgumentException("Length of paging buttons must be at least 2");
-        }
         
         this.pages = pages;
         this.plugin = plugin;
@@ -96,7 +97,7 @@ public class PagingButtons extends Pane {
      * @param length the length of this interface
      * @param priority the priority of this interface
      * @param pages the pages to interact with
-     * @since 0.12.0
+     * @since 0.1.0
      * @throws IllegalArgumentException if the length is less than 2
      */
     public PagingButtons(int length, @NotNull Priority priority, @NotNull PaginatedPane pages) {
@@ -111,7 +112,7 @@ public class PagingButtons extends Pane {
      * @param length the length of this interface
      * @param pages the pages to interact with
      * @param plugin the plugin that will be the owner of this interface's items
-     * @since 0.12.0
+     * @since 0.1.0
      * @throws IllegalArgumentException if the length is less than 2
      */
     public PagingButtons(int length, @NotNull PaginatedPane pages, @NotNull Plugin plugin) {
@@ -125,7 +126,7 @@ public class PagingButtons extends Pane {
      *
      * @param length the length of this interface
      * @param pages the pages to interact with
-     * @since 0.12.0
+     * @since 0.1.0
      * @throws IllegalArgumentException if the length is less than 2
      */
     public PagingButtons(int length, @NotNull PaginatedPane pages) {
@@ -139,17 +140,15 @@ public class PagingButtons extends Pane {
         int y = slot.getY(getLength());
 
         //this isn't our item
-        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight()) {
+        if (x < 0 || x >= getLength() || y < 0 || y >= getHeight())
             return false;
-        }
 
         callOnClick(event);
 
         ItemStack itemStack = event.getCurrentItem();
 
-        if (itemStack == null) {
+        if (itemStack == null)
             return false;
-        }
 
         if (matchesItem(this.backwardButton, itemStack)) {
             try {
@@ -179,17 +178,14 @@ public class PagingButtons extends Pane {
     }
 
     @NotNull
-    @Override
     public GuiItemContainer display() {
         GuiItemContainer container = new GuiItemContainer(getLength(), getHeight());
 
-        if (this.keepButtonsVisible || this.pages.getPage() > 0) {
+        if (this.keepButtonsVisible || this.pages.getPage() > 0)
             container.setItem(this.backwardButton, 0, 0);
-        }
 
-        if (this.keepButtonsVisible || this.pages.getPage() < this.pages.getPages() - 1) {
+        if (this.keepButtonsVisible || this.pages.getPage() < this.pages.getPages() - 1)
             container.setItem(this.forwardButton, getLength() - 1, 0);
-        }
 
         return container;
     }
@@ -200,8 +196,6 @@ public class PagingButtons extends Pane {
      * This does not make a copy of the {@link PaginatedPane} that is being controlled by this interface.
      */
     @NotNull
-    @Contract(pure = true)
-    @Override
     public PagingButtons copy() {
         PagingButtons pagingButtons = new PagingButtons(getLength(), getPriority(), this.pages, this.plugin);
 
@@ -217,8 +211,6 @@ public class PagingButtons extends Pane {
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Collection<GuiItem> getItems() {
         Collection<GuiItem> items = new HashSet<>();
 
@@ -229,40 +221,16 @@ public class PagingButtons extends Pane {
     }
 
     /**
-     * Sets the item to be used for navigating backwards. If an event is attached to the item, this event will be called
-     * after the page has been changed.
-     *
-     * @param item the new backward item
-     * @since 0.10.14
-     */
-    public void setBackwardButton(@NotNull GuiItem item) {
-        this.backwardButton = item;
-    }
-
-    /**
-     * Sets the item to be used for navigating forwards. If an event is attached to the item, this event will be called
-     * after the page has been changed.
-     *
-     * @param item the new forward item
-     * @since 0.10.14
-     */
-    public void setForwardButton(@NotNull GuiItem item) {
-        this.forwardButton = item;
-    }
-
-    /**
      * Allow to always keep the backward and forward buttons visible when on the first and last page
      *
      * @param visible Whether to keep the buttons visible
-     * @since 0.11.6
+     * @since 0.1.0
      */
     public void setButtonsAlwaysVisible(boolean visible) {
         this.keepButtonsVisible = visible;
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public Collection<Pane> getPanes() {
         return Collections.emptySet();
     }
@@ -270,7 +238,7 @@ public class PagingButtons extends Pane {
     /**
      * This is a no-op.
      *
-     * @since 0.10.14
+     * @since 0.1.0
      */
     @Override
     public void clear() {}
@@ -282,14 +250,12 @@ public class PagingButtons extends Pane {
      * @param element the element
      * @param plugin the plugin that will be the owner of the underlying items
      * @return the paging buttons pane
-     * @since 0.10.14
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public static PagingButtons load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
-        if (!element.hasAttribute("length")) {
+        if (!element.hasAttribute("length"))
             throw new XMLLoadException("Paging buttons XML tag does not have the mandatory length attribute");
-        }
 
         int length;
 
@@ -299,21 +265,18 @@ public class PagingButtons extends Pane {
             throw new XMLLoadException("Length attribute is not an integer", exception);
         }
 
-        if (!element.hasAttribute("pages")) {
+        if (!element.hasAttribute("pages"))
             throw new XMLLoadException("Paging buttons does not have pages attribute");
-        }
 
         Element paginatedPaneElement = element.getOwnerDocument().getElementById(element.getAttribute("pages"));
 
-        if (paginatedPaneElement == null) {
+        if (paginatedPaneElement == null)
             throw new XMLLoadException("Paging buttons pages reference is invalid");
-        }
 
         Object paginatedPane = paginatedPaneElement.getUserData("pane");
 
-        if (!(paginatedPane instanceof PaginatedPane)) {
+        if (!(paginatedPane instanceof PaginatedPane))
             throw new XMLLoadException("Retrieved data is not a paginated pane");
-        }
 
         PagingButtons pagingButtons = new PagingButtons(length, (PaginatedPane) paginatedPane);
 

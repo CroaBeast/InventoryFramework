@@ -11,7 +11,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -54,7 +53,7 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
      * @param length the length of the pane
      * @param height the height of the pane
      * @param priority the priority of the pane
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public StaticPane(int length, int height, @NotNull Priority priority) {
         super(length, height, priority);
@@ -67,14 +66,13 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
      *
      * @param length the length of the pane
      * @param height the height of the pane
-     * @since 0.12.0
+     * @since 0.1.0
      */
     public StaticPane(int length, int height) {
         this(length, height, Priority.NORMAL);
     }
 
     @NotNull
-	@Override
 	public GuiItemContainer display() {
         GuiItemContainer container = new GuiItemContainer(getLength(), getHeight());
 
@@ -112,7 +110,7 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
      *
      * @param item the item to set
      * @param slot the position of the item
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public void addItem(@NotNull GuiItem item, Slot slot) {
         int x = slot.getX(getLength());
@@ -139,7 +137,7 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
      * Removes the specified item from the pane
      *
      * @param item the item to remove
-     * @since 0.5.8
+     * @since 0.1.0
      */
     public void removeItem(@NotNull GuiItem item) {
         items.values().removeIf(guiItem -> guiItem.equals(item));
@@ -151,7 +149,7 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
      *
      * @param x the x coordinate of the item to remove
      * @param y the y coordinate of the item to remove
-     * @since 0.10.0
+     * @since 0.1.0
      * @see #removeItem(Slot)
      */
     public void removeItem(int x, int y) {
@@ -163,7 +161,7 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
      * there is no item at the specified coordinates, this method will do nothing.
      *
      * @param slot the slot of the item to remove
-     * @since 0.10.8
+     * @since 0.1.0
      */
     public void removeItem(@NotNull Slot slot) {
         removeItem(slot.getX(getLength()), slot.getY(getLength()));
@@ -184,15 +182,13 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
 
         ItemStack itemStack = event.getCurrentItem();
 
-        if (itemStack == null) {
+        if (itemStack == null)
             return false;
-        }
 
         GuiItem clickedItem = findMatchingItem(items.values(), itemStack);
 
-        if (clickedItem == null) {
+        if (clickedItem == null)
             return false;
-        }
 
         clickedItem.callAction(event);
 
@@ -200,8 +196,6 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
 	}
 
     @NotNull
-    @Contract(pure = true)
-	@Override
     public StaticPane copy() {
         StaticPane staticPane = new StaticPane(getLength(), getHeight(), getPriority());
 
@@ -240,7 +234,7 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
 	 * @param action The action called whenever an interaction with the item happens
      * @param plugin the plugin that will be the owner of the created items
      * @see #fillWith(ItemStack, Consumer)
-     * @since 0.10.8
+     * @since 0.1.0
 	 */
 	public void fillWith(@NotNull ItemStack itemStack, @Nullable Consumer<? super InventoryClickEvent> action,
                          @NotNull Plugin plugin) {
@@ -270,7 +264,7 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
      *
      * @param itemStack The {@link ItemStack} to fill the empty space with
      * @param action The action called whenever an interaction with the item happens
-     * @since 0.5.9
+     * @since 0.1.0
      */
     public void fillWith(@NotNull ItemStack itemStack, @Nullable Consumer<? super InventoryClickEvent> action) {
         fillWith(itemStack, action, JavaPlugin.getProvidingPlugin(StaticPane.class));
@@ -280,9 +274,8 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
 	 * Fills all empty space in the pane with the given {@code itemStack}
 	 *
 	 * @param itemStack The {@link ItemStack} to fill the empty space with
-     * @since 0.2.4
+     * @since 0.1.0
 	 */
-	@Contract("null -> fail")
 	public void fillWith(@NotNull ItemStack itemStack) {
 		this.fillWith(itemStack, null);
 	}
@@ -297,10 +290,9 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
      *
      * @param slot the slot of the item
      * @return the item at this position, or null if there is no such item
-     * @since 0.11.4
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     public GuiItem getItem(@NotNull Slot slot) {
         int x = slot.getX(getLength());
         int y = slot.getY(getLength());
@@ -308,16 +300,14 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
         for (Map.Entry<Slot, GuiItem> entry : this.items.entrySet()) {
             Slot key = entry.getKey();
 
-            if (key.getX(getLength()) == x && key.getY(getLength()) == y) {
+            if (key.getX(getLength()) == x && key.getY(getLength()) == y)
                 return entry.getValue();
-            }
         }
 
         return null;
     }
 
 	@NotNull
-	@Override
 	public Collection<GuiItem> getItems() {
 		return items.values();
 	}
@@ -328,10 +318,9 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
      * map is unmodifiable.
      *
      * @return a map of all items by their slot
-     * @since 0.11.4
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public Map<@NotNull Slot, @NotNull GuiItem> getSlottedItems() {
         return Collections.unmodifiableMap(this.items);
     }
@@ -342,8 +331,6 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
     }
 
 	@NotNull
-	@Contract(pure = true)
-	@Override
 	public Collection<Pane> getPanes() {
 		return new HashSet<>();
 	}
@@ -358,19 +345,16 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
 		this.flipVertically = flipVertically;
 	}
 
-	@Contract(pure = true)
     @Override
 	public int getRotation() {
 		return rotation;
 	}
 
-	@Contract(pure = true)
     @Override
 	public boolean isFlippedHorizontally() {
 		return flipHorizontally;
 	}
 
-	@Contract(pure = true)
     @Override
 	public boolean isFlippedVertically() {
 		return flipVertically;
@@ -383,17 +367,15 @@ public class StaticPane extends Pane implements Flippable, Rotatable {
 	 * @param element the element
      * @param plugin the plugin that will be the owner of the udnerlying items
 	 * @return the outline pane
-     * @since 0.10.8
+     * @since 0.1.0
 	 */
 	@NotNull
 	public static StaticPane load(@NotNull Object instance, @NotNull Element element, @NotNull Plugin plugin) {
-        if (!element.hasAttribute("length")) {
+        if (!element.hasAttribute("length"))
             throw new XMLLoadException("Cycle button XML tag does not have the mandatory length attribute");
-        }
 
-        if (!element.hasAttribute("height")) {
+        if (!element.hasAttribute("height"))
             throw new XMLLoadException("Cycle button XML tag does not have the mandatory height attribute");
-        }
 
         int length;
         int height;
