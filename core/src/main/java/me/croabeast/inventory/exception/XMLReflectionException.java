@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * from the XML file will throw an {@link XMLLoadException} if something goes wrong. This exception will only occur when
  * the reflection error happens after loading has finished.
  *
- * @since 0.3.1
+ * @since 0.1.0
  */
 public class XMLReflectionException extends RuntimeException {
 
@@ -17,7 +17,7 @@ public class XMLReflectionException extends RuntimeException {
      * Constructs the exception with a given message
      *
      * @param message the message to show
-     * @since 0.3.1
+     * @since 0.1.0
      */
     public XMLReflectionException(@NotNull String message) {
         super(message);
@@ -27,7 +27,7 @@ public class XMLReflectionException extends RuntimeException {
      * Constructs the exception with a given cause
      *
      * @param cause the cause of this exception
-     * @since 0.3.1
+     * @since 0.1.0
      */
     public XMLReflectionException(@NotNull Throwable cause) {
         super(cause);

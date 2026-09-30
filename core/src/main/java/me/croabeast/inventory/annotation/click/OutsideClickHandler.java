@@ -25,7 +25,7 @@ import java.util.function.Consumer;
  * <p>
  * If this method does not have the correct parameters, {@link InvalidParametersException} will be thrown.
  *
- * @since 0.12.1
+ * @since 0.1.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

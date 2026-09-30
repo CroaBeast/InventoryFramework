@@ -2,7 +2,6 @@ package me.croabeast.inventory.font.util;
 
 import me.croabeast.inventory.font.*;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +12,7 @@ import java.util.Map;
 /**
  * An interface for fonts
  *
- * @since 0.5.0
+ * @since 0.1.0
  */
 public abstract class Font {
 
@@ -192,10 +191,9 @@ public abstract class Font {
      * Gets a default item for characters that do not have a dedicated item
      *
      * @return the default item
-     * @since 0.5.0
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
     public abstract ItemStack getDefaultItem();
 
     /**
@@ -204,10 +202,9 @@ public abstract class Font {
      *
      * @param character the character to get an item from
      * @return the item
-     * @since 0.5.0
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     public abstract ItemStack toItem(char character);
 
     /**
@@ -216,10 +213,9 @@ public abstract class Font {
      *
      * @param name the name of the font
      * @return the font
-     * @since 0.5.0
+     * @since 0.1.0
      */
     @Nullable
-    @Contract(pure = true)
     public static Font fromName(@NotNull String name) {
         return FONT_BY_NAME.get(name.replace(' ', '_').toUpperCase(Locale.getDefault()));
     }
@@ -230,9 +226,8 @@ public abstract class Font {
      *
      * @param name the font name
      * @param font the font
-     * @since 0.5.0
+     * @since 0.1.0
      */
-    @Contract(pure = true)
     public static void registerFont(@NotNull String name, @NotNull Font font) {
         FONT_BY_NAME.put(name.replace(' ', '_').toUpperCase(Locale.getDefault()), font);
     }

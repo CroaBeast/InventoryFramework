@@ -4,7 +4,6 @@ import me.croabeast.inventory.font.util.Font;
 import me.croabeast.inventory.util.CSVUtil;
 import me.croabeast.inventory.util.SkullUtil;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
  * A font for characters with a space as default character. Only one instance of this class should ever exist and should
  * be used everywhere.
  *
- * @since 0.5.0
+ * @since 0.1.0
  */
 public class CSVFont extends Font {
 
@@ -36,7 +35,7 @@ public class CSVFont extends Font {
      *
      * @param defaultCharacter the default character to use when a requested character cannot be found
      * @param filePath the relative file path to the csv file containing the character mappings
-     * @since 0.5.0
+     * @since 0.1.0
      */
     public CSVFont(char defaultCharacter, String filePath) {
         this.defaultCharacter = defaultCharacter;
@@ -50,15 +49,11 @@ public class CSVFont extends Font {
     }
 
     @NotNull
-    @Contract(pure = true)
-    @Override
     public ItemStack getDefaultItem() {
         return characterMappings.get(defaultCharacter);
     }
 
     @Nullable
-    @Contract(pure = true)
-    @Override
     public ItemStack toItem(char character) {
         return characterMappings.get(character);
     }

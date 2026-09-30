@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * A class for containing players and their inventory state for later use
  *
- * @since 0.4.0
+ * @since 0.1.0
  */
 public class HumanEntityCache {
 
@@ -42,7 +42,7 @@ public class HumanEntityCache {
      * This method will fail silently if no cache is available.
      *
      * @param humanEntity the human entity to restore its cache for
-     * @since 0.5.19
+     * @since 0.1.0
      */
     public void restoreAndForget(@NotNull HumanEntity humanEntity) {
         restore(humanEntity);
@@ -52,7 +52,7 @@ public class HumanEntityCache {
     /**
      * Restores all players' contents into their inventory, clearing the cache afterwards.
      *
-     * @since 0.5.19
+     * @since 0.1.0
      */
     public void restoreAndForgetAll() {
         restoreAll();
@@ -72,7 +72,7 @@ public class HumanEntityCache {
      * @param item the item to add to the cached inventory
      * @return the amount of leftover items that couldn't be fit in the cached inventory
      * @throws IllegalStateException if the human entity's inventory is not cached
-     * @since 0.6.1
+     * @since 0.1.0
      */
     public int add(@NotNull HumanEntity humanEntity, @NotNull ItemStack item) {
         ItemStack[] items = inventories.get(humanEntity);
@@ -94,18 +94,16 @@ public class HumanEntityCache {
                 break;
             }
 
-            if (!itemStack.isSimilar(item)) {
+            if (!itemStack.isSimilar(item))
                 continue;
-            }
 
             int additionalAmount = Math.min(itemStack.getMaxStackSize() - itemStack.getAmount(), item.getAmount());
 
             itemStack.setAmount(itemStack.getAmount() + additionalAmount);
             amountPutIn += additionalAmount;
 
-            if (amountPutIn == item.getAmount()) {
+            if (amountPutIn == item.getAmount())
                 break;
-            }
         }
 
         return item.getAmount() - amountPutIn;
@@ -115,7 +113,7 @@ public class HumanEntityCache {
      * Stores this player's inventory in the cache. If the player was already stored, their cache will be overwritten.
      *
      * @param humanEntity the human entity to keep in the cache
-     * @since 0.4.0
+     * @since 0.1.0
      */
     public void store(@NotNull HumanEntity humanEntity) {
         ItemStack[] items = new ItemStack[36];
@@ -132,14 +130,13 @@ public class HumanEntityCache {
      * cache will not be cleared.
      *
      * @param humanEntity the human entity to restore its cache for
-     * @since 0.4.0
+     * @since 0.1.0
      */
     private void restore(@NotNull HumanEntity humanEntity) {
         ItemStack[] items = inventories.get(humanEntity);
 
-        if (items == null) {
+        if (items == null)
             return;
-        }
 
         for (int i = 0; i < items.length; i++) {
             humanEntity.getInventory().setItem(i, items[i]);
@@ -149,7 +146,7 @@ public class HumanEntityCache {
     /**
      * Restores all players' contents into their inventory. The cache will not be cleared.
      *
-     * @since 0.4.0
+     * @since 0.1.0
      */
     private void restoreAll() {
         inventories.keySet().forEach(this::restore);
@@ -160,7 +157,7 @@ public class HumanEntityCache {
      *
      * @param humanEntity the human entity to check whether it is present in the cache
      * @return true if the human entity is in the cache, false otherwise
-     * @since 0.10.7
+     * @since 0.1.0
      */
     public boolean contains(@NotNull HumanEntity humanEntity) {
         return this.inventories.containsKey(humanEntity);
@@ -170,7 +167,7 @@ public class HumanEntityCache {
      * Clear the cache for the specified human entity
      *
      * @param humanEntity the human entity to clear the cache for
-     * @since 0.4.0
+     * @since 0.1.0
      */
     public void clearCache(@NotNull HumanEntity humanEntity) {
         inventories.remove(humanEntity);
@@ -179,7 +176,7 @@ public class HumanEntityCache {
     /**
      * This clears the cache.
      *
-     * @since 0.4.0
+     * @since 0.1.0
      */
     private void clearCache() {
         inventories.clear();

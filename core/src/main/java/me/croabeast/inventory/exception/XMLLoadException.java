@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An exception indicating that something went wrong while trying to load a {@link Gui} from an XML file.
  *
- * @since 0.3.0
+ * @since 0.1.0
  */
 public class XMLLoadException extends RuntimeException {
 
@@ -14,7 +14,7 @@ public class XMLLoadException extends RuntimeException {
      * Constructs the exception with a given message
      *
      * @param message the message to show
-     * @since 0.3.0
+     * @since 0.1.0
      */
     public XMLLoadException(@NotNull String message) {
         super(message);
@@ -24,7 +24,7 @@ public class XMLLoadException extends RuntimeException {
      * Constructs the exception with a given cause
      *
      * @param cause the cause of this exception
-     * @since 0.3.1
+     * @since 0.1.0
      */
     public XMLLoadException(@NotNull Throwable cause) {
         super(cause);
