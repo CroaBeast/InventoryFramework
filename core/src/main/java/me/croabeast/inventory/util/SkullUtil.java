@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.UUID;
@@ -77,8 +77,8 @@ public class SkullUtil {
         PlayerTextures textures = profile.getTextures();
 
         try {
-            textures.setSkin(new URL("http://textures.minecraft.net/texture/" + id));
-        } catch (MalformedURLException exception) {
+            textures.setSkin(URI.create("http://textures.minecraft.net/texture/" + id).toURL());
+        } catch (MalformedURLException | IllegalArgumentException exception) {
             throw new IllegalArgumentException("Provided ID is invalid", exception);
         }
 
