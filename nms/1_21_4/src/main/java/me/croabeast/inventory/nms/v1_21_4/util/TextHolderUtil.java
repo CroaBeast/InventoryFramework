@@ -1,11 +1,11 @@
 package me.croabeast.inventory.nms.v1_21_4.util;
 
+import lombok.experimental.UtilityClass;
 import me.croabeast.inventory.adventure.ComponentHolder;
 import me.croabeast.inventory.adventure.StringHolder;
 import me.croabeast.inventory.adventure.TextHolder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -14,24 +14,21 @@ import java.util.stream.Stream;
 /**
  * A utility class for adding {@link TextHolder} support.
  *
- * @since 0.10.19
+ * @since 0.1.0
  */
-public final class TextHolderUtil {
+@UtilityClass
+public class TextHolderUtil {
     
-    private TextHolderUtil() {
-        //private constructor to prevent construction
-    }
     
     /**
      * Converts the specified value to a vanilla component.
      *
      * @param holder the value to convert
      * @return the value as a vanilla component
-     * @since 0.10.19
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
-    public static Component toComponent(@NotNull TextHolder holder) {
+    public Component toComponent(@NotNull TextHolder holder) {
         if (holder instanceof StringHolder) {
             return toComponent((StringHolder) holder);
         } else {
@@ -44,11 +41,10 @@ public final class TextHolderUtil {
      *
      * @param holder the value to convert
      * @return the value as a vanilla component
-     * @since 0.10.19
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
-    private static Component toComponent(@NotNull StringHolder holder) {
+    private Component toComponent(@NotNull StringHolder holder) {
         return Component.literal(holder.asLegacyString());
     }
     
@@ -57,11 +53,10 @@ public final class TextHolderUtil {
      *
      * @param holder the value to convert
      * @return the value as a vanilla component
-     * @since 0.10.19
+     * @since 0.1.0
      */
     @NotNull
-    @Contract(pure = true)
-    private static Component toComponent(@NotNull ComponentHolder holder) {
+    private Component toComponent(@NotNull ComponentHolder holder) {
         return Objects.requireNonNull(Component.Serializer.fromJson(holder.asJson(), HolderLookup.Provider.create(Stream.empty())));
     }
 }
