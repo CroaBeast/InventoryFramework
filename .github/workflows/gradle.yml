@@ -92,3 +92,28 @@ jobs:
           path: core/build/libs/InventoryFramework-*[0-9].jar
           if-no-files-found: error
           retention-days: 7
+
+      # Publishes me.croabeast.inventory:framework to https://croabeast.github.io/repo/. Done here and not in
+      # release.yml because the build outputs are still around; Gradle keeps every version in maven-metadata.xml.
+      - name: Checkout Maven repository
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/checkout@v7
+        with:
+          repository: CroaBeast/repo
+          path: maven-repo
+          token: ${{ secrets.MAVEN_DEPLOY_TOKEN }}
+
+      - name: Deploy to Maven repository
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          ./gradlew :core:publishMavenPublicationToCroaBeastRepository --build-cache \
+            -PdeployRepo=maven-repo -Porg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
+
+          VERSION=$(./gradlew -q :core:properties | awk -F': ' '/^version:/ {print $2; exit}')
+
+          cd maven-repo
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add me/croabeast/inventory
+          git commit -m "Deploy InventoryFramework $VERSION" || echo "No changes to commit"
+          git push
