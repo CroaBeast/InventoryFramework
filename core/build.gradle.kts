@@ -62,4 +62,14 @@ publishing {
             artifact(tasks.named("javadocJar"))
         }
     }
+
+    // gradle.yml passes a checkout of CroaBeast/repo, served at https://croabeast.github.io/repo/
+    providers.gradleProperty("deployRepo").orNull?.let { dir ->
+        repositories {
+            maven {
+                name = "CroaBeast"
+                url = uri(rootProject.file(dir))
+            }
+        }
+    }
 }
