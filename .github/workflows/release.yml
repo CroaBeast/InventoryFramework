@@ -158,6 +158,11 @@ jobs:
             echo
           } > release-notes.md
 
+          # "chore: sync with upstream" merges only record stefvanschie/IF as merged (git merge -s ours), so the
+          # upstream commits they bring in are left out of the notes
+          UPSTREAM_EXCLUDES=$(git log --format='%P' --grep='^chore: sync with upstream' "$HEAD_SHA" \
+            | awk 'NF > 1 { print "^" $2 }')
+
           HAS_CHANGES=false
           while read -r SHA; do
             [ -z "$SHA" ] && continue
@@ -192,7 +197,7 @@ jobs:
                 echo "- $COMMIT_TITLE by $COMMIT_AUTHOR_NAME ($SHORT_SHA)" >> release-notes.md
               fi
             fi
-          done < <(git rev-list --reverse "$RANGE")
+          done < <(git rev-list --reverse "$RANGE" $UPSTREAM_EXCLUDES)
 
           if [ "$HAS_CHANGES" = false ]; then
             echo "- No code changes detected for this release." >> release-notes.md
