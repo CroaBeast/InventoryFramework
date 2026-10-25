@@ -1,6 +1,7 @@
 package me.croabeast.inventory.adventure;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import com.google.gson.JsonElement;
 import net.kyori.adventure.text.Component;
@@ -131,18 +132,8 @@ public abstract class ComponentHolder extends TextHolder {
      * The Adventure component this instance wraps.
      */
     @NotNull
-    protected final Component value;
-        
-    /**
-     * Gets the Adventure component this instance wraps.
-     *
-     * @return the contained Adventure component
-     * @since 0.1.0
-     */
-    @NotNull
-    public Component getComponent() {
-        return value;
-    }
+    @Getter
+    protected final Component component;
     
     /**
      * Gets the wrapped Adventure component in a JSON representation.
@@ -152,27 +143,27 @@ public abstract class ComponentHolder extends TextHolder {
      */
     @NotNull
     public JsonElement asJson() {
-        return GsonComponentSerializer.gson().serializeToTree(value);
+        return GsonComponentSerializer.gson().serializeToTree(component);
     }
     
     @NotNull
     public String toString() {
-        return getClass().getSimpleName() + "{" + value + "}";
+        return getClass().getSimpleName() + "{" + component + "}";
     }
     
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return component.hashCode();
     }
     
     @Override
     public boolean equals(Object other) {
         return other != null && getClass() == other.getClass()
-                && Objects.equals(value, ((ComponentHolder) other).value);
+                && Objects.equals(component, ((ComponentHolder) other).component);
     }
     
     @NotNull
     public String asLegacyString() {
-        return getLegacySerializer().serialize(value);
+        return getLegacySerializer().serialize(component);
     }
 }

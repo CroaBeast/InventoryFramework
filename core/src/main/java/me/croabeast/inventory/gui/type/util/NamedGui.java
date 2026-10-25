@@ -1,18 +1,20 @@
 package me.croabeast.inventory.gui.type.util;
 
+import lombok.Getter;
 import me.croabeast.inventory.adventure.StringHolder;
 import me.croabeast.inventory.adventure.TextHolder;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public abstract class NamedGui extends Gui {
 
     /**
      * The title of this gui
      */
     @NotNull
-    private TextHolder title;
+    private TextHolder titleHolder;
 
     /**
      * Constructs a new gui with a title
@@ -56,8 +58,7 @@ public abstract class NamedGui extends Gui {
      */
     public NamedGui(@NotNull TextHolder title, @NotNull Plugin plugin) {
         super(plugin);
-
-        this.title = title;
+        this.titleHolder = title;
     }
 
     /**
@@ -76,7 +77,7 @@ public abstract class NamedGui extends Gui {
      * @since 0.1.0
      */
     public void setTitle(@NotNull TextHolder title) {
-        this.title = title;
+        this.titleHolder = title;
         this.dirty = true;
     }
 
@@ -88,17 +89,6 @@ public abstract class NamedGui extends Gui {
      */
     @NotNull
     public String getTitle() {
-        return title.asLegacyString();
-    }
-
-    /**
-     * Returns the title of this GUI in a wrapped form.
-     *
-     * @return the title
-     * @since 0.1.0
-     */
-    @NotNull
-    public TextHolder getTitleHolder() {
-        return title;
+        return titleHolder.asLegacyString();
     }
 }

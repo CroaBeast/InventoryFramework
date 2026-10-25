@@ -34,22 +34,22 @@ class NativeComponentHolder extends ComponentHolder {
     
     @NotNull
     public Inventory asInventoryTitle(InventoryHolder holder, InventoryType type) {
-        return Bukkit.createInventory(holder, type, value);
+        return Bukkit.createInventory(holder, type, component);
     }
     
     @NotNull
     public Inventory asInventoryTitle(InventoryHolder holder, int size) {
-        return Bukkit.createInventory(holder, size, value);
+        return Bukkit.createInventory(holder, size, component);
     }
 
     @NotNull
     public Merchant asMerchantTitle() {
-        return Bukkit.createMerchant(value);
+        return Bukkit.createMerchant(component);
     }
 
     @Override
     public void asItemDisplayName(ItemMeta meta) {
-        meta.displayName(value);
+        meta.displayName(component);
     }
     
     @Override
@@ -57,7 +57,7 @@ class NativeComponentHolder extends ComponentHolder {
         List<Component> lore = meta.hasLore()
                 ? Objects.requireNonNull(meta.lore())
                 : new ArrayList<>();
-        lore.add(value);
+        lore.add(component);
         meta.lore(lore);
     }
 }
