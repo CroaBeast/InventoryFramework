@@ -160,13 +160,12 @@ The following dependencies need to be imported and shaded:
 
 Please consult the [Adventure documentation](https://docs.adventure.kyori.net/) for more information.
 
-### How to use Adventure `Component`s
+### How to use Adventure `Component`
 
 Example of migration from legacy `String` to Adventure `Component`:
- - legacy: `namedGui.setTitle("My Title!");`
+ - Legacy: `namedGui.setTitle("My Title!");`
  - Adventure: `namedGui.setTitle(ComponentHolder.of(Component.text("My Title!")));`
- - Plain text as a component: `namedGui.setTitle(ComponentHolder.fromString("My Title!"));`. The string is used as it
-   is, without parsing color codes or MiniMessage tags.
+ - Plain text: `namedGui.setTitle(ComponentHolder.fromString("My Title!"));`. The string is used as it is, without parsing color codes or MiniMessage tags.
 
 We apologize for the boilerplate (the `ComponentHolder.of(...)` call), but that was the only way to not make InventoryFramework hard-depend on Adventure.
 
